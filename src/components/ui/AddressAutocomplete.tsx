@@ -13,6 +13,7 @@ interface Props {
   label?: string;
   placeholder?: string;
   required?: boolean;
+  valid?: boolean;
 }
 
 export default function AddressAutocomplete({
@@ -22,6 +23,7 @@ export default function AddressAutocomplete({
   label = "Street Address",
   placeholder = "123 Main St",
   required,
+  valid,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -91,6 +93,14 @@ export default function AddressAutocomplete({
 
   const inputId = label.toLowerCase().replace(/\s+/g, "-");
 
+  const validCheck = valid && (
+    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400 animate-[fadeIn_0.3s_ease-out]">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+        <path d="M4 9.5L7.5 13L14 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+
   if (!isLoaded) {
     // Fallback: plain input (matches Input component styling)
     return (
@@ -101,14 +111,17 @@ export default function AddressAutocomplete({
         >
           {label}
         </label>
-        <input
-          id={inputId}
-          className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white font-body placeholder:text-white/30 focus:outline-none focus:border-derby-blue-light focus:ring-1 focus:ring-derby-blue-light transition-colors"
-          placeholder={placeholder}
-          required={required}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
+        <div className="relative">
+          <input
+            id={inputId}
+            className={`w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white font-body placeholder:text-white/30 focus:outline-none focus:border-derby-blue-light focus:ring-1 focus:ring-derby-blue-light transition-colors ${valid ? "pr-10" : ""}`}
+            placeholder={placeholder}
+            required={required}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+          {validCheck}
+        </div>
       </div>
     );
   }
@@ -121,25 +134,28 @@ export default function AddressAutocomplete({
       >
         {label}
       </label>
-      <input
-        id={inputId}
-        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white font-body placeholder:text-white/30 focus:outline-none focus:border-derby-blue-light focus:ring-1 focus:ring-derby-blue-light transition-colors"
-        placeholder={placeholder}
-        required={required}
-        autoComplete="off"
-        role="combobox"
-        aria-expanded={open && predictions.length > 0}
-        aria-controls="address-listbox"
-        aria-activedescendant={
-          activeIndex >= 0 ? `address-option-${activeIndex}` : undefined
-        }
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => {
-          if (predictions.length > 0) setOpen(true);
-        }}
-        onKeyDown={handleKeyDown}
-      />
+      <div className="relative">
+        <input
+          id={inputId}
+          className={`w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white font-body placeholder:text-white/30 focus:outline-none focus:border-derby-blue-light focus:ring-1 focus:ring-derby-blue-light transition-colors ${valid ? "pr-10" : ""}`}
+          placeholder={placeholder}
+          required={required}
+          autoComplete="off"
+          role="combobox"
+          aria-expanded={open && predictions.length > 0}
+          aria-controls="address-listbox"
+          aria-activedescendant={
+            activeIndex >= 0 ? `address-option-${activeIndex}` : undefined
+          }
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => {
+            if (predictions.length > 0) setOpen(true);
+          }}
+          onKeyDown={handleKeyDown}
+        />
+        {validCheck}
+      </div>
       {open && predictions.length > 0 && (
         <ul
           id="address-listbox"
