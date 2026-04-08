@@ -11,6 +11,7 @@ import OwnerInfo from "@/components/steps/OwnerInfo";
 import Location from "@/components/steps/Location";
 import Services from "@/components/steps/Services";
 import OnlinePresence from "@/components/steps/OnlinePresence";
+import Documents from "@/components/steps/Documents";
 import type { Session } from "@/lib/types";
 
 export default function OnboardPage() {
@@ -63,6 +64,7 @@ export default function OnboardPage() {
         <Location />
         <Services />
         <OnlinePresence />
+        <Documents />
       </StepRenderer>
     </WizardProvider>
   );

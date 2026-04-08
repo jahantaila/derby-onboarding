@@ -8,6 +8,7 @@ const MOMENTUM_COPY = [
   "Great!",
   "Almost there!",
   "One more!",
+  "Almost done!",
   "Finish",
 ];
 

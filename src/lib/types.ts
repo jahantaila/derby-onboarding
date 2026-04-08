@@ -1,3 +1,12 @@
+export interface DocumentUpload {
+  id: string;
+  docType: string;
+  fileName: string;
+  storagePath: string;
+  fileSize: number;
+  mimeType: string;
+}
+
 export interface FormData {
   // Step 1 - Business Basics
   businessName?: string;
@@ -28,7 +37,23 @@ export interface Session {
   status: "in_progress" | "completed" | "abandoned";
 }
 
-export const TOTAL_STEPS = 6; // Steps 0–5
+export const TOTAL_STEPS = 7; // Steps 0–6
+
+export const DOCUMENT_TYPES = [
+  { key: "business_license", label: "Business License" },
+  { key: "insurance", label: "Insurance Certificate" },
+  { key: "utility_bill", label: "Utility Bill" },
+  { key: "gov_id", label: "Government ID" },
+] as const;
+
+export const ALLOWED_MIME_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+] as const;
+
+export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export const SERVICE_OPTIONS = [
   "Plumbing",
