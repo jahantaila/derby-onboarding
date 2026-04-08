@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase";
 import { Resend } from "resend";
+import twilio from "twilio";
 import type { FormData } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -217,6 +218,28 @@ export async function POST(req: NextRequest) {
       });
     } catch (clientEmailErr) {
       console.error("Client confirmation email failed:", clientEmailErr);
+    }
+  }
+
+  // Send admin SMS notification (best-effort)
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+    try {
+      const twilioClient = twilio(
+        process.env.TWILIO_ACCOUNT_SID,
+        process.env.TWILIO_AUTH_TOKEN
+      );
+      await twilioClient.messages.create({
+        to: process.env.ADMIN_PHONE_NUMBER!,
+        from: process.env.TWILIO_FROM_NUMBER!,
+        body: [
+          `New client: ${businessName} just signed up on Derby Digital!`,
+          fd.ownerName ? `Owner: ${fd.ownerName}` : null,
+          fd.ownerPhone ? `Phone: ${fd.ownerPhone}` : null,
+          `Check your dashboard.`,
+        ].filter(Boolean).join("\n"),
+      });
+    } catch (smsErr) {
+      console.error("Admin SMS notification failed:", smsErr);
     }
   }
 
