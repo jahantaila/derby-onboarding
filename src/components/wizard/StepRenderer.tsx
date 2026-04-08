@@ -1,18 +1,26 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useWizard } from "./WizardProvider";
 
 const variants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 120 : -120,
     opacity: 0,
+    scale: 0.95,
   }),
-  center: { x: 0, opacity: 1 },
+  center: { x: 0, opacity: 1, scale: 1 },
   exit: (direction: number) => ({
     x: direction > 0 ? -120 : 120,
     opacity: 0,
+    scale: 0.95,
   }),
+};
+
+const reducedVariants = {
+  enter: { opacity: 0 },
+  center: { opacity: 1 },
+  exit: { opacity: 0 },
 };
 
 interface Props {
@@ -21,6 +29,7 @@ interface Props {
 
 export default function StepRenderer({ children }: Props) {
   const { step, direction } = useWizard();
+  const prefersReduced = useReducedMotion();
 
   return (
     <div className="relative min-h-[400px] overflow-hidden">
@@ -28,11 +37,20 @@ export default function StepRenderer({ children }: Props) {
         <motion.div
           key={step}
           custom={direction}
-          variants={variants}
+          variants={prefersReduced ? reducedVariants : variants}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.3, ease: "easeInOut" }}
+          transition={
+            prefersReduced
+              ? { duration: 0.15 }
+              : {
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                  duration: 0.35,
+                }
+          }
           className="w-full"
         >
           {children[step]}

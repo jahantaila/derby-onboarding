@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
+import { motion, useReducedMotion } from "framer-motion";
 import StepNavigation from "@/components/wizard/StepNavigation";
 import {
   ALLOWED_MIME_TYPES,
@@ -9,6 +10,7 @@ import {
   MAX_FILE_SIZE,
   type DocumentUpload,
 } from "@/lib/types";
+import { staggerContainer, staggerItem } from "@/lib/animations";
 
 interface UploadSlot {
   docType: string;
@@ -207,6 +209,7 @@ function UploadZone({
 
 export default function Documents() {
   const { token } = useParams<{ token: string }>();
+  const prefersReduced = useReducedMotion();
   const [slots, setSlots] = useState<UploadSlot[]>(() =>
     DOCUMENT_TYPES.map((dt) => ({
       docType: dt.key,
@@ -351,25 +354,39 @@ export default function Documents() {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl text-white mb-2">ALMOST THERE</h2>
-      <p className="text-white/60 font-body text-sm mb-6">
-        A few quick uploads to verify your business &mdash; we handle the rest.
-      </p>
+      <motion.div
+        variants={prefersReduced ? undefined : staggerContainer}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.h2
+          className="font-heading text-2xl text-white mb-2"
+          variants={prefersReduced ? undefined : staggerItem}
+        >
+          ALMOST THERE
+        </motion.h2>
+        <motion.p
+          className="text-white/60 font-body text-sm mb-6"
+          variants={prefersReduced ? undefined : staggerItem}
+        >
+          A few quick uploads to verify your business &mdash; we handle the rest.
+        </motion.p>
 
-      <div className="space-y-4">
-        {slots.map((slot) => (
-          <div key={slot.docType}>
-            <label className="block text-sm text-white/70 font-body mb-1">
-              {slot.label}
-            </label>
-            <UploadZone
-              slot={slot}
-              onFileSelect={handleFileSelect}
-              onRemove={handleRemove}
-            />
-          </div>
-        ))}
-      </div>
+        <div className="space-y-4">
+          {slots.map((slot) => (
+            <motion.div key={slot.docType} variants={prefersReduced ? undefined : staggerItem}>
+              <label className="block text-sm text-white/70 font-body mb-1">
+                {slot.label}
+              </label>
+              <UploadZone
+                slot={slot}
+                onFileSelect={handleFileSelect}
+                onRemove={handleRemove}
+              />
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
 
       <div className="mt-4">
         <p className="text-xs text-white/40 font-body">

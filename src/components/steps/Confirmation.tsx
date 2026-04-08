@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { motion, useReducedMotion } from "framer-motion";
 import { useWizard } from "@/components/wizard/WizardProvider";
 import { BUDGET_OPTIONS, DOCUMENT_TYPES, type DocumentUpload } from "@/lib/types";
+import { staggerContainer, staggerItem } from "@/lib/animations";
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -29,6 +31,7 @@ export default function Confirmation() {
   const { token } = useParams<{ token: string }>();
   const router = useRouter();
   const { formData, goBack } = useWizard();
+  const prefersReduced = useReducedMotion();
   const [documents, setDocuments] = useState<DocumentUpload[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,108 +73,120 @@ export default function Confirmation() {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl text-white mb-1">
-        READY TO LAUNCH
-      </h2>
-      <p className="text-white/60 font-body text-sm mb-6">
-        Everything looks good. One click and we start working for you.
-      </p>
+      <motion.div
+        variants={prefersReduced ? undefined : staggerContainer}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.h2
+          className="font-heading text-2xl text-white mb-1"
+          variants={prefersReduced ? undefined : staggerItem}
+        >
+          READY TO LAUNCH
+        </motion.h2>
+        <motion.p
+          className="text-white/60 font-body text-sm mb-6"
+          variants={prefersReduced ? undefined : staggerItem}
+        >
+          Everything looks good. One click and we start working for you.
+        </motion.p>
 
-      <div className="space-y-6">
-        {/* Business Basics */}
-        <div className="bg-white/5 rounded-lg p-4">
-          <SectionHeading>Business</SectionHeading>
-          <Field label="Business Name" value={formData.businessName} />
-          <Field label="Years in Business" value={formData.yearsInBusiness} />
-        </div>
+        <div className="space-y-6">
+          {/* Business Basics */}
+          <motion.div className="bg-white/5 rounded-lg p-4" variants={prefersReduced ? undefined : staggerItem}>
+            <SectionHeading>Business</SectionHeading>
+            <Field label="Business Name" value={formData.businessName} />
+            <Field label="Years in Business" value={formData.yearsInBusiness} />
+          </motion.div>
 
-        {/* Owner / Contact */}
-        <div className="bg-white/5 rounded-lg p-4">
-          <SectionHeading>Contact</SectionHeading>
-          <Field label="Name" value={formData.ownerName} />
-          <Field label="Phone" value={formData.ownerPhone} />
-          <Field label="Email" value={formData.ownerEmail} />
-        </div>
+          {/* Owner / Contact */}
+          <motion.div className="bg-white/5 rounded-lg p-4" variants={prefersReduced ? undefined : staggerItem}>
+            <SectionHeading>Contact</SectionHeading>
+            <Field label="Name" value={formData.ownerName} />
+            <Field label="Phone" value={formData.ownerPhone} />
+            <Field label="Email" value={formData.ownerEmail} />
+          </motion.div>
 
-        {/* Location */}
-        <div className="bg-white/5 rounded-lg p-4">
-          <SectionHeading>Location</SectionHeading>
-          <Field label="Address" value={formData.businessAddress} />
-          <Field
-            label="City / State / Zip"
-            value={
-              [formData.businessCity, formData.businessState, formData.businessZip]
-                .filter(Boolean)
-                .join(", ") || undefined
-            }
-          />
-          <Field
-            label="Service Areas"
-            value={formData.serviceAreas?.join(", ") || undefined}
-          />
-        </div>
+          {/* Location */}
+          <motion.div className="bg-white/5 rounded-lg p-4" variants={prefersReduced ? undefined : staggerItem}>
+            <SectionHeading>Location</SectionHeading>
+            <Field label="Address" value={formData.businessAddress} />
+            <Field
+              label="City / State / Zip"
+              value={
+                [formData.businessCity, formData.businessState, formData.businessZip]
+                  .filter(Boolean)
+                  .join(", ") || undefined
+              }
+            />
+            <Field
+              label="Service Areas"
+              value={formData.serviceAreas?.join(", ") || undefined}
+            />
+          </motion.div>
 
-        {/* Services */}
-        <div className="bg-white/5 rounded-lg p-4">
-          <SectionHeading>Services</SectionHeading>
-          <Field
-            label="Categories"
-            value={formData.services?.join(", ") || undefined}
-          />
-        </div>
+          {/* Services */}
+          <motion.div className="bg-white/5 rounded-lg p-4" variants={prefersReduced ? undefined : staggerItem}>
+            <SectionHeading>Services</SectionHeading>
+            <Field
+              label="Categories"
+              value={formData.services?.join(", ") || undefined}
+            />
+          </motion.div>
 
-        {/* Online Presence */}
-        <div className="bg-white/5 rounded-lg p-4">
-          <SectionHeading>Online Presence</SectionHeading>
-          <Field label="Google Email" value={formData.googleEmail} />
-          <Field label="Website" value={formData.websiteUrl} />
-          <Field label="Monthly Budget" value={budgetLabel} />
-        </div>
+          {/* Online Presence */}
+          <motion.div className="bg-white/5 rounded-lg p-4" variants={prefersReduced ? undefined : staggerItem}>
+            <SectionHeading>Online Presence</SectionHeading>
+            <Field label="Google Email" value={formData.googleEmail} />
+            <Field label="Website" value={formData.websiteUrl} />
+            <Field label="Monthly Budget" value={budgetLabel} />
+          </motion.div>
 
-        {/* Documents */}
-        <div className="bg-white/5 rounded-lg p-4">
-          <SectionHeading>Documents</SectionHeading>
-          {documents.length === 0 ? (
-            <p className="text-white/40 text-sm font-body">
-              No documents uploaded
-            </p>
-          ) : (
-            <div className="space-y-1.5">
-              {documents.map((doc) => {
-                const label = DOCUMENT_TYPES.find(
-                  (dt) => dt.key === doc.docType
-                )?.label;
-                return (
-                  <div
-                    key={doc.id}
-                    className="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-b-0"
-                  >
-                    <svg
-                      className="w-4 h-4 text-green-400 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+          {/* Documents */}
+          <motion.div className="bg-white/5 rounded-lg p-4" variants={prefersReduced ? undefined : staggerItem}>
+            <SectionHeading>Documents</SectionHeading>
+            {documents.length === 0 ? (
+              <p className="text-white/40 text-sm font-body">
+                No documents uploaded
+              </p>
+            ) : (
+              <div className="space-y-1.5">
+                {documents.map((doc) => {
+                  const label = DOCUMENT_TYPES.find(
+                    (dt) => dt.key === doc.docType
+                  )?.label;
+                  return (
+                    <div
+                      key={doc.id}
+                      className="flex items-center gap-2 py-1.5 border-b border-white/5 last:border-b-0"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    <span className="text-white/50 text-sm font-body">
-                      {label ?? doc.docType}
-                    </span>
-                    <span className="text-white text-sm font-body truncate">
-                      {doc.fileName}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                      <svg
+                        className="w-4 h-4 text-green-400 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span className="text-white/50 text-sm font-body">
+                        {label ?? doc.docType}
+                      </span>
+                      <span className="text-white text-sm font-body truncate">
+                        {doc.fileName}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {error && (
         <p className="text-red-400 text-sm font-body mt-4 text-center">
@@ -188,17 +203,23 @@ export default function Confirmation() {
         >
           Back
         </button>
-        <button
+        <motion.button
           type="button"
           onClick={handleSubmit}
           disabled={submitting}
           className="bg-derby-gradient text-white font-body font-semibold px-10 py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+          whileHover={
+            !submitting && !prefersReduced
+              ? { scale: 1.02, boxShadow: "0 0 20px rgba(32,147,255,0.3)" }
+              : undefined
+          }
+          whileTap={!submitting && !prefersReduced ? { scale: 0.98 } : undefined}
         >
           {submitting && (
             <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
           )}
           {submitting ? "Submitting..." : "Submit"}
-        </button>
+        </motion.button>
       </div>
     </div>
   );
