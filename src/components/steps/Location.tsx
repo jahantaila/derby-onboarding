@@ -1,30 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Input from "@/components/ui/Input";
+import AddressAutocomplete from "@/components/ui/AddressAutocomplete";
+import ServiceAreaPicker from "@/components/ui/ServiceAreaPicker";
 import StepNavigation from "@/components/wizard/StepNavigation";
 import { useWizard } from "@/components/wizard/WizardProvider";
 import { staggerContainer, staggerItem } from "@/lib/animations";
+import type { ParsedAddress } from "@/lib/hooks/usePlacesAutocomplete";
 
 export default function Location() {
   const { formData, updateFields } = useWizard();
   const prefersReduced = useReducedMotion();
-  const [areaInput, setAreaInput] = useState("");
 
-  const areas = formData.serviceAreas ?? [];
+  const areas = useMemo(
+    () => formData.serviceAreas ?? [],
+    [formData.serviceAreas]
+  );
 
-  const addArea = () => {
-    const trimmed = areaInput.trim();
-    if (trimmed && !areas.includes(trimmed)) {
-      updateFields({ serviceAreas: [...areas, trimmed] });
-    }
-    setAreaInput("");
-  };
+  const handleAddressSelect = useCallback(
+    (parsed: ParsedAddress) => {
+      updateFields({
+        businessAddress: parsed.businessAddress,
+        businessCity: parsed.businessCity,
+        businessState: parsed.businessState,
+        businessZip: parsed.businessZip,
+      });
+    },
+    [updateFields]
+  );
 
-  const removeArea = (area: string) => {
-    updateFields({ serviceAreas: areas.filter((a) => a !== area) });
-  };
+  const addArea = useCallback(
+    (area: string) => {
+      updateFields({ serviceAreas: [...areas, area] });
+    },
+    [areas, updateFields]
+  );
+
+  const removeArea = useCallback(
+    (area: string) => {
+      updateFields({ serviceAreas: areas.filter((a) => a !== area) });
+    },
+    [areas, updateFields]
+  );
 
   const addressOk = Boolean(formData.businessAddress?.trim());
   const canAdvance = addressOk;
@@ -53,13 +72,12 @@ export default function Location() {
           {subtitle}
         </motion.p>
         <motion.div variants={prefersReduced ? undefined : staggerItem}>
-          <Input
-            label="Street Address"
-            placeholder="123 Main St"
-            required
+          <AddressAutocomplete
             value={formData.businessAddress ?? ""}
-            onChange={(e) => updateFields({ businessAddress: e.target.value })}
+            onChange={(v) => updateFields({ businessAddress: v })}
+            onSelect={handleAddressSelect}
             valid={addressOk}
+            required
           />
         </motion.div>
         <motion.div className="grid grid-cols-2 sm:grid-cols-3 gap-4" variants={prefersReduced ? undefined : staggerItem}>
@@ -89,50 +107,12 @@ export default function Location() {
           />
         </motion.div>
 
-        <motion.div className="mb-4" variants={prefersReduced ? undefined : staggerItem}>
-          <label className="block text-sm text-white/70 font-body mb-1">
-            Service Areas
-          </label>
-          <div className="flex gap-2">
-            <input
-              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white font-body placeholder:text-white/30 focus:outline-none focus:border-derby-blue-light focus:ring-1 focus:ring-derby-blue-light transition-colors"
-              placeholder="e.g. North Austin"
-              value={areaInput}
-              onChange={(e) => setAreaInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addArea();
-                }
-              }}
-            />
-            <button
-              type="button"
-              onClick={addArea}
-              className="bg-white/10 text-white px-4 py-3 rounded-lg hover:bg-white/20 transition-colors font-body"
-            >
-              Add
-            </button>
-          </div>
-          {areas.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3">
-              {areas.map((area) => (
-                <span
-                  key={area}
-                  className="bg-derby-blue/20 text-derby-blue-light text-sm font-body px-3 py-1 rounded-full flex items-center gap-1"
-                >
-                  {area}
-                  <button
-                    type="button"
-                    onClick={() => removeArea(area)}
-                    className="hover:text-white ml-1"
-                  >
-                    &times;
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
+        <motion.div variants={prefersReduced ? undefined : staggerItem}>
+          <ServiceAreaPicker
+            areas={areas}
+            onAdd={addArea}
+            onRemove={removeArea}
+          />
         </motion.div>
       </motion.div>
 
