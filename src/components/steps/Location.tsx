@@ -27,9 +27,12 @@ export default function Location() {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl text-white mb-6">
-        BUSINESS LOCATION
+      <h2 className="font-heading text-2xl text-white mb-2">
+        YOUR TERRITORY
       </h2>
+      <p className="text-white/60 font-body text-sm mb-6">
+        Let&apos;s map out where you&apos;re going to dominate.
+      </p>
       <Input
         label="Street Address"
         placeholder="123 Main St"

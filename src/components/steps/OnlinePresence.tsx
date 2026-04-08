@@ -13,9 +13,12 @@ export default function OnlinePresence() {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl text-white mb-6">
-        ONLINE PRESENCE
+      <h2 className="font-heading text-2xl text-white mb-2">
+        YOUR DIGITAL FOOTPRINT
       </h2>
+      <p className="text-white/60 font-body text-sm mb-6">
+        We&apos;ll connect you to customers searching for your services right now.
+      </p>
       <Input
         label="Google Business Email"
         placeholder="you@gmail.com"

@@ -21,9 +21,9 @@ export default function Services() {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl text-white mb-2">SERVICES</h2>
+      <h2 className="font-heading text-2xl text-white mb-2">WHAT YOU DO BEST</h2>
       <p className="text-white/60 font-body text-sm mb-6">
-        Select all services your business offers.
+        Every service you select is another revenue stream we&apos;ll activate.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
         {SERVICE_OPTIONS.map((svc) => (

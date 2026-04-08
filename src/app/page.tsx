@@ -24,7 +24,7 @@ export default function Home() {
         WELCOME
       </h2>
       <p className="font-body text-white/80 text-lg max-w-md mb-8">
-        Set up your Local Services Ads campaign in just a few steps.
+        Fill your calendar with high-value local jobs in just a few steps.
       </p>
       <button
         onClick={handleStart}

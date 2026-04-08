@@ -351,10 +351,9 @@ export default function Documents() {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl text-white mb-2">DOCUMENTS</h2>
+      <h2 className="font-heading text-2xl text-white mb-2">ALMOST THERE</h2>
       <p className="text-white/60 font-body text-sm mb-6">
-        Upload at least one document to verify your business. You can add more
-        later.
+        A few quick uploads to verify your business &mdash; we handle the rest.
       </p>
 
       <div className="space-y-4">

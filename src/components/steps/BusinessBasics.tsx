@@ -11,9 +11,12 @@ export default function BusinessBasics() {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl text-white mb-6">
-        BUSINESS BASICS
+      <h2 className="font-heading text-2xl text-white mb-2">
+        TELL US ABOUT YOUR BUSINESS
       </h2>
+      <p className="text-white/60 font-body text-sm mb-6">
+        We&apos;re building your presence from the ground up.
+      </p>
       <Input
         label="Business Name"
         placeholder="e.g. Smith Plumbing Co."

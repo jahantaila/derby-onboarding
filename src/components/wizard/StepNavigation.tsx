@@ -3,13 +3,13 @@
 import { useWizard } from "./WizardProvider";
 
 const MOMENTUM_COPY = [
-  "Let's go!",
-  "Nice!",
-  "Great!",
-  "Almost there!",
-  "One more!",
-  "Almost done!",
-  "Review",
+  "LET'S GO",
+  "KEEP IT COMING",
+  "NICE, KEEP GOING",
+  "YOU'RE ON FIRE",
+  "ALMOST THERE",
+  "ONE MORE",
+  "REVIEW & LAUNCH",
 ];
 
 interface Props {

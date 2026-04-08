@@ -19,10 +19,11 @@ export default function ThankYouPage() {
         </svg>
       </div>
       <h2 className="font-heading text-3xl text-white mb-4">
-        WE GOT EVERYTHING.
+        YOU&apos;RE IN THE GAME.
       </h2>
       <p className="font-body text-white/60 text-lg max-w-md">
-        Our team will reach out within 24 hours to kick things off.
+        Our team is already building your campaign. Expect a call within 24
+        hours.
       </p>
       <div className="mt-8 bg-derby-gradient text-transparent bg-clip-text">
         <span className="font-heading text-xl">DERBY DIGITAL</span>
