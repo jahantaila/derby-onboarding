@@ -193,13 +193,13 @@ export default function ThankYouContent({ token }: { token: string }) {
             (555) 123-4567
           </a>
           <a
-            href="mailto:jahan@derbydigital.com"
+            href="mailto:jahan@derbydigital.us"
             className="flex items-center gap-2 font-body text-sm text-derby-blue-light hover:text-white transition-colors"
           >
             <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            jahan@derbydigital.com
+            jahan@derbydigital.us
           </a>
         </div>
       </motion.div>
