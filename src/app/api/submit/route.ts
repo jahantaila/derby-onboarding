@@ -90,16 +90,15 @@ export async function POST(req: NextRequest) {
   const businessName = fd.businessName || "Unknown Business";
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  // Send admin notification email (best-effort — do not block the user)
-  try {
-    const docRows = docLinks
-      .map(
-        (d) =>
-          `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;"><a href="${escapeHtml(d.url)}" style="color:#1A6FCC;">${escapeHtml(d.name)}</a></td></tr>`
-      )
-      .join("");
+  // Build email HTML (synchronous — needed before we can send)
+  const docRows = docLinks
+    .map(
+      (d) =>
+        `<tr><td style="padding:6px 12px;border-bottom:1px solid #eee;"><a href="${escapeHtml(d.url)}" style="color:#1A6FCC;">${escapeHtml(d.name)}</a></td></tr>`
+    )
+    .join("");
 
-    const html = `
+  const adminHtml = `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
         <div style="background:linear-gradient(135deg,#2093FF 0%,#0026FF 100%);padding:24px;border-radius:8px 8px 0 0;">
           <h1 style="color:#fff;margin:0;font-size:22px;">New Client Onboarding</h1>
@@ -150,20 +149,7 @@ export async function POST(req: NextRequest) {
         </div>
       </div>`;
 
-    await resend.emails.send({
-      from: "Derby Digital <onboarding@derbydigital.us>",
-      to: "jahan@derbydigital.us",
-      subject: `New Client Onboarding: ${businessName}`,
-      html,
-    });
-  } catch (emailErr) {
-    console.error("Admin email send failed:", emailErr);
-  }
-
-  // Send client confirmation email (best-effort — do not block the response)
-  if (fd.ownerEmail) {
-    try {
-      const clientHtml = `
+  const clientHtml = `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0A0F1C;">
           <div style="background:linear-gradient(135deg,#2093FF 0%,#0026FF 100%);padding:32px 24px;text-align:center;">
             <h1 style="color:#fff;margin:0;font-size:28px;font-weight:bold;letter-spacing:1px;">DERBY DIGITAL</h1>
@@ -210,38 +196,49 @@ export async function POST(req: NextRequest) {
           </div>
         </div>`;
 
-      await resend.emails.send({
+  // Send all notifications in parallel (best-effort — do not block serially)
+  const notifications: Promise<unknown>[] = [];
+
+  notifications.push(
+    resend.emails.send({
+      from: "Derby Digital <onboarding@derbydigital.us>",
+      to: "jahan@derbydigital.us",
+      subject: `New Client Onboarding: ${businessName}`,
+      html: adminHtml,
+    }).catch((err) => console.error("Admin email send failed:", err))
+  );
+
+  if (fd.ownerEmail) {
+    notifications.push(
+      resend.emails.send({
         from: "Derby Digital <onboarding@derbydigital.us>",
         to: fd.ownerEmail,
         subject: `Welcome to Derby Digital, ${businessName}!`,
         html: clientHtml,
-      });
-    } catch (clientEmailErr) {
-      console.error("Client confirmation email failed:", clientEmailErr);
-    }
+      }).catch((err) => console.error("Client confirmation email failed:", err))
+    );
   }
 
-  // Send admin SMS notification (best-effort)
-  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-    try {
-      const twilioClient = twilio(
-        process.env.TWILIO_ACCOUNT_SID,
-        process.env.TWILIO_AUTH_TOKEN
-      );
-      await twilioClient.messages.create({
-        to: process.env.ADMIN_PHONE_NUMBER!,
-        from: process.env.TWILIO_FROM_NUMBER!,
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM_NUMBER && process.env.ADMIN_PHONE_NUMBER) {
+    const twilioClient = twilio(
+      process.env.TWILIO_ACCOUNT_SID,
+      process.env.TWILIO_AUTH_TOKEN
+    );
+    notifications.push(
+      twilioClient.messages.create({
+        to: process.env.ADMIN_PHONE_NUMBER,
+        from: process.env.TWILIO_FROM_NUMBER,
         body: [
           `New client: ${businessName} just signed up on Derby Digital!`,
           fd.ownerName ? `Owner: ${fd.ownerName}` : null,
           fd.ownerPhone ? `Phone: ${fd.ownerPhone}` : null,
           `Check your dashboard.`,
         ].filter(Boolean).join("\n"),
-      });
-    } catch (smsErr) {
-      console.error("Admin SMS notification failed:", smsErr);
-    }
+      }).catch((err) => console.error("Admin SMS notification failed:", err))
+    );
   }
+
+  await Promise.allSettled(notifications);
 
   return NextResponse.json({ ok: true });
 }
