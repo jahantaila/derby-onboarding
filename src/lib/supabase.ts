@@ -1,18 +1,25 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+let _browserClient: SupabaseClient | null = null;
 
-/** Browser/client-side Supabase client (uses anon key) */
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+/** Browser/client-side Supabase client (uses anon key). Lazily created. */
+export function getSupabase() {
+  if (!_browserClient) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    _browserClient = createClient(url, key);
+  }
+  return _browserClient;
+}
 
 /** Server-side Supabase client (uses service role key — never expose to browser) */
 export function createServiceClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceRoleKey) {
-    throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+  if (!url || !serviceRoleKey) {
+    throw new Error("Supabase env vars are not set");
   }
-  return createClient(supabaseUrl, serviceRoleKey, {
+  return createClient(url, serviceRoleKey, {
     auth: { persistSession: false },
   });
 }
