@@ -58,6 +58,7 @@ export default function OwnerInfo() {
             required
             value={formData.ownerName ?? ""}
             onChange={(e) => updateFields({ ownerName: e.target.value })}
+            valid={nameOk}
           />
         </motion.div>
         <motion.div variants={prefersReduced ? undefined : staggerItem}>
@@ -68,6 +69,7 @@ export default function OwnerInfo() {
             required
             value={formData.ownerPhone ?? ""}
             onChange={(e) => updateFields({ ownerPhone: e.target.value })}
+            valid={phoneOk}
             error={
               formData.ownerPhone && !phoneOk ? "Enter a valid phone number" : undefined
             }
@@ -81,6 +83,7 @@ export default function OwnerInfo() {
             required
             value={formData.ownerEmail ?? ""}
             onChange={(e) => updateFields({ ownerEmail: e.target.value })}
+            valid={emailOk}
             error={
               formData.ownerEmail && !emailOk ? "Enter a valid email address" : undefined
             }

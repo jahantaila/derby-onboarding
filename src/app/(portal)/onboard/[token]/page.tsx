@@ -6,6 +6,7 @@ import WizardProvider from "@/components/wizard/WizardProvider";
 import ProgressBar from "@/components/wizard/ProgressBar";
 import StepRenderer from "@/components/wizard/StepRenderer";
 import WizardBackground from "@/components/wizard/WizardBackground";
+import StepToast from "@/components/ui/StepToast";
 import Welcome from "@/components/steps/Welcome";
 import BusinessBasics from "@/components/steps/BusinessBasics";
 import OwnerInfo from "@/components/steps/OwnerInfo";
@@ -66,6 +67,7 @@ export default function OnboardPage() {
       initialData={session.form_data}
     >
       <WizardBackground>
+        <StepToast />
         <ProgressBar />
         <StepRenderer>
           <Welcome />

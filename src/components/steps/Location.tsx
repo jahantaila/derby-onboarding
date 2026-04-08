@@ -26,7 +26,8 @@ export default function Location() {
     updateFields({ serviceAreas: areas.filter((a) => a !== area) });
   };
 
-  const canAdvance = Boolean(formData.businessAddress?.trim());
+  const addressOk = Boolean(formData.businessAddress?.trim());
+  const canAdvance = addressOk;
 
   const subtitle = formData.businessName?.trim()
     ? `Let\u2019s map out where ${formData.businessName} is going to dominate.`
@@ -58,6 +59,7 @@ export default function Location() {
             required
             value={formData.businessAddress ?? ""}
             onChange={(e) => updateFields({ businessAddress: e.target.value })}
+            valid={addressOk}
           />
         </motion.div>
         <motion.div className="grid grid-cols-2 sm:grid-cols-3 gap-4" variants={prefersReduced ? undefined : staggerItem}>
@@ -66,6 +68,7 @@ export default function Location() {
             placeholder="Austin"
             value={formData.businessCity ?? ""}
             onChange={(e) => updateFields({ businessCity: e.target.value })}
+            valid={Boolean(formData.businessCity?.trim())}
           />
           <Input
             label="State"
@@ -75,12 +78,14 @@ export default function Location() {
             onChange={(e) =>
               updateFields({ businessState: e.target.value.toUpperCase() })
             }
+            valid={Boolean(formData.businessState?.trim())}
           />
           <Input
             label="ZIP Code"
             placeholder="78701"
             value={formData.businessZip ?? ""}
             onChange={(e) => updateFields({ businessZip: e.target.value })}
+            valid={Boolean(formData.businessZip?.trim())}
           />
         </motion.div>
 

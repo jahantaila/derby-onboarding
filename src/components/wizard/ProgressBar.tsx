@@ -30,9 +30,8 @@ export default function ProgressBar() {
     <div className="mb-8 relative">
       <div className="flex justify-between text-sm text-white/60 mb-2 font-body">
         <span>
-          Step {step + 1} of {TOTAL_STEPS}
+          Step {step + 1} of {TOTAL_STEPS} &mdash; {Math.round(pct)}% complete
         </span>
-        <span>{Math.round(pct)}%</span>
       </div>
       <div className="h-2 bg-white/10 rounded-full overflow-hidden">
         <motion.div

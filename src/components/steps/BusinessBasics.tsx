@@ -10,7 +10,8 @@ export default function BusinessBasics() {
   const { formData, updateFields } = useWizard();
   const prefersReduced = useReducedMotion();
 
-  const canAdvance = Boolean(formData.businessName?.trim());
+  const nameOk = Boolean(formData.businessName?.trim());
+  const canAdvance = nameOk;
 
   return (
     <div>
@@ -38,6 +39,7 @@ export default function BusinessBasics() {
             required
             value={formData.businessName ?? ""}
             onChange={(e) => updateFields({ businessName: e.target.value })}
+            valid={nameOk}
           />
         </motion.div>
         <motion.div variants={prefersReduced ? undefined : staggerItem}>
@@ -48,6 +50,7 @@ export default function BusinessBasics() {
             min="0"
             value={formData.yearsInBusiness ?? ""}
             onChange={(e) => updateFields({ yearsInBusiness: e.target.value })}
+            valid={Boolean(formData.yearsInBusiness)}
           />
         </motion.div>
       </motion.div>
