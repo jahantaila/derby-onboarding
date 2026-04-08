@@ -42,7 +42,11 @@ function resizeImage(file: File, maxWidth = 2048): Promise<File> {
       const canvas = document.createElement("canvas");
       canvas.width = maxWidth;
       canvas.height = Math.round(img.height * scale);
-      const ctx = canvas.getContext("2d")!;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        resolve(file);
+        return;
+      }
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(
         (blob) => {
@@ -329,6 +333,7 @@ export default function Documents() {
     }))
   );
   const [loaded, setLoaded] = useState(false);
+  const previewUrlsRef = useRef<Map<string, string>>(new Map());
 
   // Mobile detection via pointer: coarse
   useEffect(() => {
@@ -353,13 +358,10 @@ export default function Documents() {
 
   // Clean up object URLs on unmount
   useEffect(() => {
+    const ref = previewUrlsRef.current;
     return () => {
-      setSlots((prev) => {
-        for (const slot of prev) {
-          if (slot.previewUrl) URL.revokeObjectURL(slot.previewUrl);
-        }
-        return prev;
-      });
+      ref.forEach((url) => URL.revokeObjectURL(url));
+      ref.clear();
     };
   }, []);
 
@@ -395,10 +397,16 @@ export default function Documents() {
         return;
       }
 
+      // Revoke old preview URL before creating a new one
+      const oldPreviewUrl = previewUrlsRef.current.get(docType);
+      if (oldPreviewUrl) URL.revokeObjectURL(oldPreviewUrl);
+
       // Generate preview URL for image files
       const previewUrl = processed.type.startsWith("image/")
         ? URL.createObjectURL(processed)
         : null;
+      if (previewUrl) previewUrlsRef.current.set(docType, previewUrl);
+      else previewUrlsRef.current.delete(docType);
 
       updateSlot(docType, { uploading: true, progress: 0, error: null, previewUrl });
 
@@ -466,6 +474,7 @@ export default function Documents() {
 
       // Clean up preview URL
       if (slot.previewUrl) URL.revokeObjectURL(slot.previewUrl);
+      previewUrlsRef.current.delete(docType);
       updateSlot(docType, { doc: null, previewUrl: null });
 
       fetch(
