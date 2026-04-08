@@ -30,7 +30,6 @@ export async function PATCH(
   const update: Record<string, unknown> = {};
   if (body.form_data !== undefined) update.form_data = body.form_data;
   if (body.current_step !== undefined) update.current_step = body.current_step;
-  if (body.status !== undefined) update.status = body.status;
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: "No fields to update" }, { status: 400 });

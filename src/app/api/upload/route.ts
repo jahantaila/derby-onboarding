@@ -60,12 +60,19 @@ export async function POST(req: NextRequest) {
   // Look up session by token
   const { data: session, error: sessionError } = await supabase
     .from("sessions")
-    .select("id")
+    .select("id, status")
     .eq("token", sessionToken)
     .single();
 
   if (sessionError || !session) {
     return NextResponse.json({ error: "Session not found" }, { status: 404 });
+  }
+
+  if (session.status === "completed") {
+    return NextResponse.json(
+      { error: "Session is completed; uploads are no longer accepted" },
+      { status: 409 }
+    );
   }
 
   // Delete existing document of same type for this session (duplicate handling)
@@ -162,12 +169,19 @@ export async function DELETE(req: NextRequest) {
   // Verify session ownership
   const { data: session } = await supabase
     .from("sessions")
-    .select("id")
+    .select("id, status")
     .eq("token", sessionToken)
     .single();
 
   if (!session) {
     return NextResponse.json({ error: "Session not found" }, { status: 404 });
+  }
+
+  if (session.status === "completed") {
+    return NextResponse.json(
+      { error: "Session is completed; deletions are no longer accepted" },
+      { status: 409 }
+    );
   }
 
   const { data: doc } = await supabase
