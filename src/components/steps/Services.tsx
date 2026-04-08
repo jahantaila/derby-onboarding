@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import AdPreview from "@/components/ui/AdPreview";
 import Checkbox from "@/components/ui/Checkbox";
 import StepNavigation from "@/components/wizard/StepNavigation";
 import { useWizard } from "@/components/wizard/WizardProvider";
@@ -55,6 +56,7 @@ export default function Services() {
           ))}
         </motion.div>
       </motion.div>
+      <AdPreview />
       <StepNavigation canAdvance={canAdvance} />
     </div>
   );

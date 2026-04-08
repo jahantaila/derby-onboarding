@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import AdPreview from "@/components/ui/AdPreview";
 import Input from "@/components/ui/Input";
 import ROICalculator from "@/components/ui/ROICalculator";
 import Select from "@/components/ui/Select";
@@ -67,6 +68,7 @@ export default function OnlinePresence() {
           />
         </motion.div>
       </motion.div>
+      <AdPreview />
       <StepNavigation canAdvance={canAdvance} />
     </div>
   );

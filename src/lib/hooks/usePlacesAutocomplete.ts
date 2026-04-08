@@ -37,6 +37,10 @@ export function usePlacesAutocomplete(
     useRef<google.maps.places.AutocompleteService | null>(null);
   const placesService = useRef<google.maps.places.PlacesService | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestCounter = useRef(0);
+
+  // Serialize types for stable dependency comparison
+  const typesKey = options?.types?.join(",") ?? "";
 
   useEffect(() => {
     if (!API_KEY) return;
@@ -63,14 +67,20 @@ export function usePlacesAutocomplete(
 
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
+    const currentRequest = ++requestCounter.current;
+
     debounceTimer.current = setTimeout(() => {
+      const types = typesKey ? typesKey.split(",") : undefined;
       autocompleteService.current!.getPlacePredictions(
         {
           input,
           componentRestrictions: { country: "us" },
-          ...(options?.types ? { types: options.types } : {}),
+          ...(types ? { types } : {}),
         },
         (results, status) => {
+          // Discard stale responses from earlier requests
+          if (currentRequest !== requestCounter.current) return;
+
           if (
             status === google.maps.places.PlacesServiceStatus.OK &&
             results
@@ -86,7 +96,7 @@ export function usePlacesAutocomplete(
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
     };
-  }, [input, isLoaded, options?.types]);
+  }, [input, isLoaded, typesKey]);
 
   const getPlaceDetails = useCallback(
     (placeId: string): Promise<ParsedAddress | null> => {
@@ -115,6 +125,8 @@ export function usePlacesAutocomplete(
               if (type === "street_number") streetNumber = comp.long_name;
               else if (type === "route") route = comp.long_name;
               else if (type === "locality") city = comp.long_name;
+              else if (type === "sublocality_level_1" && !city)
+                city = comp.long_name;
               else if (type === "administrative_area_level_1")
                 state = comp.short_name;
               else if (type === "postal_code") zip = comp.long_name;
