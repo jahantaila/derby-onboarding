@@ -27,13 +27,42 @@ function Field({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
+function EmbedThankYou() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[200px] text-center py-8">
+      <div className="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
+        <svg
+          className="w-7 h-7 text-green-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      </div>
+      <h2 className="font-heading text-2xl text-white mb-2">
+        YOU&apos;RE IN THE GAME.
+      </h2>
+      <p className="font-body text-white/60 text-sm max-w-sm">
+        Our team is already building your campaign. We&apos;ll be in touch within 24 hours.
+      </p>
+    </div>
+  );
+}
+
 export default function Confirmation() {
   const { token } = useParams<{ token: string }>();
   const router = useRouter();
-  const { formData, goBack } = useWizard();
+  const { formData, goBack, embed } = useWizard();
   const prefersReduced = useReducedMotion();
   const [documents, setDocuments] = useState<DocumentUpload[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,12 +93,24 @@ export default function Confirmation() {
         throw new Error(body.error || "Submission failed");
       }
 
-      router.push(`/onboard/${token}/thank-you`);
+      if (embed) {
+        // Notify parent window and show inline thank-you
+        if (window.parent !== window) {
+          window.parent.postMessage({ type: "derby:onboard:complete" }, "*");
+        }
+        setSubmitted(true);
+      } else {
+        router.push(`/onboard/${token}/thank-you`);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setSubmitting(false);
     }
-  }, [token, submitting, router]);
+  }, [token, submitting, router, embed]);
+
+  if (submitted) {
+    return <EmbedThankYou />;
+  }
 
   return (
     <div>

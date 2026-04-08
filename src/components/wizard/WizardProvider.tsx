@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -19,6 +20,7 @@ interface WizardContextValue {
   direction: number; // 1 = forward, -1 = back (for animation)
   isFirst: boolean;
   isLast: boolean;
+  embed: boolean;
 }
 
 const WizardContext = createContext<WizardContextValue | null>(null);
@@ -33,18 +35,38 @@ interface Props {
   token: string;
   initialStep: number;
   initialData: FormData;
+  embed?: boolean;
   children: React.ReactNode;
+}
+
+function reportHeight() {
+  if (typeof window === "undefined" || window.parent === window) return;
+  requestAnimationFrame(() => {
+    const height = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: "derby:resize", height }, "*");
+  });
+  // Fallback for late-rendering content
+  setTimeout(() => {
+    const height = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: "derby:resize", height }, "*");
+  }, 350);
 }
 
 export default function WizardProvider({
   token,
   initialStep,
   initialData,
+  embed = false,
   children,
 }: Props) {
   const [step, setStep] = useState(initialStep);
   const [formData, setFormData] = useState<FormData>(initialData);
   const [direction, setDirection] = useState(1);
+
+  // Report height on step change when embedded
+  useEffect(() => {
+    if (embed) reportHeight();
+  }, [embed, step]);
 
   const updateFields = useCallback((fields: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...fields }));
@@ -89,8 +111,9 @@ export default function WizardProvider({
       direction,
       isFirst: step === 0,
       isLast: step === TOTAL_STEPS - 1,
+      embed,
     }),
-    [step, formData, updateFields, goNext, goBack, direction]
+    [step, formData, updateFields, goNext, goBack, direction, embed]
   );
 
   return (
