@@ -96,7 +96,7 @@ export default function Confirmation() {
       if (embed) {
         // Notify parent window and show inline thank-you
         if (window.parent !== window) {
-          window.parent.postMessage({ type: "derby:onboard:complete" }, "*");
+          window.parent.postMessage({ type: "derby:onboard:complete" }, "https://derbydigital.us");
         }
         setSubmitted(true);
       } else {

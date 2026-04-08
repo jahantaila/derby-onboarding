@@ -14,27 +14,36 @@ export async function POST(req: NextRequest) {
 
   const supabase = createServiceClient();
 
-  // Load session
-  const { data: session, error: sessionErr } = await supabase
+  // Atomic CAS: mark session completed only if still in_progress.
+  // Only one concurrent request can win this update — eliminates TOCTOU race.
+  const { data: session, error: casErr } = await supabase
     .from("sessions")
-    .select("id, token, form_data, status")
+    .update({ status: "completed" })
     .eq("token", token)
+    .eq("status", "in_progress")
+    .select("id, token, form_data, status")
     .single();
 
-  if (sessionErr || !session) {
-    return NextResponse.json({ error: "Session not found" }, { status: 404 });
-  }
+  if (casErr || !session) {
+    // Disambiguate: session not found vs already completed
+    const { data: existing } = await supabase
+      .from("sessions")
+      .select("status")
+      .eq("token", token)
+      .single();
 
-  if (session.status === "completed") {
-    return NextResponse.json(
-      { error: "Already submitted" },
-      { status: 409 }
-    );
+    if (existing?.status === "completed") {
+      return NextResponse.json(
+        { error: "Already submitted" },
+        { status: 409 }
+      );
+    }
+    return NextResponse.json({ error: "Session not found" }, { status: 404 });
   }
 
   const fd: FormData = session.form_data ?? {};
 
-  // Insert into submissions table
+  // Insert into submissions table (session already marked completed by CAS above)
   const { error: subErr } = await supabase.from("submissions").insert({
     session_id: session.id,
     business_name: fd.businessName ?? null,
@@ -56,16 +65,6 @@ export async function POST(req: NextRequest) {
       { error: "Failed to save submission" },
       { status: 500 }
     );
-  }
-
-  // Mark session completed
-  const { error: updateErr } = await supabase
-    .from("sessions")
-    .update({ status: "completed" })
-    .eq("id", session.id);
-
-  if (updateErr) {
-    console.error("Session status update failed:", updateErr);
   }
 
   // Load documents for email

@@ -43,12 +43,12 @@ function reportHeight() {
   if (typeof window === "undefined" || window.parent === window) return;
   requestAnimationFrame(() => {
     const height = document.documentElement.scrollHeight;
-    window.parent.postMessage({ type: "derby:resize", height }, "*");
+    window.parent.postMessage({ type: "derby:resize", height }, "https://derbydigital.us");
   });
   // Fallback for late-rendering content
   setTimeout(() => {
     const height = document.documentElement.scrollHeight;
-    window.parent.postMessage({ type: "derby:resize", height }, "*");
+    window.parent.postMessage({ type: "derby:resize", height }, "https://derbydigital.us");
   }, 350);
 }
 
