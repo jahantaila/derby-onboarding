@@ -51,9 +51,11 @@ export default function ThankYouPage() {
   useEffect(() => {
     if (prefersReduced) return;
 
+    let cancelled = false;
     let timeout: ReturnType<typeof setTimeout>;
 
     import("canvas-confetti").then((mod) => {
+      if (cancelled) return;
       const confetti = mod.default;
       confetti({
         particleCount: 150,
@@ -72,7 +74,10 @@ export default function ThankYouPage() {
       }, 1500);
     });
 
-    return () => clearTimeout(timeout);
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+    };
   }, [prefersReduced]);
 
   return (
