@@ -26,9 +26,12 @@ export default function OwnerInfo() {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl text-white mb-6">
-        OWNER INFORMATION
+      <h2 className="font-heading text-2xl text-white mb-2">
+        THE PERSON BEHIND THE BRAND
       </h2>
+      <p className="text-white/60 font-body text-sm mb-6">
+        So we know who to celebrate when the leads start rolling in.
+      </p>
       <Input
         label="Full Name"
         placeholder="John Smith"

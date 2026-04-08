@@ -17,7 +17,7 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   title: "Derby Digital - Client Onboarding",
-  description: "Get started with your Local Services Ads campaign",
+  description: "Get started with local lead generation for your business",
 };
 
 export default function RootLayout({

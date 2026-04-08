@@ -71,10 +71,10 @@ export default function Confirmation() {
   return (
     <div>
       <h2 className="font-heading text-2xl text-white mb-1">
-        YOU ARE ABOUT TO DOMINATE YOUR LOCAL MARKET.
+        READY TO LAUNCH
       </h2>
       <p className="text-white/60 font-body text-sm mb-6">
-        Review your information below, then hit submit.
+        Everything looks good. One click and we start working for you.
       </p>
 
       <div className="space-y-6">
