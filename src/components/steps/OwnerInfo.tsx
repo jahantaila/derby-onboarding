@@ -9,7 +9,8 @@ function isValidEmail(v: string) {
 }
 
 function isValidPhone(v: string) {
-  return /^\+?[\d\s()-]{7,}$/.test(v);
+  const digits = v.replace(/\D/g, "");
+  return digits.length >= 7 && /^\+?[\d\s()-]+$/.test(v);
 }
 
 export default function OwnerInfo() {
