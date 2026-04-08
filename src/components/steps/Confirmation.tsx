@@ -112,6 +112,10 @@ export default function Confirmation() {
     return <EmbedThankYou />;
   }
 
+  const subtitle = formData.businessName?.trim()
+    ? `Everything looks good for ${formData.businessName}. One click and we start working for you.`
+    : "Everything looks good. One click and we start working for you.";
+
   return (
     <div>
       <motion.div
@@ -129,7 +133,7 @@ export default function Confirmation() {
           className="text-white/60 font-body text-sm mb-6"
           variants={prefersReduced ? undefined : staggerItem}
         >
-          Everything looks good. One click and we start working for you.
+          {subtitle}
         </motion.p>
 
         <div className="space-y-6">

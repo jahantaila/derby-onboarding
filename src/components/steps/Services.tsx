@@ -22,6 +22,10 @@ export default function Services() {
 
   const canAdvance = selected.length > 0;
 
+  const subtitle = formData.businessName?.trim()
+    ? `Every service ${formData.businessName} offers is another revenue stream we\u2019ll activate.`
+    : "Every service you select is another revenue stream we\u2019ll activate.";
+
   return (
     <div>
       <motion.div
@@ -39,7 +43,7 @@ export default function Services() {
           className="text-white/60 font-body text-sm mb-6"
           variants={prefersReduced ? undefined : staggerItem}
         >
-          Every service you select is another revenue stream we&apos;ll activate.
+          {subtitle}
         </motion.p>
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 gap-x-6"

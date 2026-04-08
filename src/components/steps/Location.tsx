@@ -28,6 +28,10 @@ export default function Location() {
 
   const canAdvance = Boolean(formData.businessAddress?.trim());
 
+  const subtitle = formData.businessName?.trim()
+    ? `Let\u2019s map out where ${formData.businessName} is going to dominate.`
+    : "Let\u2019s map out where you\u2019re going to dominate.";
+
   return (
     <div>
       <motion.div
@@ -45,7 +49,7 @@ export default function Location() {
           className="text-white/60 font-body text-sm mb-6"
           variants={prefersReduced ? undefined : staggerItem}
         >
-          Let&apos;s map out where you&apos;re going to dominate.
+          {subtitle}
         </motion.p>
         <motion.div variants={prefersReduced ? undefined : staggerItem}>
           <Input
