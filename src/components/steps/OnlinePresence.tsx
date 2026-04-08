@@ -15,6 +15,10 @@ export default function OnlinePresence() {
 
   const canAdvance = Boolean(formData.monthlyBudget);
 
+  const subtitle = formData.businessName?.trim()
+    ? `We\u2019ll connect ${formData.businessName} to customers searching for your services right now.`
+    : "We\u2019ll connect you to customers searching for your services right now.";
+
   return (
     <div>
       <motion.div
@@ -32,7 +36,7 @@ export default function OnlinePresence() {
           className="text-white/60 font-body text-sm mb-6"
           variants={prefersReduced ? undefined : staggerItem}
         >
-          We&apos;ll connect you to customers searching for your services right now.
+          {subtitle}
         </motion.p>
         <motion.div variants={prefersReduced ? undefined : staggerItem}>
           <Input

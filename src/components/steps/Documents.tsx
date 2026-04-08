@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import StepNavigation from "@/components/wizard/StepNavigation";
+import { useWizard } from "@/components/wizard/WizardProvider";
 import {
   ALLOWED_MIME_TYPES,
   DOCUMENT_TYPES,
@@ -102,7 +103,6 @@ function UploadZone({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file) onFileSelect(slot.docType, file);
-      // Reset so re-selecting the same file triggers onChange
       e.target.value = "";
     },
     [slot.docType, onFileSelect]
@@ -153,7 +153,7 @@ function UploadZone({
     );
   }
 
-  // Empty drop zone
+  // Empty drop zone with enhanced drag-drop
   return (
     <div
       onDragOver={(e) => {
@@ -163,9 +163,9 @@ function UploadZone({
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
-      className={`border-2 border-dashed rounded-lg p-4 cursor-pointer transition-colors ${
+      className={`border-2 border-dashed rounded-lg p-4 cursor-pointer transition-all duration-200 ${
         dragOver
-          ? "border-derby-blue-light bg-derby-blue-light/10"
+          ? "border-derby-blue-light bg-derby-blue-light/10 shadow-[0_0_15px_rgba(32,147,255,0.3)]"
           : "border-white/20 hover:border-white/40"
       }`}
     >
@@ -178,11 +178,21 @@ function UploadZone({
         className="hidden"
       />
       <div className="flex flex-col items-center gap-1 text-center">
-        <svg
+        <motion.svg
           className="w-8 h-8 text-white/30"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          animate={
+            dragOver
+              ? { y: [0, -4, 0], color: "rgba(32,147,255,0.8)" }
+              : { y: 0 }
+          }
+          transition={
+            dragOver
+              ? { y: { repeat: Infinity, duration: 0.6 } }
+              : undefined
+          }
         >
           <path
             strokeLinecap="round"
@@ -190,7 +200,7 @@ function UploadZone({
             strokeWidth={1.5}
             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
           />
-        </svg>
+        </motion.svg>
         <p className="text-sm text-white/50 font-body">
           Drop file or tap to upload
         </p>
@@ -209,6 +219,7 @@ function UploadZone({
 
 export default function Documents() {
   const { token } = useParams<{ token: string }>();
+  const { formData } = useWizard();
   const prefersReduced = useReducedMotion();
   const [slots, setSlots] = useState<UploadSlot[]>(() =>
     DOCUMENT_TYPES.map((dt) => ({
@@ -249,7 +260,6 @@ export default function Documents() {
 
   const handleFileSelect = useCallback(
     (docType: string, file: File) => {
-      // Client-side validation
       if (
         !ALLOWED_MIME_TYPES.includes(
           file.type as (typeof ALLOWED_MIME_TYPES)[number]
@@ -267,10 +277,10 @@ export default function Documents() {
 
       updateSlot(docType, { uploading: true, progress: 0, error: null });
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("sessionToken", token);
-      formData.append("docType", docType);
+      const formDataPayload = new FormData();
+      formDataPayload.append("file", file);
+      formDataPayload.append("sessionToken", token);
+      formDataPayload.append("docType", docType);
 
       const xhr = new XMLHttpRequest();
 
@@ -317,7 +327,7 @@ export default function Documents() {
       });
 
       xhr.open("POST", "/api/upload");
-      xhr.send(formData);
+      xhr.send(formDataPayload);
     },
     [token, updateSlot]
   );
@@ -344,6 +354,10 @@ export default function Documents() {
   const anyUploading = slots.some((s) => s.uploading);
   const canAdvance = uploadedCount >= 1 && !anyUploading;
 
+  const subtitle = formData.businessName?.trim()
+    ? `A few quick uploads to verify ${formData.businessName} \u2014 we handle the rest.`
+    : "A few quick uploads to verify your business \u2014 we handle the rest.";
+
   if (!loaded) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
@@ -369,7 +383,7 @@ export default function Documents() {
           className="text-white/60 font-body text-sm mb-6"
           variants={prefersReduced ? undefined : staggerItem}
         >
-          A few quick uploads to verify your business &mdash; we handle the rest.
+          {subtitle}
         </motion.p>
 
         <div className="space-y-4">

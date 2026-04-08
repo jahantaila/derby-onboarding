@@ -37,6 +37,12 @@ export default function Welcome() {
       >
         Let&apos;s Go
       </motion.button>
+      <motion.p
+        className="font-body text-white/40 text-sm mt-6"
+        variants={prefersReduced ? undefined : staggerItem}
+      >
+        Join 50+ local businesses already growing with Derby
+      </motion.p>
     </motion.div>
   );
 }

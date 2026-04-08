@@ -28,6 +28,10 @@ export default function OwnerInfo() {
     : false;
   const canAdvance = nameOk && phoneOk && emailOk;
 
+  const subtitle = formData.businessName?.trim()
+    ? `Looking good, ${formData.businessName}. Now let\u2019s meet the person behind the brand.`
+    : "So we know who to celebrate when the leads start rolling in.";
+
   return (
     <div>
       <motion.div
@@ -45,7 +49,7 @@ export default function OwnerInfo() {
           className="text-white/60 font-body text-sm mb-6"
           variants={prefersReduced ? undefined : staggerItem}
         >
-          So we know who to celebrate when the leads start rolling in.
+          {subtitle}
         </motion.p>
         <motion.div variants={prefersReduced ? undefined : staggerItem}>
           <Input
