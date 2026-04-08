@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Input from "@/components/ui/Input";
+import ROICalculator from "@/components/ui/ROICalculator";
 import Select from "@/components/ui/Select";
 import StepNavigation from "@/components/wizard/StepNavigation";
 import { useWizard } from "@/components/wizard/WizardProvider";
@@ -58,6 +59,11 @@ export default function OnlinePresence() {
             required
             value={formData.monthlyBudget ?? ""}
             onChange={(e) => updateFields({ monthlyBudget: e.target.value })}
+          />
+          <ROICalculator
+            monthlyBudget={formData.monthlyBudget}
+            city={formData.businessCity}
+            services={formData.services}
           />
         </motion.div>
       </motion.div>
