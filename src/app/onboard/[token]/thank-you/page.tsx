@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const TIMELINE_STEPS = [
@@ -42,7 +42,11 @@ function formatDate(date: Date): string {
 
 export default function ThankYouPage() {
   const prefersReduced = useReducedMotion();
-  const today = new Date();
+  const [today, setToday] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setToday(new Date());
+  }, []);
 
   useEffect(() => {
     if (prefersReduced) return;
@@ -122,7 +126,6 @@ export default function ThankYouPage() {
         transition={{ duration: 0.5, delay: 0.8 }}
       >
         {TIMELINE_STEPS.map((step, i) => {
-          const estDate = addBusinessDays(today, step.daysOffset);
           const isLast = i === TIMELINE_STEPS.length - 1;
 
           return (
@@ -149,9 +152,11 @@ export default function ThankYouPage() {
                 <p className="font-body text-white/50 text-sm mt-0.5">
                   {step.description}
                 </p>
-                <p className="font-body text-derby-blue-light text-xs mt-1">
-                  Est. {formatDate(estDate)}
-                </p>
+                {today && (
+                  <p className="font-body text-derby-blue-light text-xs mt-1">
+                    Est. {formatDate(addBusinessDays(today, step.daysOffset))}
+                  </p>
+                )}
               </div>
             </motion.div>
           );
