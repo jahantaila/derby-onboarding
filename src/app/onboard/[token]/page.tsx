@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import WizardProvider from "@/components/wizard/WizardProvider";
 import ProgressBar from "@/components/wizard/ProgressBar";
 import StepRenderer from "@/components/wizard/StepRenderer";
@@ -12,10 +12,12 @@ import Location from "@/components/steps/Location";
 import Services from "@/components/steps/Services";
 import OnlinePresence from "@/components/steps/OnlinePresence";
 import Documents from "@/components/steps/Documents";
+import Confirmation from "@/components/steps/Confirmation";
 import type { Session } from "@/lib/types";
 
 export default function OnboardPage() {
   const { token } = useParams<{ token: string }>();
+  const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,9 +27,15 @@ export default function OnboardPage() {
         if (!r.ok) throw new Error("Session not found");
         return r.json();
       })
-      .then(setSession)
+      .then((s: Session) => {
+        if (s.status === "completed") {
+          router.replace(`/onboard/${token}/thank-you`);
+          return;
+        }
+        setSession(s);
+      })
       .catch((err) => setError(err.message));
-  }, [token]);
+  }, [token, router]);
 
   if (error) {
     return (
@@ -65,6 +73,7 @@ export default function OnboardPage() {
         <Services />
         <OnlinePresence />
         <Documents />
+        <Confirmation />
       </StepRenderer>
     </WizardProvider>
   );

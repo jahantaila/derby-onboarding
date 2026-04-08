@@ -37,7 +37,7 @@ export interface Session {
   status: "in_progress" | "completed" | "abandoned";
 }
 
-export const TOTAL_STEPS = 7; // Steps 0–6
+export const TOTAL_STEPS = 8; // Steps 0–7
 
 export const DOCUMENT_TYPES = [
   { key: "business_license", label: "Business License" },

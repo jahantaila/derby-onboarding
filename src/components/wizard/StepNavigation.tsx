@@ -9,7 +9,7 @@ const MOMENTUM_COPY = [
   "Almost there!",
   "One more!",
   "Almost done!",
-  "Finish",
+  "Review",
 ];
 
 interface Props {
