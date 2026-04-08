@@ -76,7 +76,6 @@ export default function Location() {
             value={formData.businessAddress ?? ""}
             onChange={(v) => updateFields({ businessAddress: v })}
             onSelect={handleAddressSelect}
-            valid={addressOk}
             required
           />
         </motion.div>
