@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import WizardProvider from "@/components/wizard/WizardProvider";
 import ProgressBar from "@/components/wizard/ProgressBar";
 import StepRenderer from "@/components/wizard/StepRenderer";
+import StepToast from "@/components/ui/StepToast";
 import Welcome from "@/components/steps/Welcome";
 import BusinessBasics from "@/components/steps/BusinessBasics";
 import OwnerInfo from "@/components/steps/OwnerInfo";
@@ -64,6 +65,7 @@ export default function OnboardPage() {
       initialStep={session.current_step}
       initialData={session.form_data}
     >
+      <StepToast />
       <ProgressBar />
       <StepRenderer>
         <Welcome />

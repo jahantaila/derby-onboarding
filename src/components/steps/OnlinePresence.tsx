@@ -41,6 +41,7 @@ export default function OnlinePresence() {
             type="email"
             value={formData.googleEmail ?? ""}
             onChange={(e) => updateFields({ googleEmail: e.target.value })}
+            valid={Boolean(formData.googleEmail?.includes("@"))}
           />
         </motion.div>
         <motion.div variants={prefersReduced ? undefined : staggerItem}>
@@ -50,6 +51,7 @@ export default function OnlinePresence() {
             type="url"
             value={formData.websiteUrl ?? ""}
             onChange={(e) => updateFields({ websiteUrl: e.target.value })}
+            valid={Boolean(formData.websiteUrl?.trim())}
           />
         </motion.div>
         <motion.div variants={prefersReduced ? undefined : staggerItem}>
