@@ -160,10 +160,22 @@ export default function AdPreferencesStep() {
   function inputClasses(field?: keyof FieldErrors) {
     const hasError = field && errors[field];
     return `w-full bg-white border ${
-      hasError ? "border-red-500" : "border-gray-300 focus:border-derby-blue"
-    } rounded-lg h-12 px-4 text-base text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 focus:shadow-sm ${
+      hasError ? "border-red-500" : "border-[#D1D9E6] focus:border-derby-blue"
+    } rounded-xl h-12 px-4 text-base text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 focus:shadow-sm ${
       hasError ? "focus:ring-red-500" : "focus:ring-derby-blue"
     }`;
+  }
+
+  function errorMessage(msg?: string) {
+    if (!msg) return null;
+    return (
+      <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
+        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+        {msg}
+      </p>
+    );
   }
 
   return (
@@ -186,9 +198,7 @@ export default function AdPreferencesStep() {
           placeholder="https://yourbusiness.com"
           className={inputClasses("website_url")}
         />
-        {errors.website_url && (
-          <p className="mt-1 text-sm text-red-500">{errors.website_url}</p>
-        )}
+        {errorMessage(errors.website_url)}
       </div>
 
       {/* Google Account Email */}
@@ -205,9 +215,7 @@ export default function AdPreferencesStep() {
           className={inputClasses("google_account_email")}
         />
         <p className="mt-1 text-xs text-gray-500">We&apos;ll use this to set up your Google Ads account</p>
-        {errors.google_account_email && (
-          <p className="mt-1 text-sm text-red-500">{errors.google_account_email}</p>
-        )}
+        {errorMessage(errors.google_account_email)}
       </div>
 
       {/* Monthly Budget Radio Cards */}
@@ -226,7 +234,7 @@ export default function AdPreferencesStep() {
                 className={`relative flex flex-col items-center justify-center gap-1 p-4 rounded-xl border-2 transition-all duration-200 ${
                   isSelected
                     ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
-                    : "border-gray-200 bg-white hover:border-gray-300"
+                    : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/50"
                 }`}
               >
                 <span className={`text-lg font-bold ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
@@ -246,9 +254,7 @@ export default function AdPreferencesStep() {
             );
           })}
         </div>
-        {errors.monthly_budget && (
-          <p className="mt-2 text-sm text-red-500">{errors.monthly_budget}</p>
-        )}
+        {errorMessage(errors.monthly_budget)}
       </div>
 
       {/* Current Platforms */}
@@ -267,7 +273,7 @@ export default function AdPreferencesStep() {
                 className={`relative flex items-center gap-2 p-3 rounded-xl border-2 transition-all duration-200 ${
                   isSelected
                     ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
-                    : "border-gray-200 bg-white hover:border-gray-300"
+                    : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/50"
                 }`}
               >
                 <span className="text-lg">{plat.icon}</span>

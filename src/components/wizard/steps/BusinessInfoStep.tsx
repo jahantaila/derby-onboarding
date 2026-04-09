@@ -165,10 +165,22 @@ export default function BusinessInfoStep() {
 
   function inputClasses(field: keyof FieldErrors) {
     return `w-full bg-white border ${
-      errors[field] ? "border-red-500" : "border-gray-300 focus:border-derby-blue"
-    } rounded-lg h-12 px-4 text-base text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 focus:shadow-sm ${
+      errors[field] ? "border-red-500" : "border-[#D1D9E6] focus:border-derby-blue"
+    } rounded-xl h-12 px-4 text-base text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 focus:shadow-sm ${
       errors[field] ? "focus:ring-red-500" : "focus:ring-derby-blue"
     }`;
+  }
+
+  function errorMessage(msg?: string) {
+    if (!msg) return null;
+    return (
+      <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
+        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+        {msg}
+      </p>
+    );
   }
 
   return (
@@ -192,9 +204,7 @@ export default function BusinessInfoStep() {
             placeholder="e.g. Smith Plumbing LLC"
             className={inputClasses("business_name")}
           />
-          {errors.business_name && (
-            <p className="mt-1 text-sm text-red-500">{errors.business_name}</p>
-          )}
+          {errorMessage(errors.business_name)}
         </div>
 
         {/* Owner Name */}
@@ -210,9 +220,7 @@ export default function BusinessInfoStep() {
             placeholder="e.g. John Smith"
             className={inputClasses("owner_name")}
           />
-          {errors.owner_name && (
-            <p className="mt-1 text-sm text-red-500">{errors.owner_name}</p>
-          )}
+          {errorMessage(errors.owner_name)}
         </div>
 
         {/* Phone + Email row */}
@@ -229,9 +237,7 @@ export default function BusinessInfoStep() {
               placeholder="(502) 555-0123"
               className={inputClasses("phone")}
             />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
-            )}
+            {errorMessage(errors.phone)}
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -245,9 +251,7 @@ export default function BusinessInfoStep() {
               placeholder="john@smithplumbing.com"
               className={inputClasses("email")}
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-            )}
+            {errorMessage(errors.email)}
           </div>
         </div>
 
@@ -264,9 +268,7 @@ export default function BusinessInfoStep() {
             placeholder="123 Main Street"
             className={inputClasses("address")}
           />
-          {errors.address && (
-            <p className="mt-1 text-sm text-red-500">{errors.address}</p>
-          )}
+          {errorMessage(errors.address)}
         </div>
 
         {/* City, State, ZIP row */}
@@ -283,9 +285,7 @@ export default function BusinessInfoStep() {
               placeholder="Louisville"
               className={inputClasses("city")}
             />
-            {errors.city && (
-              <p className="mt-1 text-sm text-red-500">{errors.city}</p>
-            )}
+            {errorMessage(errors.city)}
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -307,9 +307,7 @@ export default function BusinessInfoStep() {
                 </option>
               ))}
             </select>
-            {errors.state && (
-              <p className="mt-1 text-sm text-red-500">{errors.state}</p>
-            )}
+            {errorMessage(errors.state)}
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -324,9 +322,7 @@ export default function BusinessInfoStep() {
               maxLength={10}
               className={inputClasses("zip")}
             />
-            {errors.zip && (
-              <p className="mt-1 text-sm text-red-500">{errors.zip}</p>
-            )}
+            {errorMessage(errors.zip)}
           </div>
         </div>
       </div>

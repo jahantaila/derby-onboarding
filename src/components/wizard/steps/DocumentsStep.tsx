@@ -232,7 +232,7 @@ export default function DocumentsStep() {
                     ? "border-derby-blue bg-blue-50"
                     : error
                     ? "border-red-500/50 bg-red-50"
-                    : "border-gray-300 bg-white hover:border-gray-400"
+                    : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/30"
                 }`}
               >
                 <input

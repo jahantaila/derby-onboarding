@@ -35,7 +35,7 @@
       "title": "Redesign form inputs and service selection cards",
       "description": "All form inputs: white background, 1px #D1D9E6 border, rounded-xl, h-12 height, text-base size, blue border on focus (#2093FF), subtle shadow on focus. Labels above inputs in semibold. Required asterisk in red. Validation errors in red-500 below the input with a small icon. Service selection cards: rounded-xl with border, hover state adds blue border + subtle blue background tint. Selected state: blue border + blue-50 background + checkmark icon in top right. Cards in a 2-col grid on mobile, 3-col on desktop. Each card has a relevant icon (wrench for plumber, bolt for electrician, etc) centered above the label.",
       "acceptCriteria": "Inputs look polished and consistent. Service cards have proper hover/selected states with icons. Grid responsive. Build passes.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "UI06",
