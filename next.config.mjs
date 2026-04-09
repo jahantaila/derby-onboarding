@@ -9,11 +9,7 @@ const nextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' https://derbydigital.us https://*.derbydigital.us",
-          },
-          {
-            key: "X-Frame-Options",
-            value: "ALLOW-FROM https://derbydigital.us",
+            value: "frame-ancestors *",
           },
         ],
       },
