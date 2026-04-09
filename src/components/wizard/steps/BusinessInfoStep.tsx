@@ -1,0 +1,356 @@
+"use client";
+
+import { useState, useCallback, useRef } from "react";
+import { useWizard } from "../WizardContext";
+
+const US_STATES = [
+  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
+  "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
+  "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
+  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
+  "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC",
+];
+
+const STATE_NAMES: Record<string, string> = {
+  AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",
+  CO:"Colorado",CT:"Connecticut",DE:"Delaware",FL:"Florida",GA:"Georgia",
+  HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",
+  KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",
+  MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",
+  NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",
+  NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",
+  OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",
+  SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",
+  VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming",
+  DC:"District of Columbia",
+};
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+function validateEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateZip(zip: string): boolean {
+  return /^\d{5}(-\d{4})?$/.test(zip);
+}
+
+interface FieldErrors {
+  business_name?: string;
+  owner_name?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+}
+
+export default function BusinessInfoStep() {
+  const { formData, updateFormData, sessionToken, goNext, goBack } = useWizard();
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [saving, setSaving] = useState(false);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const autoSave = useCallback(
+    (fieldData: Record<string, string>) => {
+      if (!sessionToken) return;
+
+      // Debounce saves
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = setTimeout(async () => {
+        setSaving(true);
+        try {
+          await fetch(`/api/sessions/${sessionToken}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ form_data: fieldData, current_step: 2 }),
+          });
+        } catch {
+          // Silent fail for auto-save
+        } finally {
+          setSaving(false);
+        }
+      }, 500);
+    },
+    [sessionToken]
+  );
+
+  function handleChange(field: keyof FieldErrors, value: string) {
+    const processed = field === "phone" ? formatPhone(value) : value;
+    updateFormData({ [field]: processed });
+    // Clear error on change
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  }
+
+  function handleBlur(field: keyof FieldErrors) {
+    const value = (formData[field] || "").toString().trim();
+
+    // Validate on blur
+    let error: string | undefined;
+    if (!value) {
+      error = "This field is required";
+    } else if (field === "email" && !validateEmail(value)) {
+      error = "Please enter a valid email";
+    } else if (field === "zip" && !validateZip(value)) {
+      error = "Please enter a valid ZIP code";
+    } else if (field === "phone" && value.replace(/\D/g, "").length < 10) {
+      error = "Please enter a 10-digit phone number";
+    }
+
+    if (error) {
+      setErrors((prev) => ({ ...prev, [field]: error }));
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      // Auto-save valid field
+      autoSave({ [field]: value });
+    }
+  }
+
+  function validateAll(): boolean {
+    const newErrors: FieldErrors = {};
+    const requiredFields: (keyof FieldErrors)[] = [
+      "business_name", "owner_name", "phone", "email", "address", "city", "state", "zip",
+    ];
+
+    for (const field of requiredFields) {
+      const value = (formData[field] || "").toString().trim();
+      if (!value) {
+        newErrors[field] = "This field is required";
+      } else if (field === "email" && !validateEmail(value)) {
+        newErrors[field] = "Please enter a valid email";
+      } else if (field === "zip" && !validateZip(value)) {
+        newErrors[field] = "Please enter a valid ZIP code";
+      } else if (field === "phone" && value.replace(/\D/g, "").length < 10) {
+        newErrors[field] = "Please enter a 10-digit phone number";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.values(newErrors).every((e) => !e);
+  }
+
+  function handleContinue() {
+    if (validateAll()) {
+      // Save all data before advancing
+      if (sessionToken) {
+        fetch(`/api/sessions/${sessionToken}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            form_data: {
+              business_name: formData.business_name,
+              owner_name: formData.owner_name,
+              phone: formData.phone,
+              email: formData.email,
+              address: formData.address,
+              city: formData.city,
+              state: formData.state,
+              zip: formData.zip,
+            },
+            current_step: 3,
+          }),
+        });
+      }
+      goNext();
+    }
+  }
+
+  function inputClasses(field: keyof FieldErrors) {
+    return `w-full bg-derby-dark border ${
+      errors[field] ? "border-red-500" : "border-gray-700 focus:border-derby-blue"
+    } rounded-xl px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:ring-1 ${
+      errors[field] ? "focus:ring-red-500" : "focus:ring-derby-blue"
+    }`;
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto px-4">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-white mb-2">Business Information</h2>
+        <p className="text-gray-400">Tell us about your business so we can get started.</p>
+      </div>
+
+      <div className="space-y-5">
+        {/* Business Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            Business Name <span className="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.business_name || ""}
+            onChange={(e) => handleChange("business_name", e.target.value)}
+            onBlur={() => handleBlur("business_name")}
+            placeholder="e.g. Smith Plumbing LLC"
+            className={inputClasses("business_name")}
+          />
+          {errors.business_name && (
+            <p className="mt-1 text-sm text-red-400">{errors.business_name}</p>
+          )}
+        </div>
+
+        {/* Owner Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            Owner Full Name <span className="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.owner_name || ""}
+            onChange={(e) => handleChange("owner_name", e.target.value)}
+            onBlur={() => handleBlur("owner_name")}
+            placeholder="e.g. John Smith"
+            className={inputClasses("owner_name")}
+          />
+          {errors.owner_name && (
+            <p className="mt-1 text-sm text-red-400">{errors.owner_name}</p>
+          )}
+        </div>
+
+        {/* Phone + Email row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Phone <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="tel"
+              value={formData.phone || ""}
+              onChange={(e) => handleChange("phone", e.target.value)}
+              onBlur={() => handleBlur("phone")}
+              placeholder="(502) 555-0123"
+              className={inputClasses("phone")}
+            />
+            {errors.phone && (
+              <p className="mt-1 text-sm text-red-400">{errors.phone}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Email <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="email"
+              value={formData.email || ""}
+              onChange={(e) => handleChange("email", e.target.value)}
+              onBlur={() => handleBlur("email")}
+              placeholder="john@smithplumbing.com"
+              className={inputClasses("email")}
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Address */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            Street Address <span className="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.address || ""}
+            onChange={(e) => handleChange("address", e.target.value)}
+            onBlur={() => handleBlur("address")}
+            placeholder="123 Main Street"
+            className={inputClasses("address")}
+          />
+          {errors.address && (
+            <p className="mt-1 text-sm text-red-400">{errors.address}</p>
+          )}
+        </div>
+
+        {/* City, State, ZIP row */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              City <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.city || ""}
+              onChange={(e) => handleChange("city", e.target.value)}
+              onBlur={() => handleBlur("city")}
+              placeholder="Louisville"
+              className={inputClasses("city")}
+            />
+            {errors.city && (
+              <p className="mt-1 text-sm text-red-400">{errors.city}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              State <span className="text-red-400">*</span>
+            </label>
+            <select
+              value={formData.state || ""}
+              onChange={(e) => {
+                handleChange("state", e.target.value);
+                if (e.target.value) autoSave({ state: e.target.value });
+              }}
+              onBlur={() => handleBlur("state")}
+              className={inputClasses("state")}
+            >
+              <option value="">Select</option>
+              {US_STATES.map((s) => (
+                <option key={s} value={s}>
+                  {STATE_NAMES[s]}
+                </option>
+              ))}
+            </select>
+            {errors.state && (
+              <p className="mt-1 text-sm text-red-400">{errors.state}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              ZIP Code <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.zip || ""}
+              onChange={(e) => handleChange("zip", e.target.value)}
+              onBlur={() => handleBlur("zip")}
+              placeholder="40202"
+              maxLength={10}
+              className={inputClasses("zip")}
+            />
+            {errors.zip && (
+              <p className="mt-1 text-sm text-red-400">{errors.zip}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="flex items-center justify-between mt-10">
+        <button
+          onClick={goBack}
+          className="px-6 py-3 rounded-xl border border-gray-700 text-gray-300 hover:text-white hover:border-gray-500 transition-all"
+        >
+          Back
+        </button>
+        <div className="flex items-center gap-3">
+          {saving && (
+            <span className="text-xs text-gray-500">Saving...</span>
+          )}
+          <button
+            onClick={handleContinue}
+            className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all"
+          >
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
