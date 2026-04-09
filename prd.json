@@ -63,7 +63,7 @@
       "title": "Build Step 6: Review and Submit",
       "description": "Display all info in sections: Business, Services, Documents (file names), Ad Prefs. Each section has Edit button jumping to that step. Large blue Submit button. On submit: mark session complete, create submissions row, show confetti animation.",
       "acceptCriteria": "All data displays. Edit buttons work. Submit creates record. Confetti plays.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S10",

@@ -22,6 +22,10 @@
 - Document uploads go to Supabase Storage bucket 'documents' with path `{session_id}/{doc_type}.{ext}`
 - Upload route uses upsert:true for re-uploads, deletes old documents row before inserting new one
 - DocumentsStep tracks uploaded files in component state (not in formData) since docs are in separate table
+- GET /api/documents?session_id=X returns doc_type + file_name for a session — use for review/detail displays
+- POST /api/submit expects { session_token } — creates submissions row and marks session complete
+- SUBMISSION_FIELD_MAP in types.ts maps formData field names to actual DB column names on submissions table
+- Confetti animation: CSS class `animate-confetti-fall` with keyframe in globals.css — apply to absolutely positioned elements
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -107,4 +111,21 @@
   - Optional fields (website_url, facebook_url, instagram_url) only auto-save when non-empty — no validation on blur for optional fields
   - Use `&apos;` for apostrophes in JSX text to pass ESLint react/no-unescaped-entities rule
   - FormData type in types.ts already had all Step 5 fields defined from initial setup
+---
+
+## 2026-04-08 - S09
+- What was implemented: ReviewStep component displaying all wizard data in 4 sections (Business Info, Services & Trade, Documents, Ad Preferences) with Edit buttons that jump to the corresponding step. POST /api/submit route that maps form_data to submissions table columns using SUBMISSION_FIELD_MAP, marks session complete, and creates a submissions row. GET /api/documents route to fetch uploaded document metadata by session_id. Confetti CSS animation on successful submission. Submit button navigates to step 7 after confetti plays.
+- Files changed:
+  - src/components/wizard/steps/ReviewStep.tsx (new - review & submit step component)
+  - src/app/api/submit/route.ts (new - POST endpoint for finalizing submission)
+  - src/app/api/documents/route.ts (new - GET endpoint for fetching document metadata)
+  - src/components/wizard/StepRenderer.tsx (updated - renders ReviewStep for step 6)
+  - src/app/globals.css (updated - added confetti-fall keyframe animation)
+  - prd.json (updated - S09 passes: true)
+- **Learnings for future iterations:**
+  - Submissions table columns don't map 1:1 to formData fields — use SUBMISSION_FIELD_MAP from types.ts for the mapping
+  - Documents are in a separate table, not in session form_data — need a dedicated API call to fetch them for review display
+  - Confetti uses pure CSS keyframe animation (confetti-fall) with randomized JS-generated pieces — no external library needed
+  - ReviewStep fetches session first to get session.id, then uses that to query documents table
+  - The submit flow: POST /api/submit → insert submissions row + mark session complete → show confetti → goNext() to confirmation
 ---

@@ -42,3 +42,19 @@ body {
 .animate-step-in-reverse {
   animation: step-in-reverse 0.35s ease-out both;
 }
+
+/* Confetti animation */
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh) rotate(720deg);
+  }
+}
+
+.animate-confetti-fall {
+  animation: confetti-fall 3s ease-in forwards;
+}
