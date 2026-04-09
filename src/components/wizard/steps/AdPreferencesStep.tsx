@@ -159,9 +159,9 @@ export default function AdPreferencesStep() {
 
   function inputClasses(field?: keyof FieldErrors) {
     const hasError = field && errors[field];
-    return `w-full bg-derby-dark border ${
-      hasError ? "border-red-500" : "border-gray-700 focus:border-derby-blue"
-    } rounded-xl px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:ring-1 ${
+    return `w-full bg-white border ${
+      hasError ? "border-red-500" : "border-gray-300 focus:border-derby-blue"
+    } rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 ${
       hasError ? "focus:ring-red-500" : "focus:ring-derby-blue"
     }`;
   }
@@ -169,13 +169,13 @@ export default function AdPreferencesStep() {
   return (
     <div className="max-w-2xl mx-auto px-4">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Ad Preferences</h2>
-        <p className="text-gray-400">Tell us about your online presence and advertising goals.</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Ad Preferences</h2>
+        <p className="text-gray-500">Tell us about your online presence and advertising goals.</p>
       </div>
 
       {/* Website URL (optional) */}
       <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
           Website URL <span className="text-gray-500">(optional)</span>
         </label>
         <input
@@ -187,14 +187,14 @@ export default function AdPreferencesStep() {
           className={inputClasses("website_url")}
         />
         {errors.website_url && (
-          <p className="mt-1 text-sm text-red-400">{errors.website_url}</p>
+          <p className="mt-1 text-sm text-red-500">{errors.website_url}</p>
         )}
       </div>
 
       {/* Google Account Email */}
       <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Google Account Email <span className="text-red-400">*</span>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          Google Account Email <span className="text-red-500">*</span>
         </label>
         <input
           type="email"
@@ -206,14 +206,14 @@ export default function AdPreferencesStep() {
         />
         <p className="mt-1 text-xs text-gray-500">We&apos;ll use this to set up your Google Ads account</p>
         {errors.google_account_email && (
-          <p className="mt-1 text-sm text-red-400">{errors.google_account_email}</p>
+          <p className="mt-1 text-sm text-red-500">{errors.google_account_email}</p>
         )}
       </div>
 
       {/* Monthly Budget Radio Cards */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-300 mb-3">
-          Monthly Ad Budget <span className="text-red-400">*</span>
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          Monthly Ad Budget <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 gap-3">
           {BUDGET_OPTIONS.map((opt) => {
@@ -225,11 +225,11 @@ export default function AdPreferencesStep() {
                 onClick={() => selectBudget(opt.value)}
                 className={`relative flex flex-col items-center justify-center gap-1 p-4 rounded-xl border-2 transition-all duration-200 ${
                   isSelected
-                    ? "border-derby-blue bg-derby-blue/10 shadow-lg shadow-derby-blue/10"
-                    : "border-gray-700 bg-derby-card hover:border-gray-500"
+                    ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
+                    : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
               >
-                <span className={`text-lg font-bold ${isSelected ? "text-white" : "text-gray-200"}`}>
+                <span className={`text-lg font-bold ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
                   {opt.label}
                 </span>
                 <span className={`text-xs ${isSelected ? "text-derby-blue" : "text-gray-500"}`}>
@@ -247,13 +247,13 @@ export default function AdPreferencesStep() {
           })}
         </div>
         {errors.monthly_budget && (
-          <p className="mt-2 text-sm text-red-400">{errors.monthly_budget}</p>
+          <p className="mt-2 text-sm text-red-500">{errors.monthly_budget}</p>
         )}
       </div>
 
       {/* Current Platforms */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-300 mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           Current Advertising Platforms
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -266,12 +266,12 @@ export default function AdPreferencesStep() {
                 onClick={() => togglePlatform(plat.id)}
                 className={`relative flex items-center gap-2 p-3 rounded-xl border-2 transition-all duration-200 ${
                   isSelected
-                    ? "border-derby-blue bg-derby-blue/10 shadow-lg shadow-derby-blue/10"
-                    : "border-gray-700 bg-derby-card hover:border-gray-500"
+                    ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
+                    : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
               >
                 <span className="text-lg">{plat.icon}</span>
-                <span className={`text-sm font-medium ${isSelected ? "text-white" : "text-gray-300"}`}>
+                <span className={`text-sm font-medium ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
                   {plat.label}
                 </span>
                 {isSelected && (
@@ -289,13 +289,13 @@ export default function AdPreferencesStep() {
 
       {/* Social Links */}
       <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-300 mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           Social Media <span className="text-gray-500">(optional)</span>
         </label>
         <div className="space-y-3">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-sm text-gray-400">Facebook</span>
+              <span className="text-sm text-gray-600">Facebook</span>
             </div>
             <input
               type="url"
@@ -312,7 +312,7 @@ export default function AdPreferencesStep() {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-sm text-gray-400">Instagram</span>
+              <span className="text-sm text-gray-600">Instagram</span>
             </div>
             <input
               type="url"
@@ -334,7 +334,7 @@ export default function AdPreferencesStep() {
       <div className="flex items-center justify-between mt-10">
         <button
           onClick={goBack}
-          className="px-6 py-3 rounded-xl border border-gray-700 text-gray-300 hover:text-white hover:border-gray-500 transition-all"
+          className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all"
         >
           Back
         </button>

@@ -50,7 +50,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 function ConfettiAnimation() {
   const pieces = Array.from({ length: 50 }, (_, i) => i);
-  const colors = ["#2093FF", "#0026FF", "#FFD700", "#FF6B6B", "#4ADE80", "#A78BFA"];
+  const colors = ["#2093FF", "#0026FF", "#FFD700", "#FF6B6B", "#4ADE80", "#38BDF8"];
 
   return (
     <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
@@ -94,12 +94,12 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-derby-card border border-gray-800 rounded-2xl p-6 mb-4">
+    <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-4 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
         <button
           onClick={onEdit}
-          className="text-sm text-derby-blue hover:text-white transition-colors px-3 py-1 rounded-lg border border-derby-blue/30 hover:border-derby-blue hover:bg-derby-blue/10"
+          className="text-sm text-derby-blue hover:text-derby-blue-deep transition-colors px-3 py-1 rounded-lg border border-derby-blue/30 hover:border-derby-blue hover:bg-blue-50"
         >
           Edit
         </button>
@@ -112,8 +112,8 @@ function SectionCard({
 function InfoRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 py-1.5">
-      <span className="text-sm text-gray-400 sm:w-40 shrink-0">{label}</span>
-      <span className="text-sm text-white">{value || "—"}</span>
+      <span className="text-sm text-gray-500 sm:w-40 shrink-0">{label}</span>
+      <span className="text-sm text-gray-900">{value || "—"}</span>
     </div>
   );
 }
@@ -188,15 +188,15 @@ export default function ReviewStep() {
       {showConfetti && <ConfettiAnimation />}
 
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Review &amp; Submit</h2>
-        <p className="text-gray-400">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Review &amp; Submit</h2>
+        <p className="text-gray-500">
           Review your information below. Click Edit on any section to make changes.
         </p>
       </div>
 
       {/* Business Information */}
       <SectionCard title="Business Information" onEdit={() => goToStep(2)}>
-        <div className="divide-y divide-gray-800">
+        <div className="divide-y divide-gray-100">
           <InfoRow label="Business Name" value={formData.business_name} />
           <InfoRow label="Owner Name" value={formData.owner_name} />
           <InfoRow label="Phone" value={formData.phone} />
@@ -213,9 +213,9 @@ export default function ReviewStep() {
 
       {/* Services */}
       <SectionCard title="Services &amp; Trade" onEdit={() => goToStep(3)}>
-        <div className="divide-y divide-gray-800">
+        <div className="divide-y divide-gray-100">
           <div className="py-1.5">
-            <span className="text-sm text-gray-400 block mb-1.5">Services</span>
+            <span className="text-sm text-gray-500 block mb-1.5">Services</span>
             <div className="flex flex-wrap gap-2">
               {serviceLabels.length > 0 ? (
                 serviceLabels.map((label) => (
@@ -231,7 +231,7 @@ export default function ReviewStep() {
               )}
             </div>
             {formData.other_service && (
-              <p className="text-sm text-gray-300 mt-1.5">
+              <p className="text-sm text-gray-700 mt-1.5">
                 Other: {formData.other_service}
               </p>
             )}
@@ -254,9 +254,9 @@ export default function ReviewStep() {
                 key={doc.doc_type}
                 className="flex items-center gap-3 py-1.5"
               >
-                <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
                   <svg
-                    className="w-4 h-4 text-green-400"
+                    className="w-4 h-4 text-green-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -270,7 +270,7 @@ export default function ReviewStep() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm text-white">
+                  <p className="text-sm text-gray-900">
                     {DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type}
                   </p>
                   <p className="text-xs text-gray-500">{doc.file_name}</p>
@@ -285,7 +285,7 @@ export default function ReviewStep() {
 
       {/* Ad Preferences */}
       <SectionCard title="Ad Preferences" onEdit={() => goToStep(5)}>
-        <div className="divide-y divide-gray-800">
+        <div className="divide-y divide-gray-100">
           <InfoRow label="Website" value={formData.website_url} />
           <InfoRow label="Google Email" value={formData.google_account_email} />
           <InfoRow
@@ -297,7 +297,7 @@ export default function ReviewStep() {
             }
           />
           <div className="py-1.5">
-            <span className="text-sm text-gray-400 block mb-1.5">
+            <span className="text-sm text-gray-500 block mb-1.5">
               Current Platforms
             </span>
             <div className="flex flex-wrap gap-2">
@@ -326,7 +326,7 @@ export default function ReviewStep() {
 
       {/* Error */}
       {submitError && (
-        <div className="mt-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-400 text-center">
+        <div className="mt-6 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600 text-center">
           {submitError}
         </div>
       )}
@@ -335,7 +335,7 @@ export default function ReviewStep() {
       <div className="flex items-center justify-between mt-10 mb-8">
         <button
           onClick={goBack}
-          className="px-6 py-3 rounded-xl border border-gray-700 text-gray-300 hover:text-white hover:border-gray-500 transition-all"
+          className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all"
         >
           Back
         </button>

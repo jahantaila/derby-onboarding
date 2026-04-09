@@ -1,7 +1,8 @@
 # Ralph Progress Log - Derby Digital Onboarding Portal
 
 ## Codebase Patterns
-- Brand colors: derby-dark (#0A0A0F), derby-card (#1A1A2E), derby-blue (#2093FF), derby-blue-deep (#0026FF)
+- Brand colors: derby-dark (#0A1628), derby-card (#1A2744), derby-blue (#2093FF), derby-blue-deep (#0026FF), derby-text (#1A1A2E)
+- Light mode default: bg-gray-50 body, bg-white cards/inputs, gray-200/300 borders, gray-900 headings, gray-700 labels, gray-500 descriptions. No purple anywhere.
 - New layout: vertical sidebar (320px) on left for desktop (lg:), horizontal mini-bar on mobile. Sidebar hidden on Welcome (step 1) and Confirmation (step 7)
 - STEPS array now includes `icon` field (SVG path data) — used by VerticalStepTracker and potentially other components
 - Root layout uses light mode (bg-gray-50, text-gray-900) — no more dark class on html element
@@ -264,4 +265,32 @@
   - Step numbers displayed to user are offset by 1 (internal step 2 = "Step 1" to user) since Welcome is internal step 1
   - The "Next" CTA button in sidebar only shows between steps 2-5 (not on Review step 6 which has its own submit)
   - Light mode switch: bg-gray-50 body, white sidebar, gray-200 borders — existing step components still use dark styles and will need updating in UI02
+---
+
+## 2026-04-09 - UI02
+- What was implemented: Complete color scheme overhaul to Derby Digital brand light mode. Updated CSS variables (--background: #F0F4F8, --foreground: #1A1A2E). Updated Tailwind config with corrected dark mode colors (derby-dark: #0A1628, derby-card: #1A2744) and added derby-text: #1A1A2E. Converted all wizard step components from dark to light mode: white card backgrounds, gray-900 headings, gray-700 labels, gray-300 borders, white inputs with gray-300 borders. Updated service/budget/platform cards to use blue-50 selected state on white backgrounds. Converted all admin pages (layout, login, dashboard, submissions list, submission detail) to light theme: white sidebars/cards, gray-200 borders, proper contrast text colors. Updated status badges to use solid background colors (blue-100, yellow-100, green-100). Removed all purple (#A78BFA) from confetti and replaced "This Week"/"This Month" stat card gradients with cyan/sky. Updated error states to use red-50/red-200/red-600 for light mode.
+- Files changed:
+  - src/app/globals.css (updated - CSS variables to light mode)
+  - tailwind.config.ts (updated - derby-dark to #0A1628, added derby-text)
+  - src/components/wizard/steps/WelcomeStep.tsx (rewritten - light mode)
+  - src/components/wizard/steps/ConfirmationStep.tsx (rewritten - light mode)
+  - src/components/wizard/steps/BusinessInfoStep.tsx (updated - light mode inputs, labels, nav)
+  - src/components/wizard/steps/ServicesStep.tsx (updated - light mode inputs, cards, nav)
+  - src/components/wizard/steps/DocumentsStep.tsx (updated - light mode upload zones, skeleton)
+  - src/components/wizard/steps/AdPreferencesStep.tsx (updated - light mode inputs, cards, nav)
+  - src/components/wizard/steps/ReviewStep.tsx (updated - light mode section cards, info rows)
+  - src/components/wizard/StepRenderer.tsx (updated - light mode placeholder)
+  - src/app/admin/layout.tsx (rewritten - light mode sidebar/header)
+  - src/app/admin/login/page.tsx (rewritten - light mode login)
+  - src/app/admin/page.tsx (rewritten - light mode dashboard, no purple)
+  - src/app/admin/submissions/page.tsx (rewritten - light mode table/cards)
+  - src/app/admin/submissions/[id]/page.tsx (rewritten - light mode detail)
+  - prd.json (updated - UI02 passes: true)
+- **Learnings for future iterations:**
+  - Light mode color mapping: bg-derby-dark → bg-white (inputs), bg-derby-card → bg-white (cards), text-white → text-gray-900 (headings), text-gray-300 → text-gray-700 (labels), border-gray-700 → border-gray-300, border-white/10 → border-gray-200
+  - Selected card state in light mode: border-derby-blue + bg-blue-50 (not bg-derby-blue/10 which was for dark)
+  - Status badges in light mode use solid bg colors (bg-blue-100/text-blue-700) not transparent (bg-blue-500/15/text-blue-400)
+  - Error states in light mode: bg-red-50 + border-red-200 + text-red-600 (not bg-red-500/10 + text-red-400)
+  - text-white is still correct on gradient blue CTA buttons — only replace text-white on non-gradient elements
+  - Keep CSS variable --background at #F0F4F8 for the soft gray-blue base, but most cards/sidebars use explicit bg-white
 ---

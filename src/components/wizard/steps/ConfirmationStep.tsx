@@ -5,8 +5,8 @@ export default function ConfirmationStep() {
     <div className="flex flex-col items-center justify-center min-h-[500px] text-center px-4">
       {/* Animated background glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-derby-blue/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-derby-blue-deep/10 rounded-full blur-[100px] animate-pulse delay-1000" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-derby-blue/8 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-derby-blue-deep/8 rounded-full blur-[100px] animate-pulse delay-1000" />
       </div>
 
       <div className="relative z-10 max-w-lg">
@@ -27,10 +27,10 @@ export default function ConfirmationStep() {
           </svg>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
+        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
           You&apos;re In!
         </h1>
-        <p className="text-xl text-gray-300 mb-10">
+        <p className="text-xl text-gray-600 mb-10">
           Welcome to{" "}
           <span className="bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent font-semibold">
             Derby Digital
@@ -38,8 +38,8 @@ export default function ConfirmationStep() {
         </p>
 
         {/* Next steps */}
-        <div className="bg-derby-card/50 border border-gray-800 rounded-2xl p-8 mb-10 text-left">
-          <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">
+        <div className="bg-white border border-gray-200 rounded-2xl p-8 mb-10 text-left shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-6">
             What happens next
           </h3>
           <div className="space-y-6">
@@ -69,10 +69,10 @@ export default function ConfirmationStep() {
                   </span>
                 </div>
                 <div>
-                  <h4 className="text-white font-semibold mb-1">
+                  <h4 className="text-gray-900 font-semibold mb-1">
                     {step.title}
                   </h4>
-                  <p className="text-gray-400 text-sm">{step.description}</p>
+                  <p className="text-gray-500 text-sm">{step.description}</p>
                 </div>
               </div>
             ))}
@@ -80,14 +80,14 @@ export default function ConfirmationStep() {
         </div>
 
         {/* Contact info */}
-        <div className="bg-derby-card/30 border border-gray-800/50 rounded-2xl p-6 mb-10">
-          <p className="text-gray-400 text-sm mb-3">
+        <div className="bg-white/80 border border-gray-200 rounded-2xl p-6 mb-10 shadow-sm">
+          <p className="text-gray-500 text-sm mb-3">
             Questions? Reach out anytime.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="tel:5027026268"
-              className="flex items-center gap-2 text-derby-blue hover:text-white transition-colors"
+              className="flex items-center gap-2 text-derby-blue hover:text-derby-blue-deep transition-colors"
             >
               <svg
                 className="w-4 h-4"
@@ -104,10 +104,10 @@ export default function ConfirmationStep() {
               </svg>
               (502) 702-6268
             </a>
-            <span className="hidden sm:inline text-gray-600">|</span>
+            <span className="hidden sm:inline text-gray-300">|</span>
             <a
               href="mailto:jahan@derbydigital.us"
-              className="flex items-center gap-2 text-derby-blue hover:text-white transition-colors"
+              className="flex items-center gap-2 text-derby-blue hover:text-derby-blue-deep transition-colors"
             >
               <svg
                 className="w-4 h-4"

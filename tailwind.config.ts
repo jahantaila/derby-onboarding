@@ -15,10 +15,11 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         derby: {
-          dark: "#0A0A0F",
-          card: "#1A1A2E",
+          dark: "#0A1628",
+          card: "#1A2744",
           blue: "#2093FF",
           "blue-deep": "#0026FF",
+          text: "#1A1A2E",
         },
       },
     },

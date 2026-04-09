@@ -46,8 +46,8 @@ const STAT_CARDS = [
   { key: "new" as const, label: "New", gradient: "from-blue-500 to-blue-600" },
   { key: "in_progress" as const, label: "In Progress", gradient: "from-yellow-500 to-orange-500" },
   { key: "active" as const, label: "Active", gradient: "from-green-500 to-emerald-600" },
-  { key: "this_week" as const, label: "This Week", gradient: "from-purple-500 to-indigo-600" },
-  { key: "this_month" as const, label: "This Month", gradient: "from-pink-500 to-rose-600" },
+  { key: "this_week" as const, label: "This Week", gradient: "from-cyan-500 to-blue-600" },
+  { key: "this_month" as const, label: "This Month", gradient: "from-sky-500 to-derby-blue" },
 ];
 
 export default function AdminDashboardPage() {
@@ -80,11 +80,11 @@ export default function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
-      <p className="text-gray-400 mb-8">Overview of your onboarding pipeline</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
+      <p className="text-gray-500 mb-8">Overview of your onboarding pipeline</p>
 
       {error && !loading && (
-        <div className="mb-8 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-400 text-center">
+        <div className="mb-8 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600 text-center">
           Unable to load dashboard data. Please try refreshing the page.
         </div>
       )}
@@ -94,18 +94,18 @@ export default function AdminDashboardPage() {
         {STAT_CARDS.map((card) => (
           <div
             key={card.key}
-            className="relative overflow-hidden bg-derby-card rounded-xl p-5 border border-white/10"
+            className="relative overflow-hidden bg-white rounded-xl p-5 border border-gray-200 shadow-sm"
           >
             {/* Gradient accent bar */}
             <div
               className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.gradient}`}
             />
-            <p className="text-xs text-gray-400 mb-2 uppercase tracking-wide">
+            <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">
               {card.label}
             </p>
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-bold text-gray-900">
               {loading ? (
-                <span className="inline-block w-12 h-8 bg-white/5 rounded animate-pulse" />
+                <span className="inline-block w-12 h-8 bg-gray-100 rounded animate-pulse" />
               ) : stats ? (
                 <CountUp target={stats[card.key]} />
               ) : (
@@ -117,19 +117,19 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Weekly Chart */}
-      <div className="bg-derby-card rounded-xl p-6 border border-white/10">
-        <h2 className="text-lg font-semibold mb-1">Submissions Per Week</h2>
-        <p className="text-sm text-gray-400 mb-6">Last 8 weeks</p>
+      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">Submissions Per Week</h2>
+        <p className="text-sm text-gray-500 mb-6">Last 8 weeks</p>
 
         {loading ? (
           <div className="h-48 flex items-end gap-3">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-2">
                 <div
-                  className="w-full bg-white/5 rounded-t animate-pulse"
+                  className="w-full bg-gray-100 rounded-t animate-pulse"
                   style={{ height: `${30 + Math.random() * 70}%` }}
                 />
-                <div className="w-8 h-3 bg-white/5 rounded animate-pulse" />
+                <div className="w-8 h-3 bg-gray-100 rounded animate-pulse" />
               </div>
             ))}
           </div>
@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
                   className="flex-1 flex flex-col items-center gap-2"
                 >
                   {week.count > 0 && (
-                    <span className="text-xs text-gray-400">{week.count}</span>
+                    <span className="text-xs text-gray-500">{week.count}</span>
                   )}
                   <div
                     className="w-full bg-gradient-to-t from-derby-blue to-derby-blue-deep rounded-t transition-all duration-700 ease-out"
@@ -153,7 +153,7 @@ export default function AdminDashboardPage() {
                       animationDelay: `${i * 80}ms`,
                     }}
                   />
-                  <span className="text-xs text-gray-500">{week.week}</span>
+                  <span className="text-xs text-gray-400">{week.week}</span>
                 </div>
               );
             })}

@@ -39,9 +39,9 @@ const STATUS_OPTIONS = [
 ];
 
 const STATUS_BADGE: Record<string, { bg: string; text: string; label: string }> = {
-  new: { bg: "bg-blue-500/15", text: "text-blue-400", label: "New" },
-  in_progress: { bg: "bg-yellow-500/15", text: "text-yellow-400", label: "In Progress" },
-  active: { bg: "bg-green-500/15", text: "text-green-400", label: "Active" },
+  new: { bg: "bg-blue-100", text: "text-blue-700", label: "New" },
+  in_progress: { bg: "bg-yellow-100", text: "text-yellow-700", label: "In Progress" },
+  active: { bg: "bg-green-100", text: "text-green-700", label: "Active" },
 };
 
 function formatDate(dateStr: string) {
@@ -111,8 +111,8 @@ export default function AdminSubmissionsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-2">Submissions</h1>
-      <p className="text-gray-400 mb-6">Manage client onboarding submissions</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Submissions</h1>
+      <p className="text-gray-500 mb-6">Manage client onboarding submissions</p>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -123,10 +123,10 @@ export default function AdminSubmissionsPage() {
               placeholder="Search by business or owner name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-derby-card border border-white/10 rounded-lg px-4 py-2.5 pl-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
+              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 pl-10 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
             />
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -144,7 +144,7 @@ export default function AdminSubmissionsPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-derby-card border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
+          className="bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -155,23 +155,23 @@ export default function AdminSubmissionsPage() {
       </div>
 
       {error && !loading && (
-        <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-400 text-center">
+        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600 text-center">
           Unable to load submissions. Please try refreshing the page.
         </div>
       )}
 
       {/* Table */}
-      <div className="bg-derby-card rounded-xl border border-white/10 overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-8 space-y-4">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-12 bg-white/5 rounded animate-pulse" />
+              <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
             ))}
           </div>
         ) : submissions.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-gray-400 text-lg">No submissions found</p>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-gray-500 text-lg">No submissions found</p>
+            <p className="text-gray-400 text-sm mt-1">
               {search || statusFilter
                 ? "Try adjusting your search or filters"
                 : "Submissions will appear here as clients complete onboarding"}
@@ -183,7 +183,7 @@ export default function AdminSubmissionsPage() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-left text-gray-400 text-xs uppercase tracking-wider">
+                  <tr className="border-b border-gray-200 text-left text-gray-500 text-xs uppercase tracking-wider">
                     <th className="px-5 py-3 font-medium">Business</th>
                     <th className="px-5 py-3 font-medium">Owner</th>
                     <th className="px-5 py-3 font-medium">Phone</th>
@@ -213,7 +213,7 @@ export default function AdminSubmissionsPage() {
             </div>
 
             {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-white/10">
+            <div className="md:hidden divide-y divide-gray-100">
               {submissions.map((sub) => {
                 const badge = STATUS_BADGE[sub.pipeline_status] || STATUS_BADGE.new;
                 const isExpanded = expandedId === sub.id;
@@ -236,7 +236,7 @@ export default function AdminSubmissionsPage() {
       {/* Pagination */}
       {pagination && pagination.total_pages > 1 && (
         <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-500">
             Showing {(pagination.page - 1) * pagination.page_size + 1}–
             {Math.min(pagination.page * pagination.page_size, pagination.total)} of{" "}
             {pagination.total}
@@ -245,14 +245,14 @@ export default function AdminSubmissionsPage() {
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="px-3 py-1.5 text-sm rounded-lg bg-derby-card border border-white/10 text-gray-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-1.5 text-sm rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
             <button
               disabled={page >= pagination.total_pages}
               onClick={() => setPage((p) => p + 1)}
-              className="px-3 py-1.5 text-sm rounded-lg bg-derby-card border border-white/10 text-gray-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-1.5 text-sm rounded-lg bg-white border border-gray-200 text-gray-600 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>
@@ -280,15 +280,15 @@ function SubmissionRow({
     <>
       <tr
         onClick={onToggle}
-        className="border-b border-white/5 hover:bg-white/[0.02] cursor-pointer transition-colors"
+        className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
       >
-        <td className="px-5 py-3.5 font-medium text-white">
+        <td className="px-5 py-3.5 font-medium text-gray-900">
           {sub.business_name || "—"}
         </td>
-        <td className="px-5 py-3.5 text-gray-300">{sub.contact_name || "—"}</td>
-        <td className="px-5 py-3.5 text-gray-300">{sub.business_phone || "—"}</td>
-        <td className="px-5 py-3.5 text-gray-300">{sub.business_email || "—"}</td>
-        <td className="px-5 py-3.5 text-gray-300">
+        <td className="px-5 py-3.5 text-gray-600">{sub.contact_name || "—"}</td>
+        <td className="px-5 py-3.5 text-gray-600">{sub.business_phone || "—"}</td>
+        <td className="px-5 py-3.5 text-gray-600">{sub.business_email || "—"}</td>
+        <td className="px-5 py-3.5 text-gray-600">
           {formatServices(sub.service_categories)}
         </td>
         <td className="px-5 py-3.5">
@@ -298,13 +298,13 @@ function SubmissionRow({
             {badge.label}
           </span>
         </td>
-        <td className="px-5 py-3.5 text-gray-400">
+        <td className="px-5 py-3.5 text-gray-500">
           {formatDate(sub.submitted_at || sub.created_at)}
         </td>
       </tr>
       {isExpanded && (
         <tr>
-          <td colSpan={7} className="px-5 py-4 bg-white/[0.02]">
+          <td colSpan={7} className="px-5 py-4 bg-gray-50">
             <DetailPanel sub={sub} onViewDetail={onViewDetail} />
           </td>
         </tr>
@@ -330,7 +330,7 @@ function MobileSubmissionCard({
     <div>
       <button onClick={onToggle} className="w-full text-left px-4 py-3.5">
         <div className="flex items-center justify-between mb-1">
-          <span className="font-medium text-white text-sm">
+          <span className="font-medium text-gray-900 text-sm">
             {sub.business_name || "—"}
           </span>
           <span
@@ -339,7 +339,7 @@ function MobileSubmissionCard({
             {badge.label}
           </span>
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-400">
+        <div className="flex items-center gap-3 text-xs text-gray-500">
           <span>{sub.contact_name || "—"}</span>
           <span>{formatDate(sub.submitted_at || sub.created_at)}</span>
         </div>
@@ -368,7 +368,7 @@ function DetailPanel({ sub, onViewDetail }: { sub: Submission; onViewDetail: () 
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
         <div className="space-y-2">
-          <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
             Business Info
           </h4>
           <DetailRow label="Business" value={sub.business_name} />
@@ -378,7 +378,7 @@ function DetailPanel({ sub, onViewDetail }: { sub: Submission; onViewDetail: () 
           {address && <DetailRow label="Address" value={address} />}
         </div>
         <div className="space-y-2">
-          <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
             Services & Details
           </h4>
           <DetailRow label="Services" value={allServices} />
@@ -389,7 +389,7 @@ function DetailPanel({ sub, onViewDetail }: { sub: Submission; onViewDetail: () 
           <DetailRow label="Status" value={STATUS_BADGE[sub.pipeline_status]?.label || sub.pipeline_status} />
         </div>
       </div>
-      <div className="mt-4 pt-3 border-t border-white/5">
+      <div className="mt-4 pt-3 border-t border-gray-200">
         <button
           onClick={(e) => { e.stopPropagation(); onViewDetail(); }}
           className="px-4 py-2 bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
@@ -404,8 +404,8 @@ function DetailPanel({ sub, onViewDetail }: { sub: Submission; onViewDetail: () 
 function DetailRow({ label, value }: { label: string; value: string | null }) {
   return (
     <div className="flex gap-2">
-      <span className="text-gray-500 shrink-0">{label}:</span>
-      <span className="text-gray-200">{value || "—"}</span>
+      <span className="text-gray-400 shrink-0">{label}:</span>
+      <span className="text-gray-700">{value || "—"}</span>
     </div>
   );
 }

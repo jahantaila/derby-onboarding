@@ -191,8 +191,8 @@ export default function DocumentsStep() {
   return (
     <div className="max-w-2xl mx-auto px-4">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Document Uploads</h2>
-        <p className="text-gray-400">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Document Uploads</h2>
+        <p className="text-gray-500">
           Upload your business documents. We accept PDF, JPG, and PNG files up to 10MB.
         </p>
       </div>
@@ -200,12 +200,12 @@ export default function DocumentsStep() {
       <div className="space-y-4">
         {loadingDocs ? (
           DOC_SLOTS.map((slot) => (
-            <div key={slot.id} className="rounded-xl border-2 border-dashed border-gray-700 bg-derby-card p-6">
+            <div key={slot.id} className="rounded-xl border-2 border-dashed border-gray-200 bg-white p-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-white/5 animate-pulse" />
+                <div className="w-12 h-12 rounded-xl bg-gray-100 animate-pulse" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-32 bg-white/5 rounded animate-pulse" />
-                  <div className="h-3 w-48 bg-white/5 rounded animate-pulse" />
+                  <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
+                  <div className="h-3 w-48 bg-gray-100 rounded animate-pulse" />
                 </div>
               </div>
             </div>
@@ -227,12 +227,12 @@ export default function DocumentsStep() {
                 onClick={() => !isUploading && fileInputRefs.current[slot.docType]?.click()}
                 className={`relative rounded-xl border-2 border-dashed p-6 transition-all duration-200 cursor-pointer ${
                   uploaded
-                    ? "border-green-500/50 bg-green-500/5"
+                    ? "border-green-500/50 bg-green-50"
                     : isDragOver
-                    ? "border-derby-blue bg-derby-blue/10"
+                    ? "border-derby-blue bg-blue-50"
                     : error
-                    ? "border-red-500/50 bg-red-500/5"
-                    : "border-gray-700 bg-derby-card hover:border-gray-500"
+                    ? "border-red-500/50 bg-red-50"
+                    : "border-gray-300 bg-white hover:border-gray-400"
                 }`}
               >
                 <input
@@ -247,12 +247,12 @@ export default function DocumentsStep() {
                   <div
                     className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${
                       uploaded
-                        ? "bg-green-500/10"
-                        : "bg-derby-card"
+                        ? "bg-green-100"
+                        : "bg-gray-50"
                     }`}
                   >
                     {uploaded ? (
-                      <svg className="w-6 h-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
@@ -262,21 +262,21 @@ export default function DocumentsStep() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-medium text-white">{slot.label}</h3>
+                      <h3 className="text-sm font-medium text-gray-900">{slot.label}</h3>
                       {slot.required ? (
-                        <span className="text-red-400 text-xs">*</span>
+                        <span className="text-red-500 text-xs">*</span>
                       ) : (
                         <span className="text-gray-500 text-xs">(optional)</span>
                       )}
                     </div>
 
                     {uploaded ? (
-                      <p className="text-sm text-gray-400 truncate">
+                      <p className="text-sm text-gray-500 truncate">
                         {uploaded.file_name} ({formatFileSize(uploaded.file_size)})
                       </p>
                     ) : isUploading ? (
                       <div className="mt-2">
-                        <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                        <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-derby-blue to-derby-blue-deep rounded-full transition-all duration-300"
                             style={{ width: `${progressValue}%` }}
@@ -297,7 +297,7 @@ export default function DocumentsStep() {
                         e.stopPropagation();
                         fileInputRefs.current[slot.docType]?.click();
                       }}
-                      className="text-xs text-derby-blue hover:text-white transition-colors px-3 py-1.5 rounded-lg border border-gray-700 hover:border-gray-500"
+                      className="text-xs text-derby-blue hover:text-derby-blue-deep transition-colors px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400"
                     >
                       Replace
                     </button>
@@ -306,7 +306,7 @@ export default function DocumentsStep() {
               </div>
 
               {error && (
-                <p className="mt-1.5 text-sm text-red-400">{error}</p>
+                <p className="mt-1.5 text-sm text-red-500">{error}</p>
               )}
             </div>
           );
@@ -314,7 +314,7 @@ export default function DocumentsStep() {
       </div>
 
       {globalError && (
-        <p className="mt-4 text-sm text-red-400 text-center">{globalError}</p>
+        <p className="mt-4 text-sm text-red-500 text-center">{globalError}</p>
       )}
 
       <p className="mt-4 text-xs text-gray-500 text-center">
@@ -325,7 +325,7 @@ export default function DocumentsStep() {
       <div className="flex items-center justify-between mt-10">
         <button
           onClick={goBack}
-          className="px-6 py-3 rounded-xl border border-gray-700 text-gray-300 hover:text-white hover:border-gray-500 transition-all"
+          className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all"
         >
           Back
         </button>

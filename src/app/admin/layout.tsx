@@ -27,15 +27,15 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-derby-dark flex">
+    <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-derby-card border-r border-white/10 flex flex-col shrink-0 hidden md:flex">
-        <div className="p-6 border-b border-white/10">
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col shrink-0 hidden md:flex">
+        <div className="p-6 border-b border-gray-200">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center font-bold text-sm">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center font-bold text-sm text-white">
               D
             </div>
-            <span className="font-bold text-lg">Derby Digital</span>
+            <span className="font-bold text-lg text-gray-900">Derby Digital</span>
           </Link>
           <p className="text-xs text-gray-500 mt-1">Admin Dashboard</p>
         </div>
@@ -49,8 +49,8 @@ export default function AdminLayout({
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-derby-blue/10 text-derby-blue border border-derby-blue/20"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                    ? "bg-blue-50 text-derby-blue border border-derby-blue/20"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 }`}
               >
                 <span>{item.icon}</span>
@@ -60,10 +60,10 @@ export default function AdminLayout({
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-gray-200">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-400/5 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
           >
             <span>🚪</span>
             Sign Out
@@ -72,12 +72,12 @@ export default function AdminLayout({
       </aside>
 
       {/* Mobile header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-derby-card border-b border-white/10 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <Link href="/admin" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center font-bold text-xs">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center font-bold text-xs text-white">
             D
           </div>
-          <span className="font-bold">Derby Digital</span>
+          <span className="font-bold text-gray-900">Derby Digital</span>
         </Link>
         <div className="flex items-center gap-2">
           {NAV_ITEMS.map((item) => {
@@ -88,8 +88,8 @@ export default function AdminLayout({
                 href={item.href}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   isActive
-                    ? "bg-derby-blue/10 text-derby-blue"
-                    : "text-gray-400 hover:text-white"
+                    ? "bg-blue-50 text-derby-blue"
+                    : "text-gray-500 hover:text-gray-900"
                 }`}
               >
                 {item.label}
@@ -98,7 +98,7 @@ export default function AdminLayout({
           })}
           <button
             onClick={handleLogout}
-            className="px-2 py-1.5 text-gray-400 hover:text-red-400 text-xs"
+            className="px-2 py-1.5 text-gray-500 hover:text-red-600 text-xs"
           >
             Sign Out
           </button>

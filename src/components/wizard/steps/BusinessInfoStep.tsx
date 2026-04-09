@@ -164,9 +164,9 @@ export default function BusinessInfoStep() {
   }
 
   function inputClasses(field: keyof FieldErrors) {
-    return `w-full bg-derby-dark border ${
-      errors[field] ? "border-red-500" : "border-gray-700 focus:border-derby-blue"
-    } rounded-xl px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:ring-1 ${
+    return `w-full bg-white border ${
+      errors[field] ? "border-red-500" : "border-gray-300 focus:border-derby-blue"
+    } rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 ${
       errors[field] ? "focus:ring-red-500" : "focus:ring-derby-blue"
     }`;
   }
@@ -174,15 +174,15 @@ export default function BusinessInfoStep() {
   return (
     <div className="max-w-2xl mx-auto px-4">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Business Information</h2>
-        <p className="text-gray-400">Tell us about your business so we can get started.</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Business Information</h2>
+        <p className="text-gray-500">Tell us about your business so we can get started.</p>
       </div>
 
       <div className="space-y-5">
         {/* Business Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">
-            Business Name <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Business Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -193,14 +193,14 @@ export default function BusinessInfoStep() {
             className={inputClasses("business_name")}
           />
           {errors.business_name && (
-            <p className="mt-1 text-sm text-red-400">{errors.business_name}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.business_name}</p>
           )}
         </div>
 
         {/* Owner Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">
-            Owner Full Name <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Owner Full Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -211,15 +211,15 @@ export default function BusinessInfoStep() {
             className={inputClasses("owner_name")}
           />
           {errors.owner_name && (
-            <p className="mt-1 text-sm text-red-400">{errors.owner_name}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.owner_name}</p>
           )}
         </div>
 
         {/* Phone + Email row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              Phone <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Phone <span className="text-red-500">*</span>
             </label>
             <input
               type="tel"
@@ -230,12 +230,12 @@ export default function BusinessInfoStep() {
               className={inputClasses("phone")}
             />
             {errors.phone && (
-              <p className="mt-1 text-sm text-red-400">{errors.phone}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              Email <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Email <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -246,15 +246,15 @@ export default function BusinessInfoStep() {
               className={inputClasses("email")}
             />
             {errors.email && (
-              <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
             )}
           </div>
         </div>
 
         {/* Address */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">
-            Street Address <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Street Address <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -265,15 +265,15 @@ export default function BusinessInfoStep() {
             className={inputClasses("address")}
           />
           {errors.address && (
-            <p className="mt-1 text-sm text-red-400">{errors.address}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.address}</p>
           )}
         </div>
 
         {/* City, State, ZIP row */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              City <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              City <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -284,12 +284,12 @@ export default function BusinessInfoStep() {
               className={inputClasses("city")}
             />
             {errors.city && (
-              <p className="mt-1 text-sm text-red-400">{errors.city}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.city}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              State <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              State <span className="text-red-500">*</span>
             </label>
             <select
               value={formData.state || ""}
@@ -308,12 +308,12 @@ export default function BusinessInfoStep() {
               ))}
             </select>
             {errors.state && (
-              <p className="mt-1 text-sm text-red-400">{errors.state}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.state}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              ZIP Code <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              ZIP Code <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -325,7 +325,7 @@ export default function BusinessInfoStep() {
               className={inputClasses("zip")}
             />
             {errors.zip && (
-              <p className="mt-1 text-sm text-red-400">{errors.zip}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.zip}</p>
             )}
           </div>
         </div>
@@ -335,7 +335,7 @@ export default function BusinessInfoStep() {
       <div className="flex items-center justify-between mt-10">
         <button
           onClick={goBack}
-          className="px-6 py-3 rounded-xl border border-gray-700 text-gray-300 hover:text-white hover:border-gray-500 transition-all"
+          className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all"
         >
           Back
         </button>

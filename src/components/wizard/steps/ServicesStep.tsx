@@ -165,9 +165,9 @@ export default function ServicesStep() {
   }
 
   function inputClasses(field: keyof FieldErrors) {
-    return `w-full bg-derby-dark border ${
-      errors[field] ? "border-red-500" : "border-gray-700 focus:border-derby-blue"
-    } rounded-xl px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:ring-1 ${
+    return `w-full bg-white border ${
+      errors[field] ? "border-red-500" : "border-gray-300 focus:border-derby-blue"
+    } rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 ${
       errors[field] ? "focus:ring-red-500" : "focus:ring-derby-blue"
     }`;
   }
@@ -175,14 +175,14 @@ export default function ServicesStep() {
   return (
     <div className="max-w-2xl mx-auto px-4">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Services &amp; Trade</h2>
-        <p className="text-gray-400">What services does your business offer?</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Services &amp; Trade</h2>
+        <p className="text-gray-500">What services does your business offer?</p>
       </div>
 
       {/* Service Category Cards */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-300 mb-3">
-          Select your services <span className="text-red-400">*</span>
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          Select your services <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {SERVICE_CATEGORIES.map((cat) => {
@@ -194,12 +194,12 @@ export default function ServicesStep() {
                 onClick={() => toggleCategory(cat.id)}
                 className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${
                   isSelected
-                    ? "border-derby-blue bg-derby-blue/10 shadow-lg shadow-derby-blue/10"
-                    : "border-gray-700 bg-derby-card hover:border-gray-500"
+                    ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
+                    : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
               >
                 <span className="text-2xl">{cat.icon}</span>
-                <span className={`text-sm font-medium ${isSelected ? "text-white" : "text-gray-300"}`}>
+                <span className={`text-sm font-medium ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
                   {cat.label}
                 </span>
                 {isSelected && (
@@ -214,15 +214,15 @@ export default function ServicesStep() {
           })}
         </div>
         {errors.service_categories && (
-          <p className="mt-2 text-sm text-red-400">{errors.service_categories}</p>
+          <p className="mt-2 text-sm text-red-500">{errors.service_categories}</p>
         )}
       </div>
 
       {/* Other service text input */}
       {selectedCategories.includes("other") && (
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">
-            Specify your service <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Specify your service <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -236,15 +236,15 @@ export default function ServicesStep() {
             className={inputClasses("other_service")}
           />
           {errors.other_service && (
-            <p className="mt-1 text-sm text-red-400">{errors.other_service}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.other_service}</p>
           )}
         </div>
       )}
 
       {/* Service Area */}
       <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">
-          Service Area <span className="text-red-400">*</span>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          Service Area <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -255,15 +255,15 @@ export default function ServicesStep() {
           className={inputClasses("service_area")}
         />
         {errors.service_area && (
-          <p className="mt-1 text-sm text-red-400">{errors.service_area}</p>
+          <p className="mt-1 text-sm text-red-500">{errors.service_area}</p>
         )}
       </div>
 
       {/* Years in Business + Employees row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">
-            Years in Business <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Years in Business <span className="text-red-500">*</span>
           </label>
           <input
             type="number"
@@ -276,12 +276,12 @@ export default function ServicesStep() {
             className={inputClasses("years_in_business")}
           />
           {errors.years_in_business && (
-            <p className="mt-1 text-sm text-red-400">{errors.years_in_business}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.years_in_business}</p>
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">
-            Number of Employees <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            Number of Employees <span className="text-red-500">*</span>
           </label>
           <select
             value={formData.employees || ""}
@@ -300,7 +300,7 @@ export default function ServicesStep() {
             ))}
           </select>
           {errors.employees && (
-            <p className="mt-1 text-sm text-red-400">{errors.employees}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.employees}</p>
           )}
         </div>
       </div>
@@ -309,7 +309,7 @@ export default function ServicesStep() {
       <div className="flex items-center justify-between mt-10">
         <button
           onClick={goBack}
-          className="px-6 py-3 rounded-xl border border-gray-700 text-gray-300 hover:text-white hover:border-gray-500 transition-all"
+          className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all"
         >
           Back
         </button>

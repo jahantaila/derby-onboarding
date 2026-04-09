@@ -14,7 +14,7 @@
       "title": "Update color scheme to Derby Digital brand",
       "description": "Update all colors to match Derby Digital brand. Primary gradient: #2093FF to #0026FF. Backgrounds: offer both a dark mode (deep navy #0A1628 not pure black) and a light mode (soft gray-blue gradient like #F0F4F8 to #E8EEF4, similar to reference image right panel). Cards: white with subtle shadow on light mode, #1A2744 on dark mode. Text: #1A1A2E on light, white on dark. Accent/CTA buttons: blue gradient #2093FF → #0026FF with white text. Step tracker icons: blue #2093FF circles. Default to light mode since it will embed on derbydigital.us which is light. Remove any purple or overly dark black backgrounds.",
       "acceptCriteria": "Colors match Derby Digital brand. Light mode is default. No purple anywhere. Gradient buttons work. Contrast is readable. Build passes.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "UI03",

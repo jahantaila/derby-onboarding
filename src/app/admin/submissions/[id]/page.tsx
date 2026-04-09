@@ -50,9 +50,9 @@ interface DocumentWithUrl {
 }
 
 const STATUS_OPTIONS = [
-  { value: "new", label: "New", bg: "bg-blue-500/15", text: "text-blue-400" },
-  { value: "in_progress", label: "In Progress", bg: "bg-yellow-500/15", text: "text-yellow-400" },
-  { value: "active", label: "Active", bg: "bg-green-500/15", text: "text-green-400" },
+  { value: "new", label: "New", bg: "bg-blue-100", text: "text-blue-700" },
+  { value: "in_progress", label: "In Progress", bg: "bg-yellow-100", text: "text-yellow-700" },
+  { value: "active", label: "Active", bg: "bg-green-100", text: "text-green-700" },
 ];
 
 const DOC_TYPE_LABELS: Record<string, string> = {
@@ -175,9 +175,9 @@ export default function SubmissionDetailPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-48 bg-white/5 rounded animate-pulse" />
-        <div className="h-64 bg-white/5 rounded-xl animate-pulse" />
-        <div className="h-48 bg-white/5 rounded-xl animate-pulse" />
+        <div className="h-8 w-48 bg-gray-100 rounded animate-pulse" />
+        <div className="h-64 bg-gray-100 rounded-xl animate-pulse" />
+        <div className="h-48 bg-gray-100 rounded-xl animate-pulse" />
       </div>
     );
   }
@@ -207,15 +207,15 @@ export default function SubmissionDetailPage() {
       <div className="flex items-center gap-3 mb-6">
         <Link
           href="/admin/submissions"
-          className="text-gray-400 hover:text-white transition-colors"
+          className="text-gray-400 hover:text-gray-700 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">{submission.business_name || "Untitled"}</h1>
-          <p className="text-gray-400 text-sm">
+          <h1 className="text-2xl font-bold text-gray-900">{submission.business_name || "Untitled"}</h1>
+          <p className="text-gray-500 text-sm">
             Submitted {formatDate(submission.submitted_at || submission.created_at)}
           </p>
         </div>
@@ -246,14 +246,14 @@ export default function SubmissionDetailPage() {
                   {allServices.map((svc) => (
                     <span
                       key={svc}
-                      className="px-3 py-1.5 bg-derby-blue/10 border border-derby-blue/20 rounded-full text-sm text-derby-blue"
+                      className="px-3 py-1.5 bg-blue-50 border border-derby-blue/20 rounded-full text-sm text-derby-blue"
                     >
                       {svc}
                     </span>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500">No services listed</p>
+                <p className="text-gray-400">No services listed</p>
               )}
               {formData.other_service && (
                 <Field label="Other Service" value={formData.other_service} />
@@ -272,7 +272,7 @@ export default function SubmissionDetailPage() {
           {/* Documents */}
           <Section title="Documents">
             {documents.length === 0 ? (
-              <p className="text-gray-500">No documents uploaded</p>
+              <p className="text-gray-400">No documents uploaded</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {documents.map((doc) => (
@@ -310,7 +310,7 @@ export default function SubmissionDetailPage() {
               value={status}
               onChange={(e) => handleStatusChange(e.target.value)}
               disabled={statusSaving}
-              className="w-full bg-derby-dark border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 disabled:opacity-50"
+              className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 disabled:opacity-50"
             >
               {STATUS_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -319,7 +319,7 @@ export default function SubmissionDetailPage() {
               ))}
             </select>
             {statusSaving && (
-              <p className="text-xs text-gray-500 mt-1">Saving...</p>
+              <p className="text-xs text-gray-400 mt-1">Saving...</p>
             )}
           </Section>
 
@@ -330,7 +330,7 @@ export default function SubmissionDetailPage() {
               onChange={(e) => setInternalNotes(e.target.value)}
               placeholder="Add internal notes about this submission..."
               rows={6}
-              className="w-full bg-derby-dark border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 resize-y"
+              className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 resize-y"
             />
             <div className="flex items-center gap-3 mt-2">
               <button
@@ -341,7 +341,7 @@ export default function SubmissionDetailPage() {
                 {notesSaving ? "Saving..." : "Save Notes"}
               </button>
               {notesSaved && (
-                <span className="text-green-400 text-sm">Saved!</span>
+                <span className="text-green-600 text-sm">Saved!</span>
               )}
             </div>
           </Section>
@@ -350,18 +350,18 @@ export default function SubmissionDetailPage() {
           <Section title="Details">
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Submitted</span>
-                <span className="text-gray-200">
+                <span className="text-gray-400">Submitted</span>
+                <span className="text-gray-700">
                   {formatDate(submission.submitted_at || submission.created_at)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Documents</span>
-                <span className="text-gray-200">{documents.length} file(s)</span>
+                <span className="text-gray-400">Documents</span>
+                <span className="text-gray-700">{documents.length} file(s)</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Session ID</span>
-                <span className="text-gray-200 text-xs font-mono truncate ml-2">
+                <span className="text-gray-400">Session ID</span>
+                <span className="text-gray-500 text-xs font-mono truncate ml-2">
                   {submission.session_id}
                 </span>
               </div>
@@ -375,8 +375,8 @@ export default function SubmissionDetailPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-derby-card rounded-xl border border-white/10 p-5">
-      <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+      <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
         {title}
       </h3>
       {children}
@@ -395,8 +395,8 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <p className="text-xs text-gray-500 mb-0.5">{label}</p>
-      <p className="text-sm text-gray-200">{value || "—"}</p>
+      <p className="text-xs text-gray-400 mb-0.5">{label}</p>
+      <p className="text-sm text-gray-700">{value || "—"}</p>
     </div>
   );
 }
@@ -406,10 +406,10 @@ function DocumentCard({ doc }: { doc: DocumentWithUrl }) {
   const label = DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type;
 
   return (
-    <div className="bg-derby-dark rounded-lg border border-white/10 overflow-hidden">
+    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
       {/* Image preview */}
       {isImage && doc.signed_url && (
-        <div className="aspect-video bg-black/30 flex items-center justify-center overflow-hidden">
+        <div className="aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={doc.signed_url}
@@ -421,28 +421,28 @@ function DocumentCard({ doc }: { doc: DocumentWithUrl }) {
 
       {/* PDF icon for non-images */}
       {!isImage && (
-        <div className="aspect-video bg-black/30 flex items-center justify-center">
+        <div className="aspect-video bg-gray-100 flex items-center justify-center">
           <div className="text-center">
             <svg className="w-10 h-10 text-red-400 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
-            <span className="text-xs text-gray-500 uppercase">{doc.mime_type.split("/")[1]}</span>
+            <span className="text-xs text-gray-400 uppercase">{doc.mime_type.split("/")[1]}</span>
           </div>
         </div>
       )}
 
       {/* File info + download */}
       <div className="p-3">
-        <p className="text-xs text-gray-400 mb-1">{label}</p>
-        <p className="text-sm text-white truncate mb-1">{doc.file_name}</p>
+        <p className="text-xs text-gray-500 mb-1">{label}</p>
+        <p className="text-sm text-gray-900 truncate mb-1">{doc.file_name}</p>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">{formatFileSize(doc.file_size)}</span>
+          <span className="text-xs text-gray-400">{formatFileSize(doc.file_size)}</span>
           {doc.signed_url && (
             <a
               href={doc.signed_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-derby-blue hover:text-derby-blue/80 transition-colors font-medium"
+              className="text-xs text-derby-blue hover:text-derby-blue-deep transition-colors font-medium"
             >
               {isImage ? "View Full" : "Download"}
             </a>
