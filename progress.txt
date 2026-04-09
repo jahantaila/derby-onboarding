@@ -175,3 +175,15 @@
   - Cookie-based auth with httpOnly flag for security — middleware reads it server-side, logout clears via JS
   - Placeholder pages for dashboard and submissions will be built out in S13 and S15
 ---
+
+## 2026-04-08 - S13
+- What was implemented: Admin submissions table at /admin/submissions with full-featured data table. Desktop view shows 7-column table (Business, Owner, Phone, Email, Services, Status, Date). Mobile view renders as stacked cards. Color-coded status badges (new=blue, in_progress=yellow, active=green). Click any row to expand inline detail panel showing business info and services. Search input filters by business_name or contact_name via API. Status dropdown filter. Pagination with Previous/Next buttons. Loading skeleton animation. Empty state messaging.
+- Files changed:
+  - src/app/admin/submissions/page.tsx (rewritten - full submissions table with search, filter, expand, pagination)
+- **Learnings for future iterations:**
+  - Submission table columns use DB column names (contact_name, business_phone, business_email) not wizard formData names
+  - API already supports pagination, status filter, and search via query params — just wire up the frontend
+  - Mobile responsive pattern for tables: hide table on md:hidden, show card layout on md:block inverse
+  - Service categories display: capitalize first letter, replace underscores, truncate to 2 + count for table cells
+  - Detail panel uses expandedId state to track which row is expanded — click again to collapse
+---

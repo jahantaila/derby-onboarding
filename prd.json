@@ -91,7 +91,7 @@
       "title": "Build Admin Dashboard - Submissions Table",
       "description": "Table at /admin/submissions: Business Name, Owner, Phone, Email, Services, Status badge (new=blue, in_progress=yellow, active=green), Date. Click expands detail panel. Search by name. Filter by status. Sort newest first.",
       "acceptCriteria": "Table renders. Badges correct. Search/filter work. Responsive.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S14",
