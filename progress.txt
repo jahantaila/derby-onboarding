@@ -26,6 +26,8 @@
 - POST /api/submit expects { session_token } — creates submissions row and marks session complete
 - SUBMISSION_FIELD_MAP in types.ts maps formData field names to actual DB column names on submissions table
 - Confetti animation: CSS class `animate-confetti-fall` with keyframe in globals.css — apply to absolutely positioned elements
+- Admin API auth: Bearer token or `admin_token` cookie matching ADMIN_PASSWORD env var (default 'derby2026')
+- GET /api/admin/submissions supports pagination (page, page_size), status filter, and search (ilike on business_name/contact_name)
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -140,4 +142,15 @@
   - Confirmation step doesn't need wizard context since it's purely presentational
   - String descriptions in JS arrays (not JSX) can use regular apostrophes — `&apos;` is only needed directly in JSX text
   - The ConfirmationStep mirrors WelcomeStep's visual pattern (background glow, centered layout, gradient accents) for bookend consistency
+---
+
+## 2026-04-08 - S11
+- What was implemented: GET /api/admin/submissions route with pagination (page, page_size params), status filtering (new/in_progress/active), search by business_name or contact_name (ilike), and auth via Bearer token or admin_token cookie. All other 5 API routes (POST sessions, GET/PATCH sessions/[token], POST upload, POST submit, GET documents) were already built in prior stories S04-S09.
+- Files changed:
+  - src/app/api/admin/submissions/route.ts (new - paginated admin submissions endpoint)
+- **Learnings for future iterations:**
+  - All wizard API routes were already implemented incrementally as part of their respective step stories — S11 only needed the admin endpoint
+  - Admin auth uses simple password comparison (ADMIN_PASSWORD env var, default 'derby2026') — checked via Bearer header or admin_token cookie
+  - Supabase .select("*", { count: "exact" }) returns total count alongside data for pagination
+  - .or() filter syntax for ilike: `field.ilike.%search%,field2.ilike.%search%`
 ---

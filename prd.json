@@ -77,7 +77,7 @@
       "title": "Build all API routes",
       "description": "Routes: POST /api/sessions (create, return token), GET /api/sessions/[token] (get data), PATCH /api/sessions/[token] (update form_data + step), POST /api/upload (file to Storage + documents table), POST /api/submit (finalize, create submissions row), GET /api/admin/submissions (paginated, auth required). Use service role key server-side.",
       "acceptCriteria": "All routes work. Full CRUD flow functional.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S12",
