@@ -1,118 +1,76 @@
 {
   "branchName": "main",
-  "description": "Derby Digital Client Onboarding Portal with Admin Dashboard. Bold, direct-response styled multi-step wizard for new home service contractor clients. Includes admin dashboard for tracking submissions and managing pipeline.",
+  "description": "UI overhaul for Derby Digital Onboarding Portal. Redesign to match reference UI: clean step tracker sidebar, Derby Digital brand colors, bolder typography, light/dark mode toggle, and iframe-embeddable for WordPress. Reference: vertical step tracker with icons on left, form content on right, gradient blue CTAs, clean white cards on light mode with dark blue option.",
   "userStories": [
     {
-      "id": "S01",
-      "title": "Initialize Next.js 14 project with Tailwind CSS and Supabase",
-      "description": "Create a fresh Next.js 14 project with TypeScript, Tailwind CSS, and Supabase client. Set up src/app directory, global styles with Derby Digital brand colors (primary: #2093FF to #0026FF blue gradient, dark backgrounds #0A0A0F, cards #1A1A2E). Install @supabase/supabase-js, @supabase/ssr. Create lib/supabase.ts using env vars. Root layout with Inter font and dark theme.",
-      "acceptCriteria": "npm run build succeeds. Supabase client initializes. Tailwind configured with brand colors.",
-      "passes": true
+      "id": "UI01",
+      "title": "Redesign wizard layout with vertical step tracker sidebar",
+      "description": "Replace the current horizontal progress bar with a vertical step tracker on the left side (like the reference image). Each step shows: step number label (STEP 1, STEP 2, etc), an icon in a blue circle, and the step title. Active step is highlighted with filled blue circle. Completed steps show a checkmark. Upcoming steps are dimmed. The step tracker should be in a card/panel on the left (about 30% width on desktop). The form content fills the right side (70%). On mobile, the step tracker collapses to a horizontal mini bar at the top. Bottom of the left panel shows a blue gradient CTA button: 'Next: [Step Name] →'. At the top right corner show 'Call us for help' with phone number (502) 702-6268.",
+      "acceptCriteria": "Vertical step tracker renders on left with icons. Active/completed/upcoming states work. Mobile collapses gracefully. Next button shows upcoming step name. Build passes.",
+      "passes": false
     },
     {
-      "id": "S02",
-      "title": "Create Supabase database schema",
-      "description": "Create and run SQL migrations against DATABASE_URL. Tables: sessions (id uuid, token text unique, current_step int, status text, form_data jsonb, created_at, updated_at), documents (id uuid, session_id uuid FK, doc_type, file_name, storage_path, file_size, mime_type, created_at), submissions (id uuid, session_id uuid FK unique, business_name, owner_name, phone, email, address, city, state, zip, service_categories text[], service_area, monthly_budget, website_url, google_account_email, notes jsonb, pipeline_status text default 'new', submitted_at, created_at). Enable RLS. Create storage bucket 'documents'.",
-      "acceptCriteria": "All tables exist in Supabase. RLS enabled. Storage bucket exists.",
-      "passes": true
+      "id": "UI02",
+      "title": "Update color scheme to Derby Digital brand",
+      "description": "Update all colors to match Derby Digital brand. Primary gradient: #2093FF to #0026FF. Backgrounds: offer both a dark mode (deep navy #0A1628 not pure black) and a light mode (soft gray-blue gradient like #F0F4F8 to #E8EEF4, similar to reference image right panel). Cards: white with subtle shadow on light mode, #1A2744 on dark mode. Text: #1A1A2E on light, white on dark. Accent/CTA buttons: blue gradient #2093FF → #0026FF with white text. Step tracker icons: blue #2093FF circles. Default to light mode since it will embed on derbydigital.us which is light. Remove any purple or overly dark black backgrounds.",
+      "acceptCriteria": "Colors match Derby Digital brand. Light mode is default. No purple anywhere. Gradient buttons work. Contrast is readable. Build passes.",
+      "passes": false
     },
     {
-      "id": "S03",
-      "title": "Build wizard layout and step provider",
-      "description": "Create WizardProvider context managing current step (1-7), form data, navigation. Layout: progress bar with completion %, step titles, smooth fade/slide transitions. Dark #0A0A0F background, blue gradient accents #2093FF to #0026FF. Inter font. Derby Digital logo top left. Step number indicator. Must feel premium, not like a boring form.",
-      "acceptCriteria": "Wizard renders with progress bar. Navigate forward/backward. Animations work. Mobile responsive.",
-      "passes": true
+      "id": "UI03",
+      "title": "Bold typography and spacing overhaul",
+      "description": "Import and use Anton font for main headings and step titles. Use Inter or DM Sans for body text and form labels. Increase heading sizes: welcome headline should be 48px+ on desktop. Step titles in the tracker should be 18px bold. Form labels 14px semibold. Increase spacing between form fields (gap-6 minimum). Add more padding inside cards (p-8 on desktop). Input fields should be larger (h-12 minimum) with rounded-lg borders. Everything should feel spacious and premium, not cramped.",
+      "acceptCriteria": "Anton font loads for headings. Inter/DM Sans for body. Sizes increased. Spacing feels premium. Inputs are large and comfortable. Build passes.",
+      "passes": false
     },
     {
-      "id": "S04",
-      "title": "Build Step 1: Welcome screen with session creation",
-      "description": "Bold welcome step. Headline: 'Welcome to Derby Digital', subtext: 'Let\u0027s get you dominating your local market. This takes about 5 minutes.' Blue gradient CTA: 'Let\u0027s Go'. On click: POST /api/sessions to create session, store token in state + localStorage for resume. Overview of what they need (license, insurance, ID). Animated background. Feel elite.",
-      "acceptCriteria": "Welcome renders. Click creates Supabase session. Token stored. Can resume on refresh.",
-      "passes": true
+      "id": "UI04",
+      "title": "Redesign welcome/landing step",
+      "description": "Make the welcome step bold and exciting. Large gradient text headline: 'Let's Get You More Leads'. Subtext: 'Fill out this quick form and our team will set up your Google ads within 48 hours. Takes about 5 minutes.' Derby Digital logo prominently displayed. Add a subtle animated mesh gradient or soft blue glow in the background (CSS only, no heavy libraries). Show a mini preview of the steps they'll complete (like the reference image step list). Big blue gradient button: 'Get Started →'. Add social proof line: 'Trusted by 50+ local businesses'. The entire welcome should feel like joining an exclusive program.",
+      "acceptCriteria": "Welcome looks bold and premium. Gradient text works. Step preview shows. Animation is subtle. Button is prominent. Build passes.",
+      "passes": false
     },
     {
-      "id": "S05",
-      "title": "Build Step 2: Business Information",
-      "description": "Form: Business Name, Owner Full Name, Phone (formatted), Email, Address, City, State dropdown, ZIP. All required with validation. Auto-save via PATCH /api/sessions/[token] on blur. Blue-bordered inputs on dark cards. Validation errors in red. Smooth focus animations.",
-      "acceptCriteria": "All fields validate. Data auto-saves to Supabase. Persists on refresh.",
-      "passes": true
+      "id": "UI05",
+      "title": "Redesign form inputs and service selection cards",
+      "description": "All form inputs: white background, 1px #D1D9E6 border, rounded-xl, h-12 height, text-base size, blue border on focus (#2093FF), subtle shadow on focus. Labels above inputs in semibold. Required asterisk in red. Validation errors in red-500 below the input with a small icon. Service selection cards: rounded-xl with border, hover state adds blue border + subtle blue background tint. Selected state: blue border + blue-50 background + checkmark icon in top right. Cards in a 2-col grid on mobile, 3-col on desktop. Each card has a relevant icon (wrench for plumber, bolt for electrician, etc) centered above the label.",
+      "acceptCriteria": "Inputs look polished and consistent. Service cards have proper hover/selected states with icons. Grid responsive. Build passes.",
+      "passes": false
     },
     {
-      "id": "S06",
-      "title": "Build Step 3: Services and Trade",
-      "description": "Selectable cards for: Electrician, Plumber, HVAC, Roofer, Painter, Remodeler, Handyman, General Contractor, Landscaper, Pest Control, Garage Door, Locksmith, Other (text input). Each card has icon. Also: Service Area text, Years in Business number, Employees dropdown. Auto-save.",
-      "acceptCriteria": "Cards render and are selectable. Multiple selection works. Saves to session. Mobile 2-col grid.",
-      "passes": true
+      "id": "UI06",
+      "title": "Redesign document upload zones and ad preference cards",
+      "description": "Document upload zones: dashed border (#D1D9E6), rounded-xl, large drop area with cloud upload icon centered, text: 'Drag & drop or click to upload'. On hover: border goes blue, background gets subtle blue tint. After upload: show file name, size, green checkmark, and a remove button. Ad budget selection: large radio cards (not small radios). Each card shows the budget range in bold with a brief note underneath. Selected card gets blue border + blue-50 background. Platform checkboxes: styled as pill/tag toggles that highlight blue when selected.",
+      "acceptCriteria": "Upload zones look clean with proper states. Budget cards are large and clear. Platform pills toggle properly. Build passes.",
+      "passes": false
     },
     {
-      "id": "S07",
-      "title": "Build Step 4: Document Uploads",
-      "description": "Upload slots: Business License, Certificate of Insurance, Government ID, Utility Bill (optional). Drag-drop zones with click fallback. Upload to Supabase Storage bucket 'documents' via POST /api/upload. Save metadata to documents table. Accept PDF/JPG/PNG, max 10MB. Show progress and file name after upload.",
-      "acceptCriteria": "Upload via drag-drop and click. Files in Supabase Storage. Metadata saved. Validation works.",
-      "passes": true
+      "id": "UI07",
+      "title": "Redesign review, confirmation, and admin pages",
+      "description": "Review step: organized in card sections with headers (Business Info, Services, Documents, Ad Preferences). Each section has a subtle blue-gray header bar and an 'Edit' link on the right. Data in clean key-value pairs. Submit button is extra large blue gradient with 'Submit Your Info →'. Confirmation page: large checkmark animation (CSS), gradient headline 'You're All Set!', numbered next steps in a vertical timeline similar to the step tracker. Admin dashboard: match the same clean light theme. Cards with subtle shadows, blue accent stats, clean table with alternating row shading.",
+      "acceptCriteria": "Review sections are organized with headers and edit links. Confirmation has checkmark animation. Admin matches the light theme. Build passes.",
+      "passes": false
     },
     {
-      "id": "S08",
-      "title": "Build Step 5: Ad Preferences and Online Presence",
-      "description": "Fields: Website URL (optional), Google Account Email, Monthly Budget radio cards ($500-1000, $1000-2000, $2000-3000, $3000+), Current platforms checkboxes (Google Ads, Angi, HomeAdvisor, Thumbtack, Yelp, Facebook, None), Social links (Facebook, Instagram optional). Auto-save.",
-      "acceptCriteria": "All fields render. Budget cards highlight on select. Data saves.",
-      "passes": true
+      "id": "UI08",
+      "title": "Make embeddable via iframe for WordPress",
+      "description": "Create an /embed route that renders the full onboarding wizard without the outer chrome (no header, no footer, just the wizard). Add proper iframe communication: postMessage to parent on step change and on completion. Add a public/embed.js script that WordPress can include: it creates an iframe pointing to the /embed route, handles auto-height resize via postMessage, and provides a simple API: DerbyOnboarding.init({container: '#onboarding', baseUrl: 'https://onboarding.derbydigital.us'}). The embed should work at any width (min 320px). Add X-Frame-Options and CSP headers that allow embedding from derbydigital.us. Document the embed code in README.",
+      "acceptCriteria": "Embed route renders wizard without chrome. embed.js creates functional iframe. Auto-height works. Can embed on any WordPress page. README has embed instructions. Build passes.",
+      "passes": false
     },
     {
-      "id": "S09",
-      "title": "Build Step 6: Review and Submit",
-      "description": "Display all info in sections: Business, Services, Documents (file names), Ad Prefs. Each section has Edit button jumping to that step. Large blue Submit button. On submit: mark session complete, create submissions row, show confetti animation.",
-      "acceptCriteria": "All data displays. Edit buttons work. Submit creates record. Confetti plays.",
-      "passes": true
+      "id": "UI09",
+      "title": "Animations and micro-interactions polish",
+      "description": "Add smooth transitions between steps (slide left/right based on direction, 300ms). Step tracker: active step pulses subtly. Completed step icon animates in (scale from 0 to 1). Form inputs: subtle fade-in stagger when step loads (each field appears 50ms after the previous). Buttons: subtle scale on hover (1.02), press effect on click (0.98). Cards: lift shadow on hover. Progress percentage: smooth count-up animation. Confetti on submit (lightweight CSS confetti, no heavy library). Loading states: skeleton shimmer effect on async operations. All animations should be CSS/Tailwind, no heavy animation libraries.",
+      "acceptCriteria": "Step transitions are smooth. Micro-interactions feel polished. Confetti plays on submit. No jank or layout shift. Performance stays fast. Build passes.",
+      "passes": false
     },
     {
-      "id": "S10",
-      "title": "Build Step 7: Confirmation",
-      "description": "Thank you page: 'You\u0027re In! Welcome to Derby Digital.' Next steps: 1) We review (24hrs), 2) Set up Google ads, 3) Leads start coming. Contact: (502) 702-6268, jahan@derbydigital.us. 'Back to Derby Digital' link. Celebratory and premium feel.",
-      "acceptCriteria": "Confirmation renders after submit. Next steps shown. Contact info correct.",
-      "passes": true
-    },
-    {
-      "id": "S11",
-      "title": "Build all API routes",
-      "description": "Routes: POST /api/sessions (create, return token), GET /api/sessions/[token] (get data), PATCH /api/sessions/[token] (update form_data + step), POST /api/upload (file to Storage + documents table), POST /api/submit (finalize, create submissions row), GET /api/admin/submissions (paginated, auth required). Use service role key server-side.",
-      "acceptCriteria": "All routes work. Full CRUD flow functional.",
-      "passes": true
-    },
-    {
-      "id": "S12",
-      "title": "Build Admin Dashboard - Login and Layout",
-      "description": "Route /admin with password login (env ADMIN_PASSWORD default 'derby2026'). Dashboard layout: sidebar (Dashboard, Submissions), header with branding, main content. Dark theme. Auth cookie. Protect /admin/* with middleware.",
-      "acceptCriteria": "Login works. Auth persists. Sidebar nav works. Protected routes redirect.",
-      "passes": true
-    },
-    {
-      "id": "S13",
-      "title": "Build Admin Dashboard - Submissions Table",
-      "description": "Table at /admin/submissions: Business Name, Owner, Phone, Email, Services, Status badge (new=blue, in_progress=yellow, active=green), Date. Click expands detail panel. Search by name. Filter by status. Sort newest first.",
-      "acceptCriteria": "Table renders. Badges correct. Search/filter work. Responsive.",
-      "passes": true
-    },
-    {
-      "id": "S14",
-      "title": "Build Admin Dashboard - Submission Detail and Documents",
-      "description": "Detail view: all business info, services, documents with download links (signed URLs from Storage), ad prefs, date, status dropdown to change pipeline_status. Internal notes (save to notes jsonb). Image previews inline, PDF download buttons.",
-      "acceptCriteria": "Details render. Documents downloadable. Status changeable. Notes saveable.",
-      "passes": true
-    },
-    {
-      "id": "S15",
-      "title": "Build Admin Dashboard - Overview Stats",
-      "description": "Dashboard home /admin: cards for Total Submissions, New count, In Progress count, Active count, This Week, This Month. Simple bar chart (CSS or lightweight lib) for submissions per week last 8 weeks. Blue gradient cards with count-up animation.",
-      "acceptCriteria": "Stats correct from DB. Chart renders. Cards animate.",
-      "passes": true
-    },
-    {
-      "id": "S16",
-      "title": "Polish, responsive, and final QA",
-      "description": "Mobile responsive (375px, 768px, 1024px). Loading skeletons. Error handling with friendly messages. Test full flow end to end. Meta tags: title 'Derby Digital - Client Onboarding'. Build passes zero errors.",
-      "acceptCriteria": "Full flow works. Mobile responsive. No errors. Build succeeds.",
-      "passes": true
+      "id": "UI10",
+      "title": "Final responsive polish and build verification",
+      "description": "Test and fix all pages at 375px (mobile), 768px (tablet), 1024px (laptop), 1440px (desktop). Step tracker: vertical on desktop, horizontal mini-bar on mobile. Forms: single column on mobile, proper spacing. Service cards: 2-col mobile, 3-col desktop. Upload zones: full width on mobile. Admin table: horizontal scroll on mobile. Ensure all text is readable, no overflow, no cut-off content. Verify the full flow works: welcome → all steps → upload → review → submit → admin shows submission. Run npm run build and ensure zero errors and zero warnings.",
+      "acceptCriteria": "Fully responsive at all breakpoints. Full flow works end to end. Build passes with zero errors. No visual bugs.",
+      "passes": false
     }
   ]
 }
