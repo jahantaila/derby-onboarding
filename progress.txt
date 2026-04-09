@@ -49,6 +49,10 @@
 - GET /api/admin/stats returns { total, new, in_progress, active, this_week, this_month, weekly_chart[] } — auth same as other admin endpoints
 - WizardContext exposes `isRestoring` boolean — use it to show loading skeletons while session restore is in progress
 - Admin pages pattern: always pair API fetches with both `loading` (for skeleton) and `error` (for friendly message) state variables
+- Input border color: use border-[#D1D9E6] (not gray-300) for default state, rounded-xl (not rounded-lg) for all form inputs
+- Error messages: use errorMessage() helper with inline SVG exclamation icon + flex layout for consistent error display
+- Selectable card hover: hover:border-derby-blue hover:bg-blue-50/50 for unselected cards; border-[#D1D9E6] as default border
+- Service card icons: SVG path data strings (stroke-based), rendered in circular container (w-10 h-10 rounded-full)
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -331,4 +335,33 @@
   - Mesh gradient animations use multiple overlapping blurred divs with staggered animation durations (6s, 8s, 10s) for organic feel
   - CSS-only animations for background effects: use large blur values (100-150px), low opacity (4-6%), and slow timing for subtlety
   - hover:scale-[1.02] with transition-all duration-200 gives a polished button micro-interaction without animation libraries
+---
+
+## 2026-04-09 - UI05
+- What was implemented: Redesigned form inputs and service selection cards. Updated all input borders from gray-300 to #D1D9E6 and rounded-lg to rounded-xl across BusinessInfoStep, ServicesStep, AdPreferencesStep, and DocumentsStep. Added error icon (exclamation circle SVG) to all validation error messages via reusable errorMessage() helper. Replaced emoji icons in service category cards with proper SVG path icons (bolt for electrician, wrench for plumber, sun for HVAC, house for roofer, etc). Added blue hover state (hover:border-derby-blue hover:bg-blue-50/50) to service cards, budget cards, platform cards, and upload zones. Updated card border colors from gray-200 to #D1D9E6 for consistency.
+- Files changed:
+  - src/components/wizard/steps/BusinessInfoStep.tsx (updated - rounded-xl inputs, #D1D9E6 borders, errorMessage helper)
+  - src/components/wizard/steps/ServicesStep.tsx (updated - SVG icons for service cards, hover states, errorMessage helper)
+  - src/components/wizard/steps/AdPreferencesStep.tsx (updated - rounded-xl inputs, #D1D9E6 borders, hover states on cards, errorMessage helper)
+  - src/components/wizard/steps/DocumentsStep.tsx (updated - #D1D9E6 borders, hover states on upload zones)
+  - prd.json (updated - UI05 passes: true)
+- **Learnings for future iterations:**
+  - Service card SVG icons use stroke-based paths with strokeWidth={1.5} — render inside a circular bg container for visual consistency
+  - Error message pattern: inline SVG exclamation circle (w-4 h-4) + flex items-center gap-1.5 for icon alignment
+  - Consistent border color #D1D9E6 replaces Tailwind gray-300 for a softer, more refined look
+  - Hover states on selectable cards: hover:border-derby-blue hover:bg-blue-50/50 provides subtle blue tint without being too aggressive
+  - Each form step has its own errorMessage() helper since they're self-contained components — no shared utility needed
+---
+
+## 2026-04-09 - UI06
+- What was implemented: Redesigned document upload zones with centered cloud upload SVG icon, larger drop areas with centered layout. Replaced emoji doc icons with SVG path icons (document, shield, ID card, envelope). Added Remove button alongside existing Replace button for uploaded files. Uploading state now shows centered layout with pulsing icon. Redesigned ad budget cards as large radio-style cards (single column on mobile, 2-col on desktop) with radio dot indicator. Converted platform checkboxes from grid cards to pill/tag toggles (rounded-full) that highlight blue with checkmark when selected.
+- Files changed:
+  - src/components/wizard/steps/DocumentsStep.tsx (updated - cloud upload icon, centered layout, remove button, SVG doc icons)
+  - src/components/wizard/steps/AdPreferencesStep.tsx (updated - large radio budget cards, pill/tag platform toggles)
+  - prd.json (updated - UI06 passes: true)
+- **Learnings for future iterations:**
+  - Cloud upload icon SVG path: "M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+  - Pill/tag toggle pattern: rounded-full + px-4 py-2.5 + inline-flex + flex-wrap container for flowing layout
+  - Radio-style cards: use a bordered circle with inner filled dot rather than corner checkmark for single-select (vs multi-select)
+  - Upload zone empty state uses centered column layout (flex-col items-center) with icon above text for visual prominence
 ---

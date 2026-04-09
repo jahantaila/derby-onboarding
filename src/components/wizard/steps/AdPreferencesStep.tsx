@@ -223,7 +223,7 @@ export default function AdPreferencesStep() {
         <label className="block text-sm font-semibold text-gray-700 mb-3">
           Monthly Ad Budget <span className="text-red-500">*</span>
         </label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {BUDGET_OPTIONS.map((opt) => {
             const isSelected = formData.monthly_budget === opt.value;
             return (
@@ -231,25 +231,27 @@ export default function AdPreferencesStep() {
                 key={opt.value}
                 type="button"
                 onClick={() => selectBudget(opt.value)}
-                className={`relative flex flex-col items-center justify-center gap-1 p-4 rounded-xl border-2 transition-all duration-200 ${
+                className={`relative flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 text-left ${
                   isSelected
                     ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
                     : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/50"
                 }`}
               >
-                <span className={`text-lg font-bold ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
-                  {opt.label}
-                </span>
-                <span className={`text-xs ${isSelected ? "text-derby-blue" : "text-gray-500"}`}>
-                  {opt.sublabel}
-                </span>
-                {isSelected && (
-                  <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-gradient-to-r from-derby-blue to-derby-blue-deep flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                )}
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                  isSelected ? "border-derby-blue" : "border-gray-300"
+                }`}>
+                  {isSelected && (
+                    <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-derby-blue to-derby-blue-deep" />
+                  )}
+                </div>
+                <div>
+                  <span className={`text-lg font-bold block ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
+                    {opt.label}
+                  </span>
+                  <span className={`text-xs ${isSelected ? "text-derby-blue" : "text-gray-500"}`}>
+                    {opt.sublabel}
+                  </span>
+                </div>
               </button>
             );
           })}
@@ -257,12 +259,12 @@ export default function AdPreferencesStep() {
         {errorMessage(errors.monthly_budget)}
       </div>
 
-      {/* Current Platforms */}
+      {/* Current Platforms — Pill/Tag Toggles */}
       <div className="mb-6">
         <label className="block text-sm font-semibold text-gray-700 mb-3">
           Current Advertising Platforms
         </label>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="flex flex-wrap gap-2.5">
           {PLATFORM_OPTIONS.map((plat) => {
             const isSelected = selectedPlatforms.includes(plat.id);
             return (
@@ -270,23 +272,18 @@ export default function AdPreferencesStep() {
                 key={plat.id}
                 type="button"
                 onClick={() => togglePlatform(plat.id)}
-                className={`relative flex items-center gap-2 p-3 rounded-xl border-2 transition-all duration-200 ${
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full border-2 transition-all duration-200 text-sm font-medium ${
                   isSelected
-                    ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
-                    : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/50"
+                    ? "border-derby-blue bg-blue-50 text-derby-blue shadow-sm shadow-derby-blue/10"
+                    : "border-[#D1D9E6] bg-white text-gray-700 hover:border-derby-blue hover:bg-blue-50/50"
                 }`}
               >
-                <span className="text-lg">{plat.icon}</span>
-                <span className={`text-sm font-medium ${isSelected ? "text-gray-900" : "text-gray-700"}`}>
-                  {plat.label}
-                </span>
                 {isSelected && (
-                  <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-gradient-to-r from-derby-blue to-derby-blue-deep flex items-center justify-center">
-                    <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
                 )}
+                {plat.label}
               </button>
             );
           })}

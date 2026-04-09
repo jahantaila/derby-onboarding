@@ -12,10 +12,10 @@ interface DocSlot {
 }
 
 const DOC_SLOTS: DocSlot[] = [
-  { id: "business_license", label: "Business License", docType: "business_license", required: true, icon: "📄" },
-  { id: "insurance", label: "Certificate of Insurance", docType: "insurance", required: true, icon: "🛡️" },
-  { id: "government_id", label: "Government ID", docType: "government_id", required: true, icon: "🪪" },
-  { id: "utility_bill", label: "Utility Bill", docType: "utility_bill", required: false, icon: "📬" },
+  { id: "business_license", label: "Business License", docType: "business_license", required: true, icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+  { id: "insurance", label: "Certificate of Insurance", docType: "insurance", required: true, icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
+  { id: "government_id", label: "Government ID", docType: "government_id", required: true, icon: "M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" },
+  { id: "utility_bill", label: "Utility Bill", docType: "utility_bill", required: false, icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
 ];
 
 const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/png"];
@@ -243,25 +243,70 @@ export default function DocumentsStep() {
                   onChange={(e) => handleFileSelect(e, slot.docType)}
                 />
 
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${
-                      uploaded
-                        ? "bg-green-100"
-                        : "bg-gray-50"
-                    }`}
-                  >
-                    {uploaded ? (
+                {uploaded ? (
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
                       <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
-                    ) : (
-                      <span>{slot.icon}</span>
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-semibold text-gray-900">{slot.label}</h3>
+                      </div>
+                      <p className="text-sm text-gray-500 truncate">
+                        {uploaded.file_name} ({formatFileSize(uploaded.file_size)})
+                      </p>
+                    </div>
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setUploads((prev) => {
+                            const next = { ...prev };
+                            delete next[slot.docType];
+                            return next;
+                          });
+                        }}
+                        className="text-xs text-red-500 hover:text-red-700 transition-colors px-3 py-1.5 rounded-lg border border-red-200 hover:border-red-300"
+                      >
+                        Remove
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          fileInputRefs.current[slot.docType]?.click();
+                        }}
+                        className="text-xs text-derby-blue hover:text-derby-blue-deep transition-colors px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400"
+                      >
+                        Replace
+                      </button>
+                    </div>
+                  </div>
+                ) : isUploading ? (
+                  <div className="flex flex-col items-center justify-center py-4">
+                    <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3">
+                      <svg className="w-6 h-6 text-derby-blue animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d={slot.icon} />
+                      </svg>
+                    </div>
+                    <p className="text-sm font-semibold text-gray-900 mb-2">{slot.label}</p>
+                    <div className="w-48 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-derby-blue to-derby-blue-deep rounded-full transition-all duration-300"
+                        style={{ width: `${progressValue}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1.5">Uploading...</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6">
+                    <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-3">
+                      <svg className="w-7 h-7 text-derby-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                      </svg>
+                    </div>
+                    <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-sm font-semibold text-gray-900">{slot.label}</h3>
                       {slot.required ? (
                         <span className="text-red-500 text-xs">*</span>
@@ -269,40 +314,11 @@ export default function DocumentsStep() {
                         <span className="text-gray-500 text-xs">(optional)</span>
                       )}
                     </div>
-
-                    {uploaded ? (
-                      <p className="text-sm text-gray-500 truncate">
-                        {uploaded.file_name} ({formatFileSize(uploaded.file_size)})
-                      </p>
-                    ) : isUploading ? (
-                      <div className="mt-2">
-                        <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-derby-blue to-derby-blue-deep rounded-full transition-all duration-300"
-                            style={{ width: `${progressValue}%` }}
-                          />
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1">Uploading...</p>
-                      </div>
-                    ) : (
-                      <p className="text-sm text-gray-500">
-                        Drag &amp; drop or click to upload
-                      </p>
-                    )}
+                    <p className="text-sm text-gray-500">
+                      Drag &amp; drop or click to upload
+                    </p>
                   </div>
-
-                  {uploaded && !isUploading && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        fileInputRefs.current[slot.docType]?.click();
-                      }}
-                      className="text-xs text-derby-blue hover:text-derby-blue-deep transition-colors px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400"
-                    >
-                      Replace
-                    </button>
-                  )}
-                </div>
+                )}
               </div>
 
               {error && (

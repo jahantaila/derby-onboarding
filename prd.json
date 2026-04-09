@@ -42,7 +42,7 @@
       "title": "Redesign document upload zones and ad preference cards",
       "description": "Document upload zones: dashed border (#D1D9E6), rounded-xl, large drop area with cloud upload icon centered, text: 'Drag & drop or click to upload'. On hover: border goes blue, background gets subtle blue tint. After upload: show file name, size, green checkmark, and a remove button. Ad budget selection: large radio cards (not small radios). Each card shows the budget range in bold with a brief note underneath. Selected card gets blue border + blue-50 background. Platform checkboxes: styled as pill/tag toggles that highlight blue when selected.",
       "acceptCriteria": "Upload zones look clean with proper states. Budget cards are large and clear. Platform pills toggle properly. Build passes.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "UI07",
