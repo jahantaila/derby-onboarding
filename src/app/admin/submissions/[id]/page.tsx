@@ -204,22 +204,22 @@ export default function SubmissionDetailPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-start sm:items-center gap-3 mb-6">
         <Link
           href="/admin/submissions"
-          className="text-gray-400 hover:text-gray-700 transition-colors"
+          className="text-gray-400 hover:text-gray-700 transition-colors mt-1 sm:mt-0 flex-shrink-0"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">{submission.business_name || "Untitled"}</h1>
-          <p className="text-gray-500 text-sm">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{submission.business_name || "Untitled"}</h1>
+          <p className="text-gray-500 text-xs sm:text-sm">
             Submitted {formatDate(submission.submitted_at || submission.created_at)}
           </p>
         </div>
-        <span className={`inline-block px-3 py-1.5 rounded-full text-sm font-medium ${currentBadge.bg} ${currentBadge.text}`}>
+        <span className={`inline-block px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium flex-shrink-0 ${currentBadge.bg} ${currentBadge.text}`}>
           {currentBadge.label}
         </span>
       </div>
@@ -359,9 +359,9 @@ export default function SubmissionDetailPage() {
                 <span className="text-gray-400">Documents</span>
                 <span className="text-gray-700">{documents.length} file(s)</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Session ID</span>
-                <span className="text-gray-500 text-xs font-mono truncate ml-2">
+              <div className="flex justify-between gap-2">
+                <span className="text-gray-400 flex-shrink-0">Session ID</span>
+                <span className="text-gray-500 text-xs font-mono truncate">
                   {submission.session_id}
                 </span>
               </div>

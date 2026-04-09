@@ -72,21 +72,21 @@ export default function AdminLayout({
       </aside>
 
       {/* Mobile header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <Link href="/admin" className="flex items-center gap-2">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-3 py-2.5 flex items-center justify-between gap-2">
+        <Link href="/admin" className="flex items-center gap-1.5 flex-shrink-0">
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center font-bold text-xs text-white">
             D
           </div>
-          <span className="font-bold text-gray-900">Derby Digital</span>
+          <span className="font-bold text-sm text-gray-900 hidden xs:inline">Derby</span>
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
                   isActive
                     ? "bg-blue-50 text-derby-blue"
                     : "text-gray-500 hover:text-gray-900"
@@ -98,7 +98,7 @@ export default function AdminLayout({
           })}
           <button
             onClick={handleLogout}
-            className="px-2 py-1.5 text-gray-500 hover:text-red-600 text-xs"
+            className="px-2 py-1.5 text-gray-500 hover:text-red-600 text-xs whitespace-nowrap"
           >
             Sign Out
           </button>

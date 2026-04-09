@@ -2,7 +2,7 @@
 
 export default function ConfirmationStep() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[500px] text-center px-4">
+    <div className="relative flex flex-col items-center justify-center min-h-[500px] text-center px-4">
       {/* Animated background glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-derby-blue/8 rounded-full blur-[120px] animate-pulse" />
@@ -30,12 +30,12 @@ export default function ConfirmationStep() {
           </svg>
         </div>
 
-        <h1 className="text-5xl sm:text-6xl font-heading uppercase mb-4 tracking-tight leading-none">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading uppercase mb-4 tracking-tight leading-none">
           <span className="bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent">
             You&apos;re All Set!
           </span>
         </h1>
-        <p className="text-xl sm:text-2xl text-gray-600 mb-10">
+        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-10">
           Welcome to{" "}
           <span className="bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent font-semibold">
             Derby Digital

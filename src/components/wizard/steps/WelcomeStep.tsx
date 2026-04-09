@@ -64,7 +64,7 @@ export default function WelcomeStep() {
         </div>
 
         {/* Gradient headline */}
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-heading uppercase leading-none tracking-tight mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading uppercase leading-none tracking-tight mb-6">
           <span className="bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent">
             Let&apos;s Get You
           </span>

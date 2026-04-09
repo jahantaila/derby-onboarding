@@ -334,17 +334,17 @@ export default function ReviewStep() {
       )}
 
       {/* Navigation */}
-      <div className="flex items-center justify-between mt-10 mb-8">
+      <div className="flex items-center justify-between mt-10 mb-8 gap-3">
         <button
           onClick={goBack}
-          className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all"
+          className="px-4 sm:px-6 py-3 rounded-xl border border-gray-300 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-all flex-shrink-0"
         >
           Back
         </button>
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="px-10 py-4 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-bold text-lg hover:shadow-lg hover:shadow-derby-blue/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed btn-interactive"
+          className="px-6 sm:px-10 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-bold text-base sm:text-lg hover:shadow-lg hover:shadow-derby-blue/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed btn-interactive"
         >
           {submitting ? "Submitting..." : "Submit Your Info →"}
         </button>

@@ -244,9 +244,9 @@ export default function DocumentsStep() {
                 />
 
                 {uploaded ? (
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                      <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
@@ -258,7 +258,7 @@ export default function DocumentsStep() {
                         {uploaded.file_name} ({formatFileSize(uploaded.file_size)})
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 ml-auto">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -268,7 +268,7 @@ export default function DocumentsStep() {
                             return next;
                           });
                         }}
-                        className="text-xs text-red-500 hover:text-red-700 transition-colors px-3 py-1.5 rounded-lg border border-red-200 hover:border-red-300"
+                        className="text-xs text-red-500 hover:text-red-700 transition-colors px-2.5 sm:px-3 py-1.5 rounded-lg border border-red-200 hover:border-red-300"
                       >
                         Remove
                       </button>
@@ -277,7 +277,7 @@ export default function DocumentsStep() {
                           e.stopPropagation();
                           fileInputRefs.current[slot.docType]?.click();
                         }}
-                        className="text-xs text-derby-blue hover:text-derby-blue-deep transition-colors px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400"
+                        className="text-xs text-derby-blue hover:text-derby-blue-deep transition-colors px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400"
                       >
                         Replace
                       </button>

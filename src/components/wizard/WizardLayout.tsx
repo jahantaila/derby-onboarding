@@ -199,7 +199,7 @@ function MobileStepBar() {
             Step {currentStep - 1} of {TOTAL_STEPS - 2}
           </span>
         </div>
-        <span className="text-sm font-semibold text-derby-blue">
+        <span className="text-sm font-semibold text-derby-blue truncate max-w-[140px]">
           {STEPS[currentStep - 1].title}
         </span>
       </div>
