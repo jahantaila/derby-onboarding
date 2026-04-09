@@ -45,10 +45,10 @@ export default function WelcomeStep() {
         {/* Gradient headline */}
         <h1 className="text-5xl sm:text-6xl md:text-6xl lg:text-7xl font-heading uppercase leading-none tracking-tight mb-6">
           <span className="bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent">
-            Let&apos;s Set Up
+            Ready To Dominate
           </span>
           <br />
-          <span className="text-gray-900">Your Google Ads</span>
+          <span className="text-gray-900">Your Market?</span>
         </h1>
 
         {/* Subtext */}

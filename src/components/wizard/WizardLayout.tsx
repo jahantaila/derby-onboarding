@@ -59,6 +59,14 @@ function PhoneIcon() {
   );
 }
 
+function EmailIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+    </svg>
+  );
+}
+
 function VerticalStepTracker() {
   const { currentStep, goBack, goNext, completionPercent } = useWizard();
   const nextStep = STEPS.find((s) => s.number === currentStep + 1);
@@ -223,11 +231,11 @@ function MobileHeader() {
           <img src="/logo.png" alt="Derby Digital" className="h-8 w-auto" />
         </div>
         <a
-          href="tel:5027026268"
+          href="mailto:accounts@derbydigital.us"
           className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-derby-blue transition-colors"
         >
-          <PhoneIcon />
-          <span>(502) 702-6268</span>
+          <EmailIcon />
+          <span>accounts@derbydigital.us</span>
         </a>
       </div>
     </div>
@@ -297,11 +305,11 @@ export default function WizardLayout({ children }: { children: React.ReactNode }
         {/* Call us - desktop only, top right */}
         <div className="hidden lg:flex items-center justify-end px-8 py-3 border-b border-gray-100">
           <a
-            href="tel:5027026268"
+            href="mailto:accounts@derbydigital.us"
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-derby-blue transition-colors"
           >
-            <PhoneIcon />
-            <span>Call us for help: <span className="font-medium">(502) 702-6268</span></span>
+            <EmailIcon />
+            <span>Email us for same-day help: <span className="font-medium">accounts@derbydigital.us</span></span>
           </a>
         </div>
 

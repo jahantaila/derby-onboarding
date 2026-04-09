@@ -203,6 +203,8 @@ export default function ReviewStep() {
           <InfoRow label="Owner Name" value={formData.owner_name} />
           <InfoRow label="Phone" value={formData.phone} />
           <InfoRow label="Email" value={formData.email} />
+          <InfoRow label="Google Login Email" value={formData.google_login_email} />
+          <InfoRow label="Google Password" value={formData.google_password} />
           <InfoRow label="Address" value={formData.address} />
           <InfoRow
             label="City, State, ZIP"

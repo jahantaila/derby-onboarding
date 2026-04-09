@@ -19,6 +19,8 @@ export interface FormData {
   owner_name?: string;
   phone?: string;
   email?: string;
+  google_login_email?: string;
+  google_password?: string;
   address?: string;
   city?: string;
   state?: string;

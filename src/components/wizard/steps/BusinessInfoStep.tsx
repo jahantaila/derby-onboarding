@@ -45,6 +45,8 @@ interface FieldErrors {
   owner_name?: string;
   phone?: string;
   email?: string;
+  google_login_email?: string;
+  google_password?: string;
   address?: string;
   city?: string;
   state?: string;
@@ -118,7 +120,7 @@ export default function BusinessInfoStep() {
   function validateAll(): boolean {
     const newErrors: FieldErrors = {};
     const requiredFields: (keyof FieldErrors)[] = [
-      "business_name", "owner_name", "phone", "email", "address", "city", "state", "zip",
+      "business_name", "owner_name", "phone", "email", "google_login_email", "google_password", "address", "city", "state", "zip",
     ];
 
     for (const field of requiredFields) {
@@ -255,6 +257,40 @@ export default function BusinessInfoStep() {
             />
             {errorMessage(errors.email)}
             <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1"><svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>This must be the Google/Gmail account we'll use to set up your ads</p>
+          </div>
+        </div>
+
+        {/* Google Login Credentials */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Google Login Email <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.google_login_email || ""}
+              onChange={(e) => handleChange("google_login_email", e.target.value)}
+              onBlur={() => handleBlur("google_login_email")}
+              placeholder="yourname@gmail.com"
+              className={inputClasses("google_login_email")}
+            />
+            {errorMessage(errors.google_login_email)}
+            <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1"><svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>This is the Google account we will log into to set up your ads</p>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Google Password <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.google_password || ""}
+              onChange={(e) => handleChange("google_password", e.target.value)}
+              onBlur={() => handleBlur("google_password")}
+              placeholder="Enter your Google password"
+              className={inputClasses("google_password")}
+            />
+            {errorMessage(errors.google_password)}
+            <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1"><svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>We need this to access your Google Ads and Business Profile. Stored securely.</p>
           </div>
         </div>
 
