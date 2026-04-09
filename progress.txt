@@ -28,6 +28,11 @@
 - Confetti animation: CSS class `animate-confetti-fall` with keyframe in globals.css — apply to absolutely positioned elements
 - Admin API auth: Bearer token or `admin_token` cookie matching ADMIN_PASSWORD env var (default 'derby2026')
 - GET /api/admin/submissions supports pagination (page, page_size), status filter, and search (ilike on business_name/contact_name)
+- Admin pages live in `src/app/admin/` — layout.tsx has sidebar, login/page.tsx is the auth page
+- Middleware at `src/middleware.ts` protects all `/admin/*` except `/admin/login` — checks `admin_token` cookie
+- Admin login: POST /api/admin/login validates password, sets httpOnly `admin_token` cookie
+- Admin layout skips sidebar for `/admin/login` pathname — check in layout component
+- Logout: clear `admin_token` cookie via JS (`document.cookie = "admin_token=; path=/; max-age=0"`)
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -153,4 +158,20 @@
   - Admin auth uses simple password comparison (ADMIN_PASSWORD env var, default 'derby2026') — checked via Bearer header or admin_token cookie
   - Supabase .select("*", { count: "exact" }) returns total count alongside data for pagination
   - .or() filter syntax for ilike: `field.ilike.%search%,field2.ilike.%search%`
+---
+
+## 2026-04-08 - S12
+- What was implemented: Admin dashboard login and layout. Password login page at /admin/login that POSTs to /api/admin/login, validates against ADMIN_PASSWORD env var, and sets httpOnly admin_token cookie. Next.js middleware at src/middleware.ts protects all /admin/* routes (except /admin/login) by checking cookie and redirecting to login. Dashboard layout with sidebar navigation (Dashboard, Submissions) on desktop, compact header nav on mobile. Logout clears cookie. Placeholder pages for dashboard home and submissions.
+- Files changed:
+  - src/middleware.ts (new - route protection for /admin/*)
+  - src/app/api/admin/login/route.ts (new - POST login endpoint)
+  - src/app/admin/login/page.tsx (new - login page with password form)
+  - src/app/admin/layout.tsx (new - dashboard layout with sidebar)
+  - src/app/admin/page.tsx (new - dashboard home placeholder)
+  - src/app/admin/submissions/page.tsx (new - submissions placeholder)
+- **Learnings for future iterations:**
+  - Next.js middleware.ts at src root intercepts requests before rendering — use `config.matcher` to scope it
+  - Admin layout checks `pathname === "/admin/login"` to skip sidebar wrapping on the login page
+  - Cookie-based auth with httpOnly flag for security — middleware reads it server-side, logout clears via JS
+  - Placeholder pages for dashboard and submissions will be built out in S13 and S15
 ---

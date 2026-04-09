@@ -84,7 +84,7 @@
       "title": "Build Admin Dashboard - Login and Layout",
       "description": "Route /admin with password login (env ADMIN_PASSWORD default 'derby2026'). Dashboard layout: sidebar (Dashboard, Submissions), header with branding, main content. Dark theme. Auth cookie. Protect /admin/* with middleware.",
       "acceptCriteria": "Login works. Auth persists. Sidebar nav works. Protected routes redirect.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S13",
