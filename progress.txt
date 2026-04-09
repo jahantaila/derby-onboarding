@@ -17,6 +17,10 @@
 - Service category cards use border-2 + bg-derby-blue/10 for selected state, with checkmark badge top-right
 - "Other" service category conditionally shows a text input for specifying custom service type
 - FormData stores other_service as separate field (not inside service_categories array)
+- Upload API (POST /api/upload) uses FormData with file, session_token, doc_type fields — returns doc metadata
+- Document uploads go to Supabase Storage bucket 'documents' with path `{session_id}/{doc_type}.{ext}`
+- Upload route uses upsert:true for re-uploads, deletes old documents row before inserting new one
+- DocumentsStep tracks uploaded files in component state (not in formData) since docs are in separate table
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -74,4 +78,19 @@
   - Cards use 2-col grid on mobile (grid-cols-2), 3-col on sm+ breakpoint
   - Auto-save for card toggles fires immediately (no blur needed) since user intent is clear on click
   - years_in_business is stored as number (parseInt on change), others as strings
+---
+
+## 2026-04-08 - S07
+- What was implemented: DocumentsStep component with 4 upload slots (Business License, Certificate of Insurance, Government ID, Utility Bill). Drag-and-drop zones with click fallback. POST /api/upload route that validates file type (PDF/JPG/PNG) and size (10MB max), uploads to Supabase Storage, saves metadata to documents table. Progress bar animation during upload. Green checkmark + file info after successful upload. Replace button for re-uploads. Required doc validation on Continue.
+- Files changed:
+  - src/app/api/upload/route.ts (new - file upload API endpoint)
+  - src/components/wizard/steps/DocumentsStep.tsx (new - document upload step component)
+  - src/components/wizard/StepRenderer.tsx (updated - renders DocumentsStep for step 4)
+- **Learnings for future iterations:**
+  - Supabase Storage upload uses Buffer.from(await file.arrayBuffer()) for server-side file handling
+  - Storage path convention: `{session_id}/{doc_type}.{ext}` with upsert:true for re-uploads
+  - Must delete old documents row before inserting new one when re-uploading (same session_id + doc_type)
+  - Document metadata is stored in documents table, not in session form_data — step tracks uploads in component state
+  - fetch API doesn't support upload progress natively — simulate with setInterval for UX
+  - fileInputRefs use Record<string, HTMLInputElement | null> pattern for multiple file inputs
 ---

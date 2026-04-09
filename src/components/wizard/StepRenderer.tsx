@@ -4,6 +4,7 @@ import { useWizard, STEPS } from "./WizardContext";
 import WelcomeStep from "./steps/WelcomeStep";
 import BusinessInfoStep from "./steps/BusinessInfoStep";
 import ServicesStep from "./steps/ServicesStep";
+import DocumentsStep from "./steps/DocumentsStep";
 
 function StepPlaceholder({ step }: { step: (typeof STEPS)[number] }) {
   const { goNext, goBack, currentStep } = useWizard();
@@ -46,6 +47,7 @@ export default function StepRenderer() {
   if (currentStep === 1) return <WelcomeStep />;
   if (currentStep === 2) return <BusinessInfoStep />;
   if (currentStep === 3) return <ServicesStep />;
+  if (currentStep === 4) return <DocumentsStep />;
 
   const step = STEPS[currentStep - 1];
   return <StepPlaceholder step={step} />;

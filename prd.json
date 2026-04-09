@@ -49,7 +49,7 @@
       "title": "Build Step 4: Document Uploads",
       "description": "Upload slots: Business License, Certificate of Insurance, Government ID, Utility Bill (optional). Drag-drop zones with click fallback. Upload to Supabase Storage bucket 'documents' via POST /api/upload. Save metadata to documents table. Accept PDF/JPG/PNG, max 10MB. Show progress and file name after upload.",
       "acceptCriteria": "Upload via drag-drop and click. Files in Supabase Storage. Metadata saved. Validation works.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S08",
