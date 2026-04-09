@@ -17,6 +17,7 @@
 - Service category cards use border-2 + bg-derby-blue/10 for selected state, with checkmark badge top-right
 - "Other" service category conditionally shows a text input for specifying custom service type
 - FormData stores other_service as separate field (not inside service_categories array)
+- Use `&apos;` for apostrophes in JSX text — ESLint react/no-unescaped-entities rule enforced at build time
 - Upload API (POST /api/upload) uses FormData with file, session_token, doc_type fields — returns doc metadata
 - Document uploads go to Supabase Storage bucket 'documents' with path `{session_id}/{doc_type}.{ext}`
 - Upload route uses upsert:true for re-uploads, deletes old documents row before inserting new one
@@ -93,4 +94,17 @@
   - Document metadata is stored in documents table, not in session form_data — step tracks uploads in component state
   - fetch API doesn't support upload progress natively — simulate with setInterval for UX
   - fileInputRefs use Record<string, HTMLInputElement | null> pattern for multiple file inputs
+---
+
+## 2026-04-08 - S08
+- What was implemented: AdPreferencesStep component with Website URL (optional), Google Account Email (required with validation), Monthly Budget radio cards (4 tiers with sublabels), Current Platforms multi-select checkboxes (7 options with "None" exclusive toggle), Social links (Facebook/Instagram optional). Auto-save on blur and on card/checkbox selection.
+- Files changed:
+  - src/components/wizard/steps/AdPreferencesStep.tsx (new - ad preferences step component)
+  - src/components/wizard/StepRenderer.tsx (updated - renders AdPreferencesStep for step 5)
+- **Learnings for future iterations:**
+  - Budget radio cards use single-select pattern (not multi-select like service categories) — clicking one deselects the previous
+  - "None" platform option is exclusive — selecting it clears all other platforms, and selecting any platform clears "None"
+  - Optional fields (website_url, facebook_url, instagram_url) only auto-save when non-empty — no validation on blur for optional fields
+  - Use `&apos;` for apostrophes in JSX text to pass ESLint react/no-unescaped-entities rule
+  - FormData type in types.ts already had all Step 5 fields defined from initial setup
 ---

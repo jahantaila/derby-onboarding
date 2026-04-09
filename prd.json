@@ -56,7 +56,7 @@
       "title": "Build Step 5: Ad Preferences and Online Presence",
       "description": "Fields: Website URL (optional), Google Account Email, Monthly Budget radio cards ($500-1000, $1000-2000, $2000-3000, $3000+), Current platforms checkboxes (Google Ads, Angi, HomeAdvisor, Thumbtack, Yelp, Facebook, None), Social links (Facebook, Instagram optional). Auto-save.",
       "acceptCriteria": "All fields render. Budget cards highlight on select. Data saves.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S09",
