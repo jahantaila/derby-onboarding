@@ -42,7 +42,7 @@
       "title": "Build Step 3: Services and Trade",
       "description": "Selectable cards for: Electrician, Plumber, HVAC, Roofer, Painter, Remodeler, Handyman, General Contractor, Landscaper, Pest Control, Garage Door, Locksmith, Other (text input). Each card has icon. Also: Service Area text, Years in Business number, Employees dropdown. Auto-save.",
       "acceptCriteria": "Cards render and are selectable. Multiple selection works. Saves to session. Mobile 2-col grid.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S07",

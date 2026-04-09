@@ -14,6 +14,9 @@
 - Form validation pattern: validate on blur + validateAll on continue; errors stored in component state as FieldErrors record
 - Phone formatting: strip non-digits, format as (XXX) XXX-XXXX using formatPhone() utility in each step component
 - Auto-save uses debounced fetch (500ms) triggered on blur after field validation passes
+- Service category cards use border-2 + bg-derby-blue/10 for selected state, with checkmark badge top-right
+- "Other" service category conditionally shows a text input for specifying custom service type
+- FormData stores other_service as separate field (not inside service_categories array)
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -57,4 +60,18 @@
   - State dropdown uses abbreviated codes (e.g., "KY") as values, full names as display
   - inputClasses() helper generates conditional border/ring colors for error vs normal state
   - The build trace error about _app.js.nft.json is a pre-existing .next cache issue, not a code problem
+---
+
+## 2026-04-08 - S06
+- What was implemented: ServicesStep component with 13 selectable service category cards (emoji icons, multi-select, checkmark badge), conditional "Other" text input, Service Area text field, Years in Business number input, Employees dropdown. Auto-save on blur and on card selection. Full validation on Continue.
+- Files changed:
+  - src/components/wizard/steps/ServicesStep.tsx (new - services step component)
+  - src/components/wizard/StepRenderer.tsx (updated - renders ServicesStep for step 3)
+  - src/lib/types.ts (updated - added other_service field to FormData)
+- **Learnings for future iterations:**
+  - Service categories are stored as string[] in formData.service_categories with IDs like "electrician", "plumber", etc.
+  - "other" is a special category ID — when selected, shows a text input that saves to formData.other_service
+  - Cards use 2-col grid on mobile (grid-cols-2), 3-col on sm+ breakpoint
+  - Auto-save for card toggles fires immediately (no blur needed) since user intent is clear on click
+  - years_in_business is stored as number (parseInt on change), others as strings
 ---
