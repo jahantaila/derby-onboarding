@@ -38,6 +38,7 @@
 - GET /api/admin/submissions/[id]/documents returns documents with signed_url from Supabase Storage (1hr expiry)
 - Submission detail page at /admin/submissions/[id] — uses Section/Field/DocumentCard components
 - Notes stored as `{ internal: "text" }` in submissions.notes jsonb column
+- GET /api/admin/stats returns { total, new, in_progress, active, this_week, this_month, weekly_chart[] } — auth same as other admin endpoints
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -209,4 +210,17 @@
   - The submissions table originally lacked a `notes` column — needed a migration to add it (jsonb default '{}')
   - Image preview uses native `<img>` tag with eslint-disable for @next/next/no-img-element since these are external signed URLs
   - Next.js 14 dynamic route params are now a Promise — must `await params` in route handlers
+---
+
+## 2026-04-08 - S15
+- What was implemented: Admin dashboard overview stats page at /admin with 6 stat cards (Total Submissions, New, In Progress, Active, This Week, This Month) featuring count-up animation with ease-out cubic easing. CSS bar chart showing submissions per week for last 8 weeks with gradient bars. New GET /api/admin/stats endpoint that aggregates submission counts by status, this week/month, and weekly chart data. Loading skeleton states. Blue gradient accent bars on stat cards.
+- Files changed:
+  - src/app/api/admin/stats/route.ts (new - stats aggregation API endpoint)
+  - src/app/admin/page.tsx (rewritten - full dashboard with stat cards, count-up animation, bar chart)
+- **Learnings for future iterations:**
+  - CountUp animation uses requestAnimationFrame with ease-out cubic (1 - (1-t)^3) for smooth number counting
+  - Stats API fetches all submissions and computes aggregates in JS (simple enough for expected data volume)
+  - Weekly chart uses CSS height percentages relative to max value — minimum 4% height for zero-count bars
+  - Stat cards use a gradient accent bar at top (absolute positioned h-1) for visual distinction
+  - Chart loading skeleton uses random heights for visual interest during load
 ---

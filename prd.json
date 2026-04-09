@@ -105,7 +105,7 @@
       "title": "Build Admin Dashboard - Overview Stats",
       "description": "Dashboard home /admin: cards for Total Submissions, New count, In Progress count, Active count, This Week, This Month. Simple bar chart (CSS or lightweight lib) for submissions per week last 8 weeks. Blue gradient cards with count-up animation.",
       "acceptCriteria": "Stats correct from DB. Chart renders. Cards animate.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S16",
