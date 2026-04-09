@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { FormData } from "@/lib/types";
 
 export const STEPS = [
@@ -43,6 +43,26 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
 
   const completionPercent = Math.round(((currentStep - 1) / (TOTAL_STEPS - 1)) * 100);
+
+  // Restore session from localStorage on mount
+  useEffect(() => {
+    const savedToken = localStorage.getItem("derby_session_token");
+    if (savedToken && !sessionToken) {
+      fetch(`/api/sessions/${savedToken}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("Session not found");
+          return res.json();
+        })
+        .then((session) => {
+          setSessionToken(savedToken);
+          if (session.form_data) setFormData(session.form_data);
+          if (session.current_step > 1) setCurrentStep(session.current_step);
+        })
+        .catch(() => {
+          localStorage.removeItem("derby_session_token");
+        });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const goNext = useCallback(() => {
     setDirection("forward");

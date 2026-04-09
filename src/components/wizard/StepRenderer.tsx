@@ -1,6 +1,7 @@
 "use client";
 
 import { useWizard, STEPS } from "./WizardContext";
+import WelcomeStep from "./steps/WelcomeStep";
 
 function StepPlaceholder({ step }: { step: (typeof STEPS)[number] }) {
   const { goNext, goBack, currentStep } = useWizard();
@@ -29,7 +30,7 @@ function StepPlaceholder({ step }: { step: (typeof STEPS)[number] }) {
             onClick={goNext}
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all"
           >
-            {isFirst ? "Let's Go" : "Continue"}
+            Continue
           </button>
         )}
       </div>
@@ -39,7 +40,9 @@ function StepPlaceholder({ step }: { step: (typeof STEPS)[number] }) {
 
 export default function StepRenderer() {
   const { currentStep } = useWizard();
-  const step = STEPS[currentStep - 1];
 
+  if (currentStep === 1) return <WelcomeStep />;
+
+  const step = STEPS[currentStep - 1];
   return <StepPlaceholder step={step} />;
 }
