@@ -28,7 +28,7 @@
       "title": "Redesign welcome/landing step",
       "description": "Make the welcome step bold and exciting. Large gradient text headline: 'Let's Get You More Leads'. Subtext: 'Fill out this quick form and our team will set up your Google ads within 48 hours. Takes about 5 minutes.' Derby Digital logo prominently displayed. Add a subtle animated mesh gradient or soft blue glow in the background (CSS only, no heavy libraries). Show a mini preview of the steps they'll complete (like the reference image step list). Big blue gradient button: 'Get Started →'. Add social proof line: 'Trusted by 50+ local businesses'. The entire welcome should feel like joining an exclusive program.",
       "acceptCriteria": "Welcome looks bold and premium. Gradient text works. Step preview shows. Animation is subtle. Button is prominent. Build passes.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "UI05",

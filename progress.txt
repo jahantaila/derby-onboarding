@@ -319,3 +319,16 @@
   - Form step heading pattern: `text-3xl sm:text-4xl font-heading uppercase text-gray-900 mb-2 leading-tight`
   - Welcome/Confirmation use larger headings: `text-5xl sm:text-6xl font-heading uppercase`
 ---
+
+## 2026-04-09 - UI04
+- What was implemented: Redesigned welcome/landing step to be bold and premium. Large gradient text headline "Let's Get You More Leads" (up to 7xl on desktop). Derby Digital logo with icon + text prominently displayed at top. Animated mesh gradient background with 3 overlapping blurred orbs using CSS keyframe animations (mesh-slow 8s, mesh-medium 10s, mesh-fast 6s). Mini step preview card showing all 5 wizard steps with icons from STEPS array. Social proof line with 5 gold stars: "Trusted by 50+ local businesses". Bigger CTA button "Get Started →" with hover scale effect. Subtext highlights "48 hours" and "5 minutes" in semibold.
+- Files changed:
+  - src/components/wizard/steps/WelcomeStep.tsx (rewritten - gradient headline, logo, step preview, social proof, mesh background)
+  - src/app/globals.css (updated - added mesh-slow, mesh-medium, mesh-fast keyframe animations)
+  - prd.json (updated - UI04 passes: true)
+- **Learnings for future iterations:**
+  - STEPS array can be filtered (number 2-6) to create a step preview list — avoids hardcoding step titles
+  - Mesh gradient animations use multiple overlapping blurred divs with staggered animation durations (6s, 8s, 10s) for organic feel
+  - CSS-only animations for background effects: use large blur values (100-150px), low opacity (4-6%), and slow timing for subtlety
+  - hover:scale-[1.02] with transition-all duration-200 gives a polished button micro-interaction without animation libraries
+---
