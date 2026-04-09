@@ -35,7 +35,7 @@
       "title": "Build Step 2: Business Information",
       "description": "Form: Business Name, Owner Full Name, Phone (formatted), Email, Address, City, State dropdown, ZIP. All required with validation. Auto-save via PATCH /api/sessions/[token] on blur. Blue-bordered inputs on dark cards. Validation errors in red. Smooth focus animations.",
       "acceptCriteria": "All fields validate. Data auto-saves to Supabase. Persists on refresh.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S06",

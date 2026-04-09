@@ -10,6 +10,10 @@
 - Wizard animations use CSS keyframes in globals.css (animate-step-in, animate-step-in-reverse)
 - Page is "use client" — WizardProvider wraps WizardLayout which wraps StepRenderer
 - Mobile responsive: sm: breakpoint for desktop step indicators, mobile shows simplified "Step X of Y"
+- PATCH /api/sessions/[token] merges form_data (server-side merge with existing data) — use for auto-save on blur
+- Form validation pattern: validate on blur + validateAll on continue; errors stored in component state as FieldErrors record
+- Phone formatting: strip non-digits, format as (XXX) XXX-XXXX using formatPhone() utility in each step component
+- Auto-save uses debounced fetch (500ms) triggered on blur after field validation passes
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -39,4 +43,18 @@
   - `getServiceClient()` bypasses RLS — use for all server-side DB operations
   - Session resume: WizardContext useEffect checks localStorage on mount, fetches session data, restores step + formData
   - WelcomeStep uses absolute positioning for background glow effects (pointer-events-none)
+---
+
+## 2026-04-08 - S05
+- What was implemented: BusinessInfoStep component with all 8 required fields (Business Name, Owner Name, Phone, Email, Address, City, State dropdown, ZIP). PATCH /api/sessions/[token] API route for auto-saving form data. Phone auto-formatting, email/ZIP validation, debounced auto-save on blur, full form validation on Continue.
+- Files changed:
+  - src/components/wizard/steps/BusinessInfoStep.tsx (new - business info form)
+  - src/app/api/sessions/[token]/route.ts (updated - added PATCH handler with form_data merge)
+  - src/components/wizard/StepRenderer.tsx (updated - renders BusinessInfoStep for step 2)
+- **Learnings for future iterations:**
+  - PATCH route merges form_data server-side: fetches existing form_data, spreads new fields on top, then updates. This prevents overwriting other steps' data.
+  - Auto-save triggers on blur after validation passes — debounced at 500ms to avoid excessive API calls
+  - State dropdown uses abbreviated codes (e.g., "KY") as values, full names as display
+  - inputClasses() helper generates conditional border/ring colors for error vs normal state
+  - The build trace error about _app.js.nft.json is a pre-existing .next cache issue, not a code problem
 ---
