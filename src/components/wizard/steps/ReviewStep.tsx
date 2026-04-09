@@ -344,7 +344,7 @@ export default function ReviewStep() {
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="px-10 py-4 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-bold text-lg hover:shadow-lg hover:shadow-derby-blue/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-10 py-4 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-bold text-lg hover:shadow-lg hover:shadow-derby-blue/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed btn-interactive"
         >
           {submitting ? "Submitting..." : "Submit Your Info →"}
         </button>

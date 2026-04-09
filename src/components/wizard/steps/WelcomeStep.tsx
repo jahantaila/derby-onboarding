@@ -136,7 +136,7 @@ export default function WelcomeStep() {
         <button
           onClick={handleStart}
           disabled={loading}
-          className="px-12 py-4 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold text-lg hover:shadow-xl hover:shadow-derby-blue/25 hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-12 py-4 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold text-lg hover:shadow-xl hover:shadow-derby-blue/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed btn-interactive"
         >
           {loading ? (
             <span className="flex items-center gap-2">

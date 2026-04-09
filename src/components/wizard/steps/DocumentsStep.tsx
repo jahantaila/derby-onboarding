@@ -197,7 +197,7 @@ export default function DocumentsStep() {
         </p>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-5 animate-field-stagger">
         {loadingDocs ? (
           DOC_SLOTS.map((slot) => (
             <div key={slot.id} className="rounded-xl border-2 border-dashed border-gray-200 bg-white p-6">
@@ -347,7 +347,7 @@ export default function DocumentsStep() {
         </button>
         <button
           onClick={handleContinue}
-          className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all"
+          className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all btn-interactive"
         >
           Continue
         </button>

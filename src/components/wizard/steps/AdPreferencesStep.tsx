@@ -234,7 +234,7 @@ export default function AdPreferencesStep() {
                 className={`relative flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 text-left ${
                   isSelected
                     ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
-                    : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/50"
+                    : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/50 card-hover-lift"
                 }`}
               >
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
@@ -347,7 +347,7 @@ export default function AdPreferencesStep() {
           )}
           <button
             onClick={handleContinue}
-            className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all"
+            className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all btn-interactive"
           >
             Continue
           </button>

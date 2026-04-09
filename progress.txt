@@ -55,6 +55,8 @@
 - Service card icons: SVG path data strings (stroke-based), rendered in circular container (w-10 h-10 rounded-full)
 - Embed route (/embed) has its own layout.tsx (transparent bg, no chrome) — postMessage events use { type: "derby-onboarding" } namespace
 - CSP and X-Frame-Options configured in next.config.mjs headers() — only /embed allows framing
+- Animation classes: btn-interactive (hover/press scale), card-hover-lift (shadow lift), animate-field-stagger (cascading fade-in on children), animate-shimmer (skeleton loading)
+- All animations are pure CSS in globals.css — no animation libraries used
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -400,4 +402,24 @@
   - postMessage uses { type: "derby-onboarding" } prefix for namespacing — listeners filter by this
   - CSP frame-ancestors is the modern replacement for X-Frame-Options — include both for compatibility
   - embed.js auto-detects baseUrl from its own script src if not explicitly provided
+---
+
+## 2026-04-09 - UI09
+- What was implemented: Complete animations and micro-interactions polish. Step transitions updated to 300ms. Active step in tracker now has subtle pulse animation (animate-step-pulse). Completed step checkmark icon pops in with scale animation (animate-icon-pop-in). Form fields stagger fade-in on step load (animate-field-stagger with 50ms delay between children). All CTA buttons have hover scale(1.02) and active scale(0.98) via btn-interactive class. Service and budget cards have shadow lift on hover (card-hover-lift). Progress percentage has smooth count-up animation via AnimatedPercent component with ease-out cubic easing. Loading skeletons use shimmer gradient animation instead of plain pulse. Confetti already existed from S09. All animations are pure CSS/Tailwind with no libraries.
+- Files changed:
+  - src/app/globals.css (updated - 7 new animations: step-pulse, icon-pop-in, field-fade-in, btn-interactive, card-hover-lift, shimmer; step transition duration to 300ms)
+  - src/components/wizard/WizardLayout.tsx (updated - AnimatedPercent component, active step pulse, completed icon pop-in, shimmer skeletons)
+  - src/components/wizard/steps/BusinessInfoStep.tsx (updated - btn-interactive, animate-field-stagger)
+  - src/components/wizard/steps/ServicesStep.tsx (updated - btn-interactive, card-hover-lift)
+  - src/components/wizard/steps/DocumentsStep.tsx (updated - btn-interactive, animate-field-stagger)
+  - src/components/wizard/steps/AdPreferencesStep.tsx (updated - btn-interactive, card-hover-lift on budget cards)
+  - src/components/wizard/steps/ReviewStep.tsx (updated - btn-interactive on submit)
+  - src/components/wizard/steps/WelcomeStep.tsx (updated - btn-interactive replacing inline hover:scale)
+  - prd.json (updated - UI09 passes: true)
+- **Learnings for future iterations:**
+  - animate-field-stagger uses nth-child delays (50ms increments) for cascading fade-in — add to any parent container
+  - btn-interactive applies hover:scale(1.02) + active:scale(0.98) via CSS class — avoids repeating Tailwind utility classes
+  - card-hover-lift adds translateY(-1px) + elevated shadow — lightweight hover effect for selectable cards
+  - AnimatedPercent uses requestAnimationFrame with ease-out cubic for smooth number counting — same pattern as admin CountUp
+  - Shimmer skeleton: linear-gradient background with background-position animation — more polished than simple pulse
 ---

@@ -207,7 +207,7 @@ export default function ServicesStep() {
                 className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${
                   isSelected
                     ? "border-derby-blue bg-blue-50 shadow-lg shadow-derby-blue/10"
-                    : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/50"
+                    : "border-[#D1D9E6] bg-white hover:border-derby-blue hover:bg-blue-50/50 card-hover-lift"
                 }`}
               >
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -327,7 +327,7 @@ export default function ServicesStep() {
           )}
           <button
             onClick={handleContinue}
-            className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all"
+            className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all btn-interactive"
           >
             Continue
           </button>

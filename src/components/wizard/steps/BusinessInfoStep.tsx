@@ -190,7 +190,7 @@ export default function BusinessInfoStep() {
         <p className="text-gray-500 text-base">Tell us about your business so we can get started.</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 animate-field-stagger">
         {/* Business Name */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -341,7 +341,7 @@ export default function BusinessInfoStep() {
           )}
           <button
             onClick={handleContinue}
-            className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all"
+            className="px-8 py-3 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-semibold hover:shadow-lg hover:shadow-derby-blue/25 transition-all btn-interactive"
           >
             Continue
           </button>
