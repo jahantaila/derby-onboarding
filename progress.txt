@@ -1,1 +1,24 @@
 # Ralph Progress Log - Derby Digital Onboarding Portal
+
+## Codebase Patterns
+- Brand colors: derby-dark (#0A0A0F), derby-card (#1A1A2E), derby-blue (#2093FF), derby-blue-deep (#0026FF)
+- Use `@/components/wizard/WizardContext` for step state — useWizard() hook provides currentStep, formData, navigation
+- STEPS array and TOTAL_STEPS constant exported from WizardContext for step metadata
+- Wizard animations use CSS keyframes in globals.css (animate-step-in, animate-step-in-reverse)
+- Page is "use client" — WizardProvider wraps WizardLayout which wraps StepRenderer
+- Mobile responsive: sm: breakpoint for desktop step indicators, mobile shows simplified "Step X of Y"
+
+## 2026-04-08 - S03
+- What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
+- Files changed:
+  - src/components/wizard/WizardContext.tsx (new - context provider)
+  - src/components/wizard/WizardLayout.tsx (new - layout with progress bar)
+  - src/components/wizard/StepRenderer.tsx (new - placeholder step renderer)
+  - src/app/page.tsx (updated - wired up wizard)
+  - src/app/globals.css (updated - added step transition animations)
+- **Learnings for future iterations:**
+  - The FormData type from @/lib/types.ts is used for wizard form state — all step form fields are optional
+  - goToStep() in WizardContext tracks direction for proper slide animation
+  - StepRenderer uses placeholder components — future stories replace these with real step implementations
+  - Progress bar calculates completion as (currentStep - 1) / (TOTAL_STEPS - 1) * 100
+---
