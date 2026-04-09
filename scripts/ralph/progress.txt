@@ -1,0 +1,45 @@
+# Ralph Progress Log
+Started: Wed Apr  8 21:36:13 EDT 2026
+---
+
+## Codebase Patterns
+- Brand colors: derby-dark (#0A0A0F), derby-card (#1A1A2E), derby-blue (#2093FF), derby-blue-deep (#0026FF) defined in tailwind.config.ts
+- Supabase client: `supabase` (anon) from `src/lib/supabase.ts`, `getServiceClient()` for server-side service role
+- Font: Inter via next/font/google, applied as font-sans in Tailwind config
+- Dark theme: class="dark" on <html>, bg-derby-dark as base background
+- next-env.d.ts is in .gitignore — don't try to stage it
+- DB types and field mapping in `src/lib/types.ts` — use `SUBMISSION_FIELD_MAP` when writing to submissions table
+- Direct Postgres (DATABASE_URL) unreachable from WSL — always use Supabase JS client via REST API
+- Submissions column names differ from PRD (business_phone not phone, contact_name not owner_name, etc.) — check types.ts
+- Wizard form data stored in session.form_data jsonb using PRD field names; map on submit
+
+## 2026-04-08 - S01
+- Initialized Next.js 14 project with TypeScript, Tailwind CSS, ESLint, App Router (src/app)
+- Installed @supabase/supabase-js and @supabase/ssr
+- Configured Tailwind with Derby Digital brand colors (derby-dark, derby-card, derby-blue, derby-blue-deep)
+- Created src/lib/supabase.ts with anon client and getServiceClient() for server-side
+- Updated layout.tsx with Inter font, dark theme, meta tags
+- Simplified page.tsx to placeholder with gradient text
+- Files changed: package.json, tailwind.config.ts, src/app/layout.tsx, src/app/page.tsx, src/app/globals.css, src/lib/supabase.ts, tsconfig.json, next.config.mjs, postcss.config.mjs, .eslintrc.json
+- **Learnings for future iterations:**
+  - WSL has no internet for Google Fonts — Inter font request fails at build but falls back to sans-serif; builds still succeed
+  - create-next-app won't run in a non-empty directory — must create in /tmp and copy files over
+  - .env.local already exists with Supabase credentials — no need to create it
+---
+
+## 2026-04-08 - S02
+- Verified Supabase database schema: sessions, documents, submissions tables all exist with RLS enabled
+- Verified storage bucket 'documents' exists (10MB limit, PDF/JPG/PNG)
+- Created migration SQL documenting actual schema at supabase/migrations/001_initial_schema.sql
+- Created setup verification script at supabase/setup.ts
+- Created TypeScript types at src/lib/types.ts with DB types + PRD field mapping
+- Installed pg, @types/pg, dotenv as dev dependencies
+- Files changed: supabase/migrations/001_initial_schema.sql, supabase/setup.ts, src/lib/types.ts, package.json, package-lock.json
+- **Learnings for future iterations:**
+  - Direct Postgres connection (DATABASE_URL) unreachable from WSL — host only resolves to IPv6 which WSL can't route
+  - Supabase pooler connections also didn't work (tenant not found in any tested region)
+  - Use Supabase REST API (service role key) for all DB operations — it works via HTTPS/IPv4
+  - Submissions table columns differ from PRD: uses business_phone/business_email/contact_name instead of phone/email/owner_name
+  - Session form_data (jsonb) stores wizard data using PRD field names; submissions table uses different column names — see SUBMISSION_FIELD_MAP in src/lib/types.ts
+  - Setup verification: `npx tsx supabase/setup.ts` confirms tables + bucket exist
+---

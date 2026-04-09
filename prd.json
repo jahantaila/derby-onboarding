@@ -7,14 +7,14 @@
       "title": "Initialize Next.js 14 project with Tailwind CSS and Supabase",
       "description": "Create a fresh Next.js 14 project with TypeScript, Tailwind CSS, and Supabase client. Set up src/app directory, global styles with Derby Digital brand colors (primary: #2093FF to #0026FF blue gradient, dark backgrounds #0A0A0F, cards #1A1A2E). Install @supabase/supabase-js, @supabase/ssr. Create lib/supabase.ts using env vars. Root layout with Inter font and dark theme.",
       "acceptCriteria": "npm run build succeeds. Supabase client initializes. Tailwind configured with brand colors.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S02",
       "title": "Create Supabase database schema",
       "description": "Create and run SQL migrations against DATABASE_URL. Tables: sessions (id uuid, token text unique, current_step int, status text, form_data jsonb, created_at, updated_at), documents (id uuid, session_id uuid FK, doc_type, file_name, storage_path, file_size, mime_type, created_at), submissions (id uuid, session_id uuid FK unique, business_name, owner_name, phone, email, address, city, state, zip, service_categories text[], service_area, monthly_budget, website_url, google_account_email, notes jsonb, pipeline_status text default 'new', submitted_at, created_at). Enable RLS. Create storage bucket 'documents'.",
       "acceptCriteria": "All tables exist in Supabase. RLS enabled. Storage bucket exists.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S03",
