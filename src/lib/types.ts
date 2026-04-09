@@ -26,6 +26,7 @@ export interface FormData {
 
   // Step 3: Services and Trade
   service_categories?: string[];
+  other_service?: string;
   service_area?: string;
   years_in_business?: number;
   employees?: string;
