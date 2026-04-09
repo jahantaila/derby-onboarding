@@ -194,7 +194,7 @@ export default function AdminSubmissionsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {submissions.map((sub) => {
+                  {submissions.map((sub, idx) => {
                     const badge = STATUS_BADGE[sub.pipeline_status] || STATUS_BADGE.new;
                     const isExpanded = expandedId === sub.id;
                     return (
@@ -203,6 +203,7 @@ export default function AdminSubmissionsPage() {
                         sub={sub}
                         badge={badge}
                         isExpanded={isExpanded}
+                        isEven={idx % 2 === 0}
                         onToggle={() => setExpandedId(isExpanded ? null : sub.id)}
                         onViewDetail={() => router.push(`/admin/submissions/${sub.id}`)}
                       />
@@ -267,12 +268,14 @@ function SubmissionRow({
   sub,
   badge,
   isExpanded,
+  isEven,
   onToggle,
   onViewDetail,
 }: {
   sub: Submission;
   badge: { bg: string; text: string; label: string };
   isExpanded: boolean;
+  isEven: boolean;
   onToggle: () => void;
   onViewDetail: () => void;
 }) {
@@ -280,7 +283,7 @@ function SubmissionRow({
     <>
       <tr
         onClick={onToggle}
-        className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+        className={`border-b border-gray-100 hover:bg-blue-50/50 cursor-pointer transition-colors ${isEven ? "bg-white" : "bg-gray-50/50"}`}
       >
         <td className="px-5 py-3.5 font-medium text-gray-900">
           {sub.business_name || "—"}

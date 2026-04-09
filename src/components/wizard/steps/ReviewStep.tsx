@@ -94,17 +94,19 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 mb-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+    <div className="bg-white border border-gray-200 rounded-2xl mb-5 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-6 lg:px-8 py-3.5 bg-gradient-to-r from-gray-50 to-blue-50/50 border-b border-gray-200">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">{title}</h3>
         <button
           onClick={onEdit}
-          className="text-sm text-derby-blue hover:text-derby-blue-deep transition-colors px-3 py-1 rounded-lg border border-derby-blue/30 hover:border-derby-blue hover:bg-blue-50"
+          className="text-sm text-derby-blue hover:text-derby-blue-deep transition-colors font-medium"
         >
           Edit
         </button>
       </div>
-      {children}
+      <div className="px-6 lg:px-8 py-5">
+        {children}
+      </div>
     </div>
   );
 }
@@ -344,7 +346,7 @@ export default function ReviewStep() {
           disabled={submitting}
           className="px-10 py-4 rounded-xl bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white font-bold text-lg hover:shadow-lg hover:shadow-derby-blue/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {submitting ? "Submitting..." : "Submit Application"}
+          {submitting ? "Submitting..." : "Submit Your Info →"}
         </button>
       </div>
     </div>

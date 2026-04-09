@@ -10,8 +10,8 @@ export default function ConfirmationStep() {
       </div>
 
       <div className="relative z-10 max-w-lg">
-        {/* Success icon */}
-        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center mx-auto mb-8 shadow-lg shadow-derby-blue/30">
+        {/* Animated checkmark */}
+        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center mx-auto mb-8 shadow-lg shadow-derby-blue/30 animate-checkmark-pop">
           <svg
             className="w-12 h-12 text-white"
             fill="none"
@@ -20,15 +20,20 @@ export default function ConfirmationStep() {
             strokeWidth={2.5}
           >
             <path
+              className="animate-checkmark-draw"
               strokeLinecap="round"
               strokeLinejoin="round"
               d="M5 13l4 4L19 7"
+              strokeDasharray="30"
+              strokeDashoffset="30"
             />
           </svg>
         </div>
 
-        <h1 className="text-5xl sm:text-6xl font-heading uppercase text-gray-900 mb-4 tracking-tight leading-none">
-          You&apos;re In!
+        <h1 className="text-5xl sm:text-6xl font-heading uppercase mb-4 tracking-tight leading-none">
+          <span className="bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent">
+            You&apos;re All Set!
+          </span>
         </h1>
         <p className="text-xl sm:text-2xl text-gray-600 mb-10">
           Welcome to{" "}
@@ -37,12 +42,12 @@ export default function ConfirmationStep() {
           </span>
         </p>
 
-        {/* Next steps */}
+        {/* Next steps — vertical timeline */}
         <div className="bg-white border border-gray-200 rounded-2xl p-8 lg:p-10 mb-10 text-left shadow-sm">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-6">
             What happens next
           </h3>
-          <div className="space-y-7">
+          <div className="relative">
             {[
               {
                 number: "1",
@@ -61,14 +66,18 @@ export default function ConfirmationStep() {
                 description:
                   "Sit back and watch the calls roll in from customers in your area.",
               },
-            ].map((step) => (
-              <div key={step.number} className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center flex-shrink-0">
+            ].map((step, idx) => (
+              <div key={step.number} className="flex gap-4 relative pb-7 last:pb-0">
+                {/* Connecting line */}
+                {idx < 2 && (
+                  <div className="absolute left-5 top-10 w-0.5 h-[calc(100%-10px)] bg-gradient-to-b from-derby-blue/30 to-derby-blue/10" />
+                )}
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center flex-shrink-0 relative z-10 shadow-md shadow-derby-blue/20">
                   <span className="text-sm font-bold text-white">
                     {step.number}
                   </span>
                 </div>
-                <div>
+                <div className="pt-1.5">
                   <h4 className="text-gray-900 font-semibold mb-1">
                     {step.title}
                   </h4>

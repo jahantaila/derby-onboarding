@@ -375,11 +375,15 @@ export default function SubmissionDetailPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-      <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
-        {title}
-      </h3>
-      {children}
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="px-5 py-3 bg-gradient-to-r from-gray-50 to-blue-50/50 border-b border-gray-200">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+          {title}
+        </h3>
+      </div>
+      <div className="p-5">
+        {children}
+      </div>
     </div>
   );
 }

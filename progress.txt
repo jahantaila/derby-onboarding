@@ -365,3 +365,19 @@
   - Radio-style cards: use a bordered circle with inner filled dot rather than corner checkmark for single-select (vs multi-select)
   - Upload zone empty state uses centered column layout (flex-col items-center) with icon above text for visual prominence
 ---
+
+## 2026-04-09 - UI07
+- What was implemented: Redesigned review sections with blue-gray gradient header bars (from-gray-50 to-blue-50/50) and right-aligned "Edit" links. Updated submit button text to "Submit Your Info →". Added CSS checkmark animation to confirmation page (pop + draw animations). Changed headline to gradient text "You're All Set!". Added vertical timeline with connecting lines to next-steps section. Added blue-gray header bars to admin submission detail sections. Added alternating row shading to admin submissions table (bg-white / bg-gray-50/50). Table rows now have blue hover (hover:bg-blue-50/50).
+- Files changed:
+  - src/components/wizard/steps/ReviewStep.tsx (updated - blue-gray section headers, submit button text)
+  - src/components/wizard/steps/ConfirmationStep.tsx (updated - checkmark animation, gradient headline, vertical timeline)
+  - src/app/globals.css (updated - added checkmark-pop and checkmark-draw keyframes)
+  - src/app/admin/submissions/page.tsx (updated - alternating row shading, blue hover)
+  - src/app/admin/submissions/[id]/page.tsx (updated - blue-gray section header bars)
+  - prd.json (updated - UI07 passes: true)
+- **Learnings for future iterations:**
+  - CSS checkmark draw animation: stroke-dasharray + stroke-dashoffset with animation to 0 creates a drawing effect
+  - Vertical timeline connecting lines: absolute positioned div (w-0.5) from top of circle to bottom of item, with gradient opacity fade
+  - Blue-gray header bar pattern: bg-gradient-to-r from-gray-50 to-blue-50/50 with border-b — used consistently in review and admin sections
+  - Alternating row shading: pass index to row component, apply bg-white vs bg-gray-50/50 conditionally
+---
