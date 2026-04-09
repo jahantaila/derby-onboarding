@@ -75,8 +75,35 @@ function StepTransition({ children }: { children: React.ReactNode }) {
   );
 }
 
+function WizardSkeleton() {
+  return (
+    <div className="min-h-screen bg-derby-dark flex flex-col">
+      <header className="border-b border-gray-800/50 px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-4xl mx-auto flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-derby-card animate-pulse" />
+          <div className="h-5 w-28 bg-derby-card rounded animate-pulse" />
+        </div>
+      </header>
+      <div className="px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="h-1.5 bg-derby-card rounded-full animate-pulse mb-2" />
+        </div>
+      </div>
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-4xl mx-auto flex flex-col items-center pt-16">
+          <div className="w-20 h-20 rounded-2xl bg-derby-card animate-pulse mb-8" />
+          <div className="h-8 w-64 bg-derby-card rounded animate-pulse mb-4" />
+          <div className="h-4 w-48 bg-derby-card rounded animate-pulse" />
+        </div>
+      </main>
+    </div>
+  );
+}
+
 export default function WizardLayout({ children }: { children: React.ReactNode }) {
-  const { currentStep, goBack } = useWizard();
+  const { currentStep, goBack, isRestoring } = useWizard();
+
+  if (isRestoring) return <WizardSkeleton />;
 
   return (
     <div className="min-h-screen bg-derby-dark flex flex-col">

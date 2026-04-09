@@ -53,6 +53,7 @@ const STAT_CARDS = [
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function fetchStats() {
@@ -61,7 +62,11 @@ export default function AdminDashboardPage() {
         if (res.ok) {
           const data = await res.json();
           setStats(data);
+        } else {
+          setError(true);
         }
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -77,6 +82,12 @@ export default function AdminDashboardPage() {
     <div>
       <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
       <p className="text-gray-400 mb-8">Overview of your onboarding pipeline</p>
+
+      {error && !loading && (
+        <div className="mb-8 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-400 text-center">
+          Unable to load dashboard data. Please try refreshing the page.
+        </div>
+      )}
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">

@@ -43,21 +43,35 @@ export default function DocumentsStep() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dragOver, setDragOver] = useState<Record<string, boolean>>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const [loadingDocs, setLoadingDocs] = useState(true);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   // Load existing documents on mount
   useEffect(() => {
-    if (!sessionToken) return;
+    if (!sessionToken) {
+      setLoadingDocs(false);
+      return;
+    }
     fetch(`/api/sessions/${sessionToken}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
       .then((session) => {
         if (session.id) {
-          // Fetch documents for this session via a simple query approach
-          // We'll fetch from a dedicated endpoint or parse from session
-          // For now, we store uploaded docs in component state
+          return fetch(`/api/documents?session_id=${session.id}`)
+            .then((res) => res.ok ? res.json() : [])
+            .then((docs: { id: string; doc_type: string; file_name: string; file_size: number; mime_type: string }[]) => {
+              const loaded: Record<string, UploadedDoc> = {};
+              for (const doc of docs) {
+                loaded[doc.doc_type] = doc;
+              }
+              setUploads(loaded);
+            });
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoadingDocs(false));
   }, [sessionToken]);
 
   const validateFile = useCallback((file: File): string | null => {
@@ -184,7 +198,20 @@ export default function DocumentsStep() {
       </div>
 
       <div className="space-y-4">
-        {DOC_SLOTS.map((slot) => {
+        {loadingDocs ? (
+          DOC_SLOTS.map((slot) => (
+            <div key={slot.id} className="rounded-xl border-2 border-dashed border-gray-700 bg-derby-card p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-white/5 animate-pulse" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-32 bg-white/5 rounded animate-pulse" />
+                  <div className="h-3 w-48 bg-white/5 rounded animate-pulse" />
+                </div>
+              </div>
+            </div>
+          ))
+        ) : null}
+        {!loadingDocs && DOC_SLOTS.map((slot) => {
           const uploaded = uploads[slot.docType];
           const isUploading = uploading[slot.docType];
           const progressValue = progress[slot.docType] || 0;

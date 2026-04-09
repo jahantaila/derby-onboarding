@@ -39,6 +39,8 @@
 - Submission detail page at /admin/submissions/[id] — uses Section/Field/DocumentCard components
 - Notes stored as `{ internal: "text" }` in submissions.notes jsonb column
 - GET /api/admin/stats returns { total, new, in_progress, active, this_week, this_month, weekly_chart[] } — auth same as other admin endpoints
+- WizardContext exposes `isRestoring` boolean — use it to show loading skeletons while session restore is in progress
+- Admin pages pattern: always pair API fetches with both `loading` (for skeleton) and `error` (for friendly message) state variables
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -223,4 +225,23 @@
   - Weekly chart uses CSS height percentages relative to max value — minimum 4% height for zero-count bars
   - Stat cards use a gradient accent bar at top (absolute positioned h-1) for visual distinction
   - Chart loading skeleton uses random heights for visual interest during load
+---
+
+## 2026-04-09 - S16
+- What was implemented: Polish, responsive, and final QA pass. Added loading skeleton during session restore (prevents flash of Step 1 before restoring to saved step). Added friendly error messages on submission failure in ReviewStep. Added error states to admin dashboard stats and submissions pages. Enhanced meta tags with OpenGraph data. Added loading skeletons to DocumentsStep while fetching existing uploads. Fixed DocumentsStep to properly restore previously uploaded documents on revisit. Build passes with zero errors/warnings.
+- Files changed:
+  - src/components/wizard/WizardContext.tsx (updated - added isRestoring state for session restore loading)
+  - src/components/wizard/WizardLayout.tsx (updated - added WizardSkeleton component shown during restore)
+  - src/components/wizard/steps/ReviewStep.tsx (updated - added submitError state with friendly error messages)
+  - src/components/wizard/steps/DocumentsStep.tsx (updated - loading skeleton + restore existing uploads from API)
+  - src/app/layout.tsx (updated - enhanced meta description + OpenGraph tags)
+  - src/app/admin/page.tsx (updated - added error state for stats API failure)
+  - src/app/admin/submissions/page.tsx (updated - added error state for submissions API failure)
+  - prd.json (updated - S16 passes: true)
+- **Learnings for future iterations:**
+  - WizardContext isRestoring state prevents the wizard from rendering before session data is loaded from localStorage/API
+  - DocumentsStep had a dead useEffect that only fetched the session but never loaded existing document metadata — now properly fetches docs from /api/documents and restores upload state
+  - Admin pages should always have both loading skeletons AND error states for API calls — don't silently swallow errors
+  - Next.js metadata export supports openGraph property for social sharing previews
+  - ESLint in this project (via next build) catches unused variables — if build fails with "assigned but never used", the variable's usage JSX may not have been saved yet
 ---

@@ -70,9 +70,11 @@ export default function AdminSubmissionsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [error, setError] = useState(false);
 
   const fetchSubmissions = useCallback(async () => {
     setLoading(true);
+    setError(false);
     try {
       const params = new URLSearchParams({ page: String(page), page_size: "20" });
       if (statusFilter) params.set("status", statusFilter);
@@ -86,6 +88,7 @@ export default function AdminSubmissionsPage() {
     } catch {
       setSubmissions([]);
       setPagination(null);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -150,6 +153,12 @@ export default function AdminSubmissionsPage() {
           ))}
         </select>
       </div>
+
+      {error && !loading && (
+        <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-400 text-center">
+          Unable to load submissions. Please try refreshing the page.
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-derby-card rounded-xl border border-white/10 overflow-hidden">

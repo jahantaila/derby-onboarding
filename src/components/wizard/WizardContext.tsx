@@ -26,6 +26,7 @@ interface WizardContextType {
   setSessionToken: (token: string) => void;
   completionPercent: number;
   direction: "forward" | "backward";
+  isRestoring: boolean;
 }
 
 const WizardContext = createContext<WizardContextType | null>(null);
@@ -41,6 +42,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const [formData, setFormData] = useState<FormData>({});
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
+  const [isRestoring, setIsRestoring] = useState(true);
 
   const completionPercent = Math.round(((currentStep - 1) / (TOTAL_STEPS - 1)) * 100);
 
@@ -60,7 +62,12 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         })
         .catch(() => {
           localStorage.removeItem("derby_session_token");
+        })
+        .finally(() => {
+          setIsRestoring(false);
         });
+    } else {
+      setIsRestoring(false);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -96,6 +103,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setSessionToken,
         completionPercent,
         direction,
+        isRestoring,
       }}
     >
       {children}

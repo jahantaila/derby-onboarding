@@ -9,7 +9,12 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Derby Digital - Client Onboarding",
-  description: "Derby Digital Client Onboarding Portal",
+  description: "Get started with Derby Digital. Complete your onboarding in 5 minutes and start dominating your local market with targeted Google Ads.",
+  openGraph: {
+    title: "Derby Digital - Client Onboarding",
+    description: "Get started with Derby Digital. Complete your onboarding in 5 minutes.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

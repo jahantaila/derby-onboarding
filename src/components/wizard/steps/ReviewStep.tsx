@@ -122,6 +122,7 @@ export default function ReviewStep() {
   const { formData, sessionToken, goBack, goNext, goToStep } = useWizard();
   const [documents, setDocuments] = useState<DocInfo[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
 
   const fetchDocuments = useCallback(async () => {
@@ -148,6 +149,7 @@ export default function ReviewStep() {
   async function handleSubmit() {
     if (!sessionToken || submitting) return;
     setSubmitting(true);
+    setSubmitError(null);
 
     try {
       const res = await fetch("/api/submit", {
@@ -163,9 +165,12 @@ export default function ReviewStep() {
           goNext();
         }, 2500);
       } else {
+        const data = await res.json().catch(() => ({}));
+        setSubmitError(data.error || "Failed to submit. Please try again.");
         setSubmitting(false);
       }
     } catch {
+      setSubmitError("Something went wrong. Please check your connection and try again.");
       setSubmitting(false);
     }
   }
@@ -318,6 +323,13 @@ export default function ReviewStep() {
           )}
         </div>
       </SectionCard>
+
+      {/* Error */}
+      {submitError && (
+        <div className="mt-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-400 text-center">
+          {submitError}
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="flex items-center justify-between mt-10 mb-8">
