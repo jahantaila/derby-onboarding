@@ -167,21 +167,21 @@ export default function ServicesStep() {
   function inputClasses(field: keyof FieldErrors) {
     return `w-full bg-white border ${
       errors[field] ? "border-red-500" : "border-gray-300 focus:border-derby-blue"
-    } rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 ${
+    } rounded-lg h-12 px-4 text-base text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 focus:shadow-sm ${
       errors[field] ? "focus:ring-red-500" : "focus:ring-derby-blue"
     }`;
   }
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Services &amp; Trade</h2>
-        <p className="text-gray-500">What services does your business offer?</p>
+      <div className="mb-10">
+        <h2 className="text-3xl sm:text-4xl font-heading uppercase text-gray-900 mb-2 leading-tight">Services &amp; Trade</h2>
+        <p className="text-gray-500 text-base">What services does your business offer?</p>
       </div>
 
       {/* Service Category Cards */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 mb-3">
           Select your services <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -221,7 +221,7 @@ export default function ServicesStep() {
       {/* Other service text input */}
       {selectedCategories.includes("other") && (
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Specify your service <span className="text-red-500">*</span>
           </label>
           <input
@@ -242,8 +242,8 @@ export default function ServicesStep() {
       )}
 
       {/* Service Area */}
-      <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
           Service Area <span className="text-red-500">*</span>
         </label>
         <input
@@ -260,9 +260,9 @@ export default function ServicesStep() {
       </div>
 
       {/* Years in Business + Employees row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Years in Business <span className="text-red-500">*</span>
           </label>
           <input
@@ -280,7 +280,7 @@ export default function ServicesStep() {
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Number of Employees <span className="text-red-500">*</span>
           </label>
           <select

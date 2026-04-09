@@ -45,7 +45,7 @@ function VerticalStepTracker() {
         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center">
           <span className="text-white font-bold text-sm">D</span>
         </div>
-        <span className="text-lg font-semibold text-gray-900 tracking-tight">
+        <span className="text-lg font-heading text-gray-900 tracking-tight uppercase">
           Derby Digital
         </span>
       </div>
@@ -86,7 +86,7 @@ function VerticalStepTracker() {
                     Step {step.number - 1}
                   </span>
                   <p
-                    className={`text-sm font-medium leading-tight ${
+                    className={`text-base font-bold leading-tight ${
                       isActive
                         ? "text-gray-900"
                         : isCompleted
@@ -287,7 +287,7 @@ export default function WizardLayout({ children }: { children: React.ReactNode }
         </div>
 
         {/* Step content */}
-        <main className="flex-1 px-4 sm:px-6 lg:px-10 py-6 lg:py-8 overflow-y-auto">
+        <main className="flex-1 px-4 sm:px-8 lg:px-12 py-6 lg:py-10 overflow-y-auto">
           <div className="max-w-3xl mx-auto">
             <StepTransition>{children}</StepTransition>
           </div>

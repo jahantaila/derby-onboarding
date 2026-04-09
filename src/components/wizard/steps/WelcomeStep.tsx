@@ -53,24 +53,24 @@ export default function WelcomeStep() {
           </svg>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+        <h1 className="text-5xl sm:text-6xl font-heading uppercase text-gray-900 mb-4 tracking-tight leading-none">
           Welcome to{" "}
           <span className="bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent">
             Derby Digital
           </span>
         </h1>
 
-        <p className="text-lg text-gray-500 mb-10 leading-relaxed">
+        <p className="text-lg sm:text-xl text-gray-500 mb-10 leading-relaxed">
           Let&apos;s get you dominating your local market. This takes about 5
           minutes.
         </p>
 
         {/* What you'll need */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-10 text-left shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-8 mb-10 text-left shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-5">
             What you&apos;ll need
           </h3>
-          <ul className="space-y-3">
+          <ul className="space-y-4">
             {[
               "Business License",
               "Certificate of Insurance",

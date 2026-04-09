@@ -161,21 +161,21 @@ export default function AdPreferencesStep() {
     const hasError = field && errors[field];
     return `w-full bg-white border ${
       hasError ? "border-red-500" : "border-gray-300 focus:border-derby-blue"
-    } rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 ${
+    } rounded-lg h-12 px-4 text-base text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 focus:shadow-sm ${
       hasError ? "focus:ring-red-500" : "focus:ring-derby-blue"
     }`;
   }
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Ad Preferences</h2>
-        <p className="text-gray-500">Tell us about your online presence and advertising goals.</p>
+      <div className="mb-10">
+        <h2 className="text-3xl sm:text-4xl font-heading uppercase text-gray-900 mb-2 leading-tight">Ad Preferences</h2>
+        <p className="text-gray-500 text-base">Tell us about your online presence and advertising goals.</p>
       </div>
 
       {/* Website URL (optional) */}
-      <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
           Website URL <span className="text-gray-500">(optional)</span>
         </label>
         <input
@@ -192,8 +192,8 @@ export default function AdPreferencesStep() {
       </div>
 
       {/* Google Account Email */}
-      <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
           Google Account Email <span className="text-red-500">*</span>
         </label>
         <input
@@ -212,7 +212,7 @@ export default function AdPreferencesStep() {
 
       {/* Monthly Budget Radio Cards */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 mb-3">
           Monthly Ad Budget <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 gap-3">
@@ -253,7 +253,7 @@ export default function AdPreferencesStep() {
 
       {/* Current Platforms */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 mb-3">
           Current Advertising Platforms
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -288,8 +288,8 @@ export default function AdPreferencesStep() {
       </div>
 
       {/* Social Links */}
-      <div className="mb-5">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-gray-700 mb-3">
           Social Media <span className="text-gray-500">(optional)</span>
         </label>
         <div className="space-y-3">

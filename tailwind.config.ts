@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "sans-serif"],
+        heading: ["var(--font-anton)", "Anton", "sans-serif"],
       },
       colors: {
         background: "var(--background)",

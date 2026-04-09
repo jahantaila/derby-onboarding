@@ -166,22 +166,22 @@ export default function BusinessInfoStep() {
   function inputClasses(field: keyof FieldErrors) {
     return `w-full bg-white border ${
       errors[field] ? "border-red-500" : "border-gray-300 focus:border-derby-blue"
-    } rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 ${
+    } rounded-lg h-12 px-4 text-base text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 focus:shadow-sm ${
       errors[field] ? "focus:ring-red-500" : "focus:ring-derby-blue"
     }`;
   }
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Business Information</h2>
-        <p className="text-gray-500">Tell us about your business so we can get started.</p>
+      <div className="mb-10">
+        <h2 className="text-3xl sm:text-4xl font-heading uppercase text-gray-900 mb-2 leading-tight">Business Information</h2>
+        <p className="text-gray-500 text-base">Tell us about your business so we can get started.</p>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         {/* Business Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Business Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -199,7 +199,7 @@ export default function BusinessInfoStep() {
 
         {/* Owner Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Owner Full Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -216,9 +216,9 @@ export default function BusinessInfoStep() {
         </div>
 
         {/* Phone + Email row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Phone <span className="text-red-500">*</span>
             </label>
             <input
@@ -234,7 +234,7 @@ export default function BusinessInfoStep() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -253,7 +253,7 @@ export default function BusinessInfoStep() {
 
         {/* Address */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
             Street Address <span className="text-red-500">*</span>
           </label>
           <input
@@ -270,9 +270,9 @@ export default function BusinessInfoStep() {
         </div>
 
         {/* City, State, ZIP row */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               City <span className="text-red-500">*</span>
             </label>
             <input
@@ -288,7 +288,7 @@ export default function BusinessInfoStep() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               State <span className="text-red-500">*</span>
             </label>
             <select
@@ -312,7 +312,7 @@ export default function BusinessInfoStep() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               ZIP Code <span className="text-red-500">*</span>
             </label>
             <input

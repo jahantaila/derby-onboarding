@@ -94,7 +94,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-4 shadow-sm">
+    <div className="bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 mb-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
         <button
@@ -187,9 +187,9 @@ export default function ReviewStep() {
     <div className="max-w-2xl mx-auto px-4">
       {showConfetti && <ConfettiAnimation />}
 
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Review &amp; Submit</h2>
-        <p className="text-gray-500">
+      <div className="mb-10">
+        <h2 className="text-3xl sm:text-4xl font-heading uppercase text-gray-900 mb-2 leading-tight">Review &amp; Submit</h2>
+        <p className="text-gray-500 text-base">
           Review your information below. Click Edit on any section to make changes.
         </p>
       </div>

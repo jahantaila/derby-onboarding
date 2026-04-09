@@ -27,10 +27,10 @@ export default function ConfirmationStep() {
           </svg>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+        <h1 className="text-5xl sm:text-6xl font-heading uppercase text-gray-900 mb-4 tracking-tight leading-none">
           You&apos;re In!
         </h1>
-        <p className="text-xl text-gray-600 mb-10">
+        <p className="text-xl sm:text-2xl text-gray-600 mb-10">
           Welcome to{" "}
           <span className="bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent font-semibold">
             Derby Digital
@@ -38,11 +38,11 @@ export default function ConfirmationStep() {
         </p>
 
         {/* Next steps */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 mb-10 text-left shadow-sm">
+        <div className="bg-white border border-gray-200 rounded-2xl p-8 lg:p-10 mb-10 text-left shadow-sm">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-6">
             What happens next
           </h3>
-          <div className="space-y-6">
+          <div className="space-y-7">
             {[
               {
                 number: "1",

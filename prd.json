@@ -21,7 +21,7 @@
       "title": "Bold typography and spacing overhaul",
       "description": "Import and use Anton font for main headings and step titles. Use Inter or DM Sans for body text and form labels. Increase heading sizes: welcome headline should be 48px+ on desktop. Step titles in the tracker should be 18px bold. Form labels 14px semibold. Increase spacing between form fields (gap-6 minimum). Add more padding inside cards (p-8 on desktop). Input fields should be larger (h-12 minimum) with rounded-lg borders. Everything should feel spacious and premium, not cramped.",
       "acceptCriteria": "Anton font loads for headings. Inter/DM Sans for body. Sizes increased. Spacing feels premium. Inputs are large and comfortable. Build passes.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "UI04",

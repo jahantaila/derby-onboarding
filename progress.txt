@@ -1,6 +1,9 @@
 # Ralph Progress Log - Derby Digital Onboarding Portal
 
 ## Codebase Patterns
+- Typography: font-heading (Anton, uppercase) for h1/h2 headings; font-sans (Inter) for body/labels; CSS vars --font-anton and --font-inter
+- Input styling: h-12 height, rounded-lg, text-base, focus:shadow-sm — consistent across all form steps
+- Label styling: text-sm font-semibold text-gray-700 mb-2 — consistent across all form steps
 - Brand colors: derby-dark (#0A1628), derby-card (#1A2744), derby-blue (#2093FF), derby-blue-deep (#0026FF), derby-text (#1A1A2E)
 - Light mode default: bg-gray-50 body, bg-white cards/inputs, gray-200/300 borders, gray-900 headings, gray-700 labels, gray-500 descriptions. No purple anywhere.
 - New layout: vertical sidebar (320px) on left for desktop (lg:), horizontal mini-bar on mobile. Sidebar hidden on Welcome (step 1) and Confirmation (step 7)
@@ -293,4 +296,26 @@
   - Error states in light mode: bg-red-50 + border-red-200 + text-red-600 (not bg-red-500/10 + text-red-400)
   - text-white is still correct on gradient blue CTA buttons — only replace text-white on non-gradient elements
   - Keep CSS variable --background at #F0F4F8 for the soft gray-blue base, but most cards/sidebars use explicit bg-white
+---
+
+## 2026-04-09 - UI03
+- What was implemented: Bold typography and spacing overhaul. Imported Anton font for all main headings (h1/h2) via next/font/google. Added font-heading Tailwind family. Updated all wizard step headings to font-heading uppercase with increased sizes (5xl-6xl for welcome/confirmation, 3xl-4xl for form steps). Bumped step titles in sidebar from text-sm to text-base font-bold. Changed all form labels from font-medium to font-semibold. Increased input fields to h-12 height with rounded-lg and text-base. Widened form field spacing to gap-6/space-y-6. Added more card padding (p-8/lg:p-8/lg:p-10). Increased main content area padding (sm:px-8 lg:px-12 lg:py-10).
+- Files changed:
+  - src/app/layout.tsx (updated - imported Anton font, added --font-anton CSS variable)
+  - tailwind.config.ts (updated - added font-heading family mapping to Anton)
+  - src/components/wizard/WizardLayout.tsx (updated - sidebar logo to font-heading, step titles to text-base font-bold, main content padding increased)
+  - src/components/wizard/steps/WelcomeStep.tsx (updated - h1 to font-heading 5xl/6xl uppercase, card padding p-8)
+  - src/components/wizard/steps/ConfirmationStep.tsx (updated - h1 to font-heading 5xl/6xl uppercase, card padding lg:p-10)
+  - src/components/wizard/steps/BusinessInfoStep.tsx (updated - h2 font-heading, labels font-semibold, inputs h-12 rounded-lg, gap-6)
+  - src/components/wizard/steps/ServicesStep.tsx (updated - h2 font-heading, labels font-semibold, inputs h-12 rounded-lg, gap-6)
+  - src/components/wizard/steps/DocumentsStep.tsx (updated - h2 font-heading, doc labels font-semibold, upload zone lg:p-8)
+  - src/components/wizard/steps/AdPreferencesStep.tsx (updated - h2 font-heading, labels font-semibold, inputs h-12 rounded-lg, mb-6)
+  - src/components/wizard/steps/ReviewStep.tsx (updated - h2 font-heading, section card padding lg:p-8)
+  - prd.json (updated - UI03 passes: true)
+- **Learnings for future iterations:**
+  - Anton font is weight 400 only — use `weight: "400"` in next/font/google config
+  - All headings use `font-heading uppercase` class combo since Anton looks best in uppercase
+  - Input h-12 is the standard height — uses explicit height instead of py-3 for consistent sizing across input and select elements
+  - Form step heading pattern: `text-3xl sm:text-4xl font-heading uppercase text-gray-900 mb-2 leading-tight`
+  - Welcome/Confirmation use larger headings: `text-5xl sm:text-6xl font-heading uppercase`
 ---

@@ -190,14 +190,14 @@ export default function DocumentsStep() {
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Document Uploads</h2>
-        <p className="text-gray-500">
+      <div className="mb-10">
+        <h2 className="text-3xl sm:text-4xl font-heading uppercase text-gray-900 mb-2 leading-tight">Document Uploads</h2>
+        <p className="text-gray-500 text-base">
           Upload your business documents. We accept PDF, JPG, and PNG files up to 10MB.
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         {loadingDocs ? (
           DOC_SLOTS.map((slot) => (
             <div key={slot.id} className="rounded-xl border-2 border-dashed border-gray-200 bg-white p-6">
@@ -225,7 +225,7 @@ export default function DocumentsStep() {
                 onDragOver={(e) => handleDragOver(e, slot.docType)}
                 onDragLeave={() => handleDragLeave(slot.docType)}
                 onClick={() => !isUploading && fileInputRefs.current[slot.docType]?.click()}
-                className={`relative rounded-xl border-2 border-dashed p-6 transition-all duration-200 cursor-pointer ${
+                className={`relative rounded-xl border-2 border-dashed p-6 lg:p-8 transition-all duration-200 cursor-pointer ${
                   uploaded
                     ? "border-green-500/50 bg-green-50"
                     : isDragOver
@@ -262,7 +262,7 @@ export default function DocumentsStep() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-medium text-gray-900">{slot.label}</h3>
+                      <h3 className="text-sm font-semibold text-gray-900">{slot.label}</h3>
                       {slot.required ? (
                         <span className="text-red-500 text-xs">*</span>
                       ) : (
