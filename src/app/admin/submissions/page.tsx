@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 interface Submission {
   id: string;
@@ -61,6 +62,7 @@ function formatServices(categories: string[] | null) {
 }
 
 export default function AdminSubmissionsPage() {
+  const router = useRouter();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
@@ -193,6 +195,7 @@ export default function AdminSubmissionsPage() {
                         badge={badge}
                         isExpanded={isExpanded}
                         onToggle={() => setExpandedId(isExpanded ? null : sub.id)}
+                        onViewDetail={() => router.push(`/admin/submissions/${sub.id}`)}
                       />
                     );
                   })}
@@ -212,6 +215,7 @@ export default function AdminSubmissionsPage() {
                     badge={badge}
                     isExpanded={isExpanded}
                     onToggle={() => setExpandedId(isExpanded ? null : sub.id)}
+                    onViewDetail={() => router.push(`/admin/submissions/${sub.id}`)}
                   />
                 );
               })}
@@ -255,11 +259,13 @@ function SubmissionRow({
   badge,
   isExpanded,
   onToggle,
+  onViewDetail,
 }: {
   sub: Submission;
   badge: { bg: string; text: string; label: string };
   isExpanded: boolean;
   onToggle: () => void;
+  onViewDetail: () => void;
 }) {
   return (
     <>
@@ -290,7 +296,7 @@ function SubmissionRow({
       {isExpanded && (
         <tr>
           <td colSpan={7} className="px-5 py-4 bg-white/[0.02]">
-            <DetailPanel sub={sub} />
+            <DetailPanel sub={sub} onViewDetail={onViewDetail} />
           </td>
         </tr>
       )}
@@ -303,11 +309,13 @@ function MobileSubmissionCard({
   badge,
   isExpanded,
   onToggle,
+  onViewDetail,
 }: {
   sub: Submission;
   badge: { bg: string; text: string; label: string };
   isExpanded: boolean;
   onToggle: () => void;
+  onViewDetail: () => void;
 }) {
   return (
     <div>
@@ -329,14 +337,14 @@ function MobileSubmissionCard({
       </button>
       {isExpanded && (
         <div className="px-4 pb-4">
-          <DetailPanel sub={sub} />
+          <DetailPanel sub={sub} onViewDetail={onViewDetail} />
         </div>
       )}
     </div>
   );
 }
 
-function DetailPanel({ sub }: { sub: Submission }) {
+function DetailPanel({ sub, onViewDetail }: { sub: Submission; onViewDetail: () => void }) {
   const allServices = sub.service_categories
     ? sub.service_categories
         .map((c) => c.charAt(0).toUpperCase() + c.slice(1).replace(/_/g, " "))
@@ -348,27 +356,37 @@ function DetailPanel({ sub }: { sub: Submission }) {
     .join(", ");
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-      <div className="space-y-2">
-        <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
-          Business Info
-        </h4>
-        <DetailRow label="Business" value={sub.business_name} />
-        <DetailRow label="Owner" value={sub.contact_name} />
-        <DetailRow label="Phone" value={sub.business_phone} />
-        <DetailRow label="Email" value={sub.business_email} />
-        {address && <DetailRow label="Address" value={address} />}
+    <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+        <div className="space-y-2">
+          <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+            Business Info
+          </h4>
+          <DetailRow label="Business" value={sub.business_name} />
+          <DetailRow label="Owner" value={sub.contact_name} />
+          <DetailRow label="Phone" value={sub.business_phone} />
+          <DetailRow label="Email" value={sub.business_email} />
+          {address && <DetailRow label="Address" value={address} />}
+        </div>
+        <div className="space-y-2">
+          <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+            Services & Details
+          </h4>
+          <DetailRow label="Services" value={allServices} />
+          <DetailRow
+            label="Submitted"
+            value={formatDate(sub.submitted_at || sub.created_at)}
+          />
+          <DetailRow label="Status" value={STATUS_BADGE[sub.pipeline_status]?.label || sub.pipeline_status} />
+        </div>
       </div>
-      <div className="space-y-2">
-        <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
-          Services & Details
-        </h4>
-        <DetailRow label="Services" value={allServices} />
-        <DetailRow
-          label="Submitted"
-          value={formatDate(sub.submitted_at || sub.created_at)}
-        />
-        <DetailRow label="Status" value={STATUS_BADGE[sub.pipeline_status]?.label || sub.pipeline_status} />
+      <div className="mt-4 pt-3 border-t border-white/5">
+        <button
+          onClick={(e) => { e.stopPropagation(); onViewDetail(); }}
+          className="px-4 py-2 bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+        >
+          View Full Details
+        </button>
       </div>
     </div>
   );

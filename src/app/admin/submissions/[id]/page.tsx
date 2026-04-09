@@ -1,0 +1,454 @@
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+
+interface SubmissionDetail {
+  id: string;
+  session_id: string;
+  business_name: string | null;
+  contact_name: string | null;
+  business_phone: string | null;
+  business_email: string | null;
+  business_address: string | null;
+  business_city: string | null;
+  business_state: string | null;
+  business_zip: string | null;
+  service_categories: string[] | null;
+  service_area_miles: number | null;
+  weekly_budget_cents: number | null;
+  contact_phone: string | null;
+  contact_email: string | null;
+  pipeline_status: "new" | "in_progress" | "active";
+  submitted_at: string;
+  created_at: string;
+  notes: Record<string, string> | null;
+}
+
+interface FormDataExtras {
+  website_url?: string;
+  google_account_email?: string;
+  monthly_budget?: string;
+  current_platforms?: string[];
+  facebook_url?: string;
+  instagram_url?: string;
+  service_area?: string;
+  years_in_business?: number;
+  employees?: string;
+  other_service?: string;
+}
+
+interface DocumentWithUrl {
+  id: string;
+  doc_type: string;
+  file_name: string;
+  storage_path: string;
+  file_size: number;
+  mime_type: string;
+  signed_url: string | null;
+}
+
+const STATUS_OPTIONS = [
+  { value: "new", label: "New", bg: "bg-blue-500/15", text: "text-blue-400" },
+  { value: "in_progress", label: "In Progress", bg: "bg-yellow-500/15", text: "text-yellow-400" },
+  { value: "active", label: "Active", bg: "bg-green-500/15", text: "text-green-400" },
+];
+
+const DOC_TYPE_LABELS: Record<string, string> = {
+  business_license: "Business License",
+  insurance: "Certificate of Insurance",
+  government_id: "Government ID",
+  utility_bill: "Utility Bill",
+};
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function formatFileSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function isImageType(mimeType: string) {
+  return mimeType.startsWith("image/");
+}
+
+export default function SubmissionDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+
+  const [submission, setSubmission] = useState<SubmissionDetail | null>(null);
+  const [formData, setFormData] = useState<FormDataExtras>({});
+  const [documents, setDocuments] = useState<DocumentWithUrl[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState("");
+  const [statusSaving, setStatusSaving] = useState(false);
+  const [internalNotes, setInternalNotes] = useState("");
+  const [notesSaving, setNotesSaving] = useState(false);
+  const [notesSaved, setNotesSaved] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [subRes, docsRes] = await Promise.all([
+        fetch(`/api/admin/submissions/${id}`),
+        fetch(`/api/admin/submissions/${id}/documents`),
+      ]);
+
+      if (!subRes.ok) {
+        router.push("/admin/submissions");
+        return;
+      }
+
+      const subData = await subRes.json();
+      setSubmission(subData.submission);
+      setFormData(subData.form_data || {});
+      setStatus(subData.submission.pipeline_status);
+      setInternalNotes(subData.submission.notes?.internal || "");
+
+      if (docsRes.ok) {
+        const docsData = await docsRes.json();
+        setDocuments(docsData);
+      }
+    } catch {
+      router.push("/admin/submissions");
+    } finally {
+      setLoading(false);
+    }
+  }, [id, router]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  async function handleStatusChange(newStatus: string) {
+    setStatus(newStatus);
+    setStatusSaving(true);
+    try {
+      const res = await fetch(`/api/admin/submissions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pipeline_status: newStatus }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSubmission(data.submission);
+      }
+    } catch {
+      // revert on error
+      if (submission) setStatus(submission.pipeline_status);
+    } finally {
+      setStatusSaving(false);
+    }
+  }
+
+  async function handleSaveNotes() {
+    setNotesSaving(true);
+    setNotesSaved(false);
+    try {
+      const res = await fetch(`/api/admin/submissions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes: { internal: internalNotes } }),
+      });
+      if (res.ok) {
+        setNotesSaved(true);
+        setTimeout(() => setNotesSaved(false), 2000);
+      }
+    } catch {
+      // silent fail
+    } finally {
+      setNotesSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="h-8 w-48 bg-white/5 rounded animate-pulse" />
+        <div className="h-64 bg-white/5 rounded-xl animate-pulse" />
+        <div className="h-48 bg-white/5 rounded-xl animate-pulse" />
+      </div>
+    );
+  }
+
+  if (!submission) return null;
+
+  const address = [
+    submission.business_address,
+    submission.business_city,
+    submission.business_state,
+    submission.business_zip,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const allServices = submission.service_categories
+    ? submission.service_categories.map(
+        (c) => c.charAt(0).toUpperCase() + c.slice(1).replace(/_/g, " ")
+      )
+    : [];
+
+  const currentBadge = STATUS_OPTIONS.find((s) => s.value === status) || STATUS_OPTIONS[0];
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <Link
+          href="/admin/submissions"
+          className="text-gray-400 hover:text-white transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </Link>
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold">{submission.business_name || "Untitled"}</h1>
+          <p className="text-gray-400 text-sm">
+            Submitted {formatDate(submission.submitted_at || submission.created_at)}
+          </p>
+        </div>
+        <span className={`inline-block px-3 py-1.5 rounded-full text-sm font-medium ${currentBadge.bg} ${currentBadge.text}`}>
+          {currentBadge.label}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main content - 2 cols */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Business Information */}
+          <Section title="Business Information">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Business Name" value={submission.business_name} />
+              <Field label="Owner" value={submission.contact_name} />
+              <Field label="Phone" value={submission.business_phone} />
+              <Field label="Email" value={submission.business_email} />
+              {address && <Field label="Address" value={address} className="sm:col-span-2" />}
+            </div>
+          </Section>
+
+          {/* Services */}
+          <Section title="Services & Trade">
+            <div className="space-y-4">
+              {allServices.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {allServices.map((svc) => (
+                    <span
+                      key={svc}
+                      className="px-3 py-1.5 bg-derby-blue/10 border border-derby-blue/20 rounded-full text-sm text-derby-blue"
+                    >
+                      {svc}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">No services listed</p>
+              )}
+              {formData.other_service && (
+                <Field label="Other Service" value={formData.other_service} />
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <Field label="Service Area" value={formData.service_area || null} />
+                <Field
+                  label="Years in Business"
+                  value={formData.years_in_business != null ? String(formData.years_in_business) : null}
+                />
+                <Field label="Employees" value={formData.employees || null} />
+              </div>
+            </div>
+          </Section>
+
+          {/* Documents */}
+          <Section title="Documents">
+            {documents.length === 0 ? (
+              <p className="text-gray-500">No documents uploaded</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {documents.map((doc) => (
+                  <DocumentCard key={doc.id} doc={doc} />
+                ))}
+              </div>
+            )}
+          </Section>
+
+          {/* Ad Preferences */}
+          <Section title="Ad Preferences & Online Presence">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Monthly Budget" value={formData.monthly_budget || null} />
+              <Field label="Google Account" value={formData.google_account_email || null} />
+              <Field label="Website" value={formData.website_url || null} />
+              <Field
+                label="Current Platforms"
+                value={
+                  formData.current_platforms && formData.current_platforms.length > 0
+                    ? formData.current_platforms.join(", ")
+                    : null
+                }
+              />
+              <Field label="Facebook" value={formData.facebook_url || null} />
+              <Field label="Instagram" value={formData.instagram_url || null} />
+            </div>
+          </Section>
+        </div>
+
+        {/* Sidebar - 1 col */}
+        <div className="space-y-6">
+          {/* Status */}
+          <Section title="Pipeline Status">
+            <select
+              value={status}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              disabled={statusSaving}
+              className="w-full bg-derby-dark border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 disabled:opacity-50"
+            >
+              {STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            {statusSaving && (
+              <p className="text-xs text-gray-500 mt-1">Saving...</p>
+            )}
+          </Section>
+
+          {/* Internal Notes */}
+          <Section title="Internal Notes">
+            <textarea
+              value={internalNotes}
+              onChange={(e) => setInternalNotes(e.target.value)}
+              placeholder="Add internal notes about this submission..."
+              rows={6}
+              className="w-full bg-derby-dark border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 resize-y"
+            />
+            <div className="flex items-center gap-3 mt-2">
+              <button
+                onClick={handleSaveNotes}
+                disabled={notesSaving}
+                className="px-4 py-2 bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+              >
+                {notesSaving ? "Saving..." : "Save Notes"}
+              </button>
+              {notesSaved && (
+                <span className="text-green-400 text-sm">Saved!</span>
+              )}
+            </div>
+          </Section>
+
+          {/* Quick Info */}
+          <Section title="Details">
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Submitted</span>
+                <span className="text-gray-200">
+                  {formatDate(submission.submitted_at || submission.created_at)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Documents</span>
+                <span className="text-gray-200">{documents.length} file(s)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Session ID</span>
+                <span className="text-gray-200 text-xs font-mono truncate ml-2">
+                  {submission.session_id}
+                </span>
+              </div>
+            </div>
+          </Section>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-derby-card rounded-xl border border-white/10 p-5">
+      <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">
+        {title}
+      </h3>
+      {children}
+    </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  className = "",
+}: {
+  label: string;
+  value: string | null;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <p className="text-xs text-gray-500 mb-0.5">{label}</p>
+      <p className="text-sm text-gray-200">{value || "—"}</p>
+    </div>
+  );
+}
+
+function DocumentCard({ doc }: { doc: DocumentWithUrl }) {
+  const isImage = isImageType(doc.mime_type);
+  const label = DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type;
+
+  return (
+    <div className="bg-derby-dark rounded-lg border border-white/10 overflow-hidden">
+      {/* Image preview */}
+      {isImage && doc.signed_url && (
+        <div className="aspect-video bg-black/30 flex items-center justify-center overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={doc.signed_url}
+            alt={doc.file_name}
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
+      )}
+
+      {/* PDF icon for non-images */}
+      {!isImage && (
+        <div className="aspect-video bg-black/30 flex items-center justify-center">
+          <div className="text-center">
+            <svg className="w-10 h-10 text-red-400 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            <span className="text-xs text-gray-500 uppercase">{doc.mime_type.split("/")[1]}</span>
+          </div>
+        </div>
+      )}
+
+      {/* File info + download */}
+      <div className="p-3">
+        <p className="text-xs text-gray-400 mb-1">{label}</p>
+        <p className="text-sm text-white truncate mb-1">{doc.file_name}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-500">{formatFileSize(doc.file_size)}</span>
+          {doc.signed_url && (
+            <a
+              href={doc.signed_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-derby-blue hover:text-derby-blue/80 transition-colors font-medium"
+            >
+              {isImage ? "View Full" : "Download"}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

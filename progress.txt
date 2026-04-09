@@ -33,6 +33,11 @@
 - Admin login: POST /api/admin/login validates password, sets httpOnly `admin_token` cookie
 - Admin layout skips sidebar for `/admin/login` pathname — check in layout component
 - Logout: clear `admin_token` cookie via JS (`document.cookie = "admin_token=; path=/; max-age=0"`)
+- GET /api/admin/submissions/[id] returns { submission, form_data } — form_data from sessions table has ad prefs not in submissions
+- PATCH /api/admin/submissions/[id] accepts { pipeline_status, notes } — notes is jsonb column on submissions
+- GET /api/admin/submissions/[id]/documents returns documents with signed_url from Supabase Storage (1hr expiry)
+- Submission detail page at /admin/submissions/[id] — uses Section/Field/DocumentCard components
+- Notes stored as `{ internal: "text" }` in submissions.notes jsonb column
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -186,4 +191,22 @@
   - Mobile responsive pattern for tables: hide table on md:hidden, show card layout on md:block inverse
   - Service categories display: capitalize first letter, replace underscores, truncate to 2 + count for table cells
   - Detail panel uses expandedId state to track which row is expanded — click again to collapse
+---
+
+## 2026-04-08 - S14
+- What was implemented: Full submission detail page at /admin/submissions/[id] with all business info, services (as tag badges), documents with image previews and download links (signed URLs from Supabase Storage), ad preferences (from session form_data), pipeline status dropdown (changes saved via PATCH), and internal notes textarea (saved to notes jsonb column). Added "View Full Details" button to the inline detail panel on the submissions table. Created migration for notes column.
+- Files changed:
+  - src/app/admin/submissions/[id]/page.tsx (new - full submission detail page)
+  - src/app/api/admin/submissions/[id]/route.ts (new - GET single submission + PATCH status/notes)
+  - src/app/api/admin/submissions/[id]/documents/route.ts (new - GET documents with signed URLs)
+  - src/app/admin/submissions/page.tsx (updated - added "View Full Details" button linking to detail page)
+  - src/lib/types.ts (updated - added notes field to Submission interface)
+  - supabase/migrations/002_add_notes_column.sql (new - adds notes jsonb column to submissions)
+  - prd.json (updated - S14 passes: true)
+- **Learnings for future iterations:**
+  - Ad preferences (website_url, monthly_budget, google_account_email, etc.) are NOT in the submissions table — they live in session.form_data. Detail view must fetch session data alongside submission.
+  - Supabase Storage signed URLs: `supabase.storage.from("bucket").createSignedUrl(path, expirySeconds)` — returns { data: { signedUrl } }
+  - The submissions table originally lacked a `notes` column — needed a migration to add it (jsonb default '{}')
+  - Image preview uses native `<img>` tag with eslint-disable for @next/next/no-img-element since these are external signed URLs
+  - Next.js 14 dynamic route params are now a Promise — must `await params` in route handlers
 ---

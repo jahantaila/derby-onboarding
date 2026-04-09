@@ -72,6 +72,7 @@ export interface Submission {
   created_at: string;
   kickoff_booked_at: string | null;
   pipeline_status: "new" | "in_progress" | "active";
+  notes: Record<string, unknown> | null;
 }
 
 /**

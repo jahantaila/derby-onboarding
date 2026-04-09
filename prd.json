@@ -98,7 +98,7 @@
       "title": "Build Admin Dashboard - Submission Detail and Documents",
       "description": "Detail view: all business info, services, documents with download links (signed URLs from Storage), ad prefs, date, status dropdown to change pipeline_status. Internal notes (save to notes jsonb). Image previews inline, PDF download buttons.",
       "acceptCriteria": "Details render. Documents downloadable. Status changeable. Notes saveable.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S15",
