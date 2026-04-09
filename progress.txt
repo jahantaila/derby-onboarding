@@ -129,3 +129,15 @@
   - ReviewStep fetches session first to get session.id, then uses that to query documents table
   - The submit flow: POST /api/submit → insert submissions row + mark session complete → show confetti → goNext() to confirmation
 ---
+
+## 2026-04-08 - S10
+- What was implemented: ConfirmationStep component (Step 7) — thank you page with "You're In! Welcome to Derby Digital" headline, 3 numbered next steps (review in 24hrs, Google ads setup, leads start coming), contact info with clickable phone (502-702-6268) and email (jahan@derbydigital.us) links, and "Back to Derby Digital" external link. Animated background glow and premium styling matching the welcome step.
+- Files changed:
+  - src/components/wizard/steps/ConfirmationStep.tsx (new - confirmation/thank you step component)
+  - src/components/wizard/StepRenderer.tsx (updated - renders ConfirmationStep for step 7)
+- **Learnings for future iterations:**
+  - Step 7 is a terminal step — no navigation buttons needed (no goNext/goBack)
+  - Confirmation step doesn't need wizard context since it's purely presentational
+  - String descriptions in JS arrays (not JSX) can use regular apostrophes — `&apos;` is only needed directly in JSX text
+  - The ConfirmationStep mirrors WelcomeStep's visual pattern (background glow, centered layout, gradient accents) for bookend consistency
+---

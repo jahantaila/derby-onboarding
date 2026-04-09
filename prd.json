@@ -70,7 +70,7 @@
       "title": "Build Step 7: Confirmation",
       "description": "Thank you page: 'You\u0027re In! Welcome to Derby Digital.' Next steps: 1) We review (24hrs), 2) Set up Google ads, 3) Leads start coming. Contact: (502) 702-6268, jahan@derbydigital.us. 'Back to Derby Digital' link. Celebratory and premium feel.",
       "acceptCriteria": "Confirmation renders after submit. Next steps shown. Contact info correct.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S11",
