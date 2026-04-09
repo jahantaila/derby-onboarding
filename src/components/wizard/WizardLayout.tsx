@@ -228,7 +228,7 @@ function MobileHeader() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center">
             <span className="text-white font-bold text-xs">D</span>
           </div>
-          <span className="text-base font-semibold text-gray-900">Derby Digital</span>
+          <img src="/logo.png" alt="Derby Digital" className="h-8 w-auto" />
         </div>
         <a
           href="tel:5027026268"

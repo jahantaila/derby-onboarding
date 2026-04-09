@@ -5,7 +5,6 @@ import WelcomeStep from "./steps/WelcomeStep";
 import BusinessInfoStep from "./steps/BusinessInfoStep";
 import ServicesStep from "./steps/ServicesStep";
 import DocumentsStep from "./steps/DocumentsStep";
-import AdPreferencesStep from "./steps/AdPreferencesStep";
 import ReviewStep from "./steps/ReviewStep";
 import ConfirmationStep from "./steps/ConfirmationStep";
 
@@ -51,9 +50,8 @@ export default function StepRenderer() {
   if (currentStep === 2) return <BusinessInfoStep />;
   if (currentStep === 3) return <ServicesStep />;
   if (currentStep === 4) return <DocumentsStep />;
-  if (currentStep === 5) return <AdPreferencesStep />;
-  if (currentStep === 6) return <ReviewStep />;
-  if (currentStep === 7) return <ConfirmationStep />;
+  if (currentStep === 5) return <ReviewStep />;
+  if (currentStep === 6) return <ConfirmationStep />;
 
   const step = STEPS[currentStep - 1];
   return <StepPlaceholder step={step} />;

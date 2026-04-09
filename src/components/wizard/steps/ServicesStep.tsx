@@ -269,6 +269,29 @@ export default function ServicesStep() {
           className={inputClasses("service_area")}
         />
         {errorMessage(errors.service_area)}
+        <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1"><svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Please include areas you&apos;d like to expand to or the furthest out you&apos;d be willing to go</p>
+      </div>
+
+      {/* Additional Services */}
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Additional Services
+        </label>
+        <textarea
+          value={formData.additional_services || ""}
+          onChange={(e) => {
+            updateFormData({ additional_services: e.target.value });
+          }}
+          onBlur={() => {
+            if (sessionToken && formData.additional_services) {
+              autoSave({ additional_services: formData.additional_services });
+            }
+          }}
+          placeholder="e.g. Water heater installation, sewer line repair, gas line work..."
+          rows={3}
+          className="w-full bg-white border border-[#D1D9E6] focus:border-derby-blue rounded-xl px-4 py-3 text-base text-gray-900 placeholder-gray-400 outline-none transition-all focus:ring-1 focus:shadow-sm focus:ring-derby-blue resize-none"
+        />
+        <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1"><svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Are there any other services you are licensed for or would like leads for?</p>
       </div>
 
       {/* Years in Business + Employees row */}

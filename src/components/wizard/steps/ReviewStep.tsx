@@ -285,46 +285,6 @@ export default function ReviewStep() {
         )}
       </SectionCard>
 
-      {/* Ad Preferences */}
-      <SectionCard title="Ad Preferences" onEdit={() => goToStep(5)}>
-        <div className="divide-y divide-gray-100">
-          <InfoRow label="Website" value={formData.website_url} />
-          <InfoRow label="Google Email" value={formData.google_account_email} />
-          <InfoRow
-            label="Monthly Budget"
-            value={
-              formData.monthly_budget
-                ? BUDGET_LABELS[formData.monthly_budget] || formData.monthly_budget
-                : undefined
-            }
-          />
-          <div className="py-1.5">
-            <span className="text-sm text-gray-500 block mb-1.5">
-              Current Platforms
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {platformLabels.length > 0 ? (
-                platformLabels.map((label) => (
-                  <span
-                    key={label}
-                    className="text-xs font-medium px-3 py-1 rounded-full bg-derby-blue/10 text-derby-blue border border-derby-blue/20"
-                  >
-                    {label}
-                  </span>
-                ))
-              ) : (
-                <span className="text-sm text-gray-500">—</span>
-              )}
-            </div>
-          </div>
-          {formData.facebook_url && (
-            <InfoRow label="Facebook" value={formData.facebook_url} />
-          )}
-          {formData.instagram_url && (
-            <InfoRow label="Instagram" value={formData.instagram_url} />
-          )}
-        </div>
-      </SectionCard>
 
       {/* Error */}
       {submitError && (
