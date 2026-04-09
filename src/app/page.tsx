@@ -1,10 +1,15 @@
+"use client";
+
+import { WizardProvider } from "@/components/wizard/WizardContext";
+import WizardLayout from "@/components/wizard/WizardLayout";
+import StepRenderer from "@/components/wizard/StepRenderer";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold bg-gradient-to-r from-derby-blue to-derby-blue-deep bg-clip-text text-transparent">
-        Derby Digital
-      </h1>
-      <p className="mt-4 text-gray-400">Client Onboarding Portal</p>
-    </main>
+    <WizardProvider>
+      <WizardLayout>
+        <StepRenderer />
+      </WizardLayout>
+    </WizardProvider>
   );
 }
