@@ -46,6 +46,22 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   const completionPercent = Math.round(((currentStep - 1) / (TOTAL_STEPS - 1)) * 100);
 
+  // Broadcast step changes via postMessage (for iframe embedding)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const isComplete = currentStep === TOTAL_STEPS;
+    window.parent.postMessage(
+      {
+        type: "derby-onboarding",
+        event: isComplete ? "complete" : "step-change",
+        step: currentStep,
+        totalSteps: TOTAL_STEPS,
+        completionPercent,
+      },
+      "*"
+    );
+  }, [currentStep, completionPercent]);
+
   // Restore session from localStorage on mount
   useEffect(() => {
     const savedToken = localStorage.getItem("derby_session_token");

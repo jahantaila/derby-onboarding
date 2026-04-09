@@ -56,7 +56,7 @@
       "title": "Make embeddable via iframe for WordPress",
       "description": "Create an /embed route that renders the full onboarding wizard without the outer chrome (no header, no footer, just the wizard). Add proper iframe communication: postMessage to parent on step change and on completion. Add a public/embed.js script that WordPress can include: it creates an iframe pointing to the /embed route, handles auto-height resize via postMessage, and provides a simple API: DerbyOnboarding.init({container: '#onboarding', baseUrl: 'https://onboarding.derbydigital.us'}). The embed should work at any width (min 320px). Add X-Frame-Options and CSP headers that allow embedding from derbydigital.us. Document the embed code in README.",
       "acceptCriteria": "Embed route renders wizard without chrome. embed.js creates functional iframe. Auto-height works. Can embed on any WordPress page. README has embed instructions. Build passes.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "UI09",

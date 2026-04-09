@@ -53,6 +53,8 @@
 - Error messages: use errorMessage() helper with inline SVG exclamation icon + flex layout for consistent error display
 - Selectable card hover: hover:border-derby-blue hover:bg-blue-50/50 for unselected cards; border-[#D1D9E6] as default border
 - Service card icons: SVG path data strings (stroke-based), rendered in circular container (w-10 h-10 rounded-full)
+- Embed route (/embed) has its own layout.tsx (transparent bg, no chrome) — postMessage events use { type: "derby-onboarding" } namespace
+- CSP and X-Frame-Options configured in next.config.mjs headers() — only /embed allows framing
 
 ## 2026-04-08 - S03
 - What was implemented: WizardProvider context (step management, form data, session token, navigation direction), WizardLayout (header with Derby logo + back button, progress bar with step circles + completion %, mobile step indicator), StepRenderer with placeholder steps, CSS animations for step transitions
@@ -380,4 +382,22 @@
   - Vertical timeline connecting lines: absolute positioned div (w-0.5) from top of circle to bottom of item, with gradient opacity fade
   - Blue-gray header bar pattern: bg-gradient-to-r from-gray-50 to-blue-50/50 with border-b — used consistently in review and admin sections
   - Alternating row shading: pass index to row component, apply bg-white vs bg-gray-50/50 conditionally
+---
+
+## 2026-04-09 - UI08
+- What was implemented: Created /embed route with its own layout (transparent background, no outer chrome) that renders the full wizard. Added postMessage communication in WizardContext — broadcasts step-change and complete events to parent window on every step transition. Created public/embed.js with DerbyOnboarding.init() API that creates an iframe, handles auto-height resize via postMessage, and supports onStepChange/onComplete callbacks. Configured Next.js headers: /embed allows framing from derbydigital.us (CSP frame-ancestors), all other routes use X-Frame-Options: DENY. Created README.md with embed instructions, options table, and example code.
+- Files changed:
+  - src/app/embed/page.tsx (new - embed page with AutoHeightReporter)
+  - src/app/embed/layout.tsx (new - minimal layout with transparent bg)
+  - public/embed.js (new - WordPress embed script)
+  - next.config.mjs (updated - CSP and X-Frame-Options headers)
+  - src/components/wizard/WizardContext.tsx (updated - postMessage on step change)
+  - README.md (new - embed documentation)
+  - prd.json (updated - UI08 passes: true)
+- **Learnings for future iterations:**
+  - Embed route uses its own layout.tsx to override the root layout — Next.js allows route-specific layouts
+  - Auto-height: MutationObserver on body + interval fallback ensures height is always up to date
+  - postMessage uses { type: "derby-onboarding" } prefix for namespacing — listeners filter by this
+  - CSP frame-ancestors is the modern replacement for X-Frame-Options — include both for compatibility
+  - embed.js auto-detects baseUrl from its own script src if not explicitly provided
 ---

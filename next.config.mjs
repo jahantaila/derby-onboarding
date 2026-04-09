@@ -1,4 +1,32 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/embed",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'self' https://derbydigital.us https://*.derbydigital.us",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "ALLOW-FROM https://derbydigital.us",
+          },
+        ],
+      },
+      {
+        // Block framing on non-embed routes
+        source: "/((?!embed).*)",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+        ],
+      },
+    ];
+  },
+};
 
 export default nextConfig;
