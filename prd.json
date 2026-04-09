@@ -70,7 +70,7 @@
       "title": "Final responsive polish and build verification",
       "description": "Test and fix all pages at 375px (mobile), 768px (tablet), 1024px (laptop), 1440px (desktop). Step tracker: vertical on desktop, horizontal mini-bar on mobile. Forms: single column on mobile, proper spacing. Service cards: 2-col mobile, 3-col desktop. Upload zones: full width on mobile. Admin table: horizontal scroll on mobile. Ensure all text is readable, no overflow, no cut-off content. Verify the full flow works: welcome → all steps → upload → review → submit → admin shows submission. Run npm run build and ensure zero errors and zero warnings.",
       "acceptCriteria": "Fully responsive at all breakpoints. Full flow works end to end. Build passes with zero errors. No visual bugs.",
-      "passes": false
+      "passes": true
     }
   ]
 }

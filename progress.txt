@@ -423,3 +423,21 @@
   - AnimatedPercent uses requestAnimationFrame with ease-out cubic for smooth number counting — same pattern as admin CountUp
   - Shimmer skeleton: linear-gradient background with background-position animation — more polished than simple pulse
 ---
+
+## 2026-04-09 - UI10
+- What was implemented: Final responsive polish across all breakpoints (375px, 768px, 1024px, 1440px). Fixed overflow/truncation issues on mobile for step tracker title, confirmation headline, review submit button, admin detail header, admin mobile nav, and document upload action buttons. Added proper `relative` positioning to ConfirmationStep for background glow containment. Verified build passes with zero errors and zero warnings.
+- Files changed:
+  - src/components/wizard/WizardLayout.tsx (truncation on mobile step bar title)
+  - src/components/wizard/steps/WelcomeStep.tsx (responsive headline sizing 4xl→5xl→6xl→7xl)
+  - src/components/wizard/steps/ConfirmationStep.tsx (added relative positioning, responsive text sizing)
+  - src/components/wizard/steps/DocumentsStep.tsx (responsive uploaded file layout with flex-wrap)
+  - src/components/wizard/steps/ReviewStep.tsx (responsive submit button padding/sizing)
+  - src/app/admin/layout.tsx (tighter mobile header spacing, whitespace-nowrap on nav)
+  - src/app/admin/submissions/[id]/page.tsx (truncated title, responsive header, session ID overflow fix)
+- **Learnings for future iterations:**
+  - Always add `relative` to containers that use `absolute inset-0` children for background effects
+  - Mobile step bar title needs `truncate max-w-[140px]` since step names vary in length
+  - Admin mobile header is tight at 375px — keep nav items compact with whitespace-nowrap
+  - Review submit button: use responsive padding (px-6 sm:px-10) to prevent cramping on small screens
+  - Document upload uploaded-state buttons: use flex-wrap + ml-auto pattern for graceful wrapping
+---
