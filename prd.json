@@ -28,7 +28,7 @@
       "title": "Build Step 1: Welcome screen with session creation",
       "description": "Bold welcome step. Headline: 'Welcome to Derby Digital', subtext: 'Let\u0027s get you dominating your local market. This takes about 5 minutes.' Blue gradient CTA: 'Let\u0027s Go'. On click: POST /api/sessions to create session, store token in state + localStorage for resume. Overview of what they need (license, insurance, ID). Animated background. Feel elite.",
       "acceptCriteria": "Welcome renders. Click creates Supabase session. Token stored. Can resume on refresh.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "S05",
