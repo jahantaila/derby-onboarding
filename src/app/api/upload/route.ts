@@ -3,7 +3,7 @@ import { getServiceClient } from "@/lib/supabase";
 
 const ALLOWED_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-const VALID_DOC_TYPES = ["business_license", "insurance", "government_id", "utility_bill"];
+const VALID_DOC_TYPES = ["business_license", "insurance", "government_id", "utility_bill", "utility_bill_1", "utility_bill_2"];
 
 export async function POST(request: NextRequest) {
   try {

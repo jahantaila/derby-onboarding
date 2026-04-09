@@ -55,6 +55,7 @@ export default function BusinessInfoStep() {
   const { formData, updateFormData, sessionToken, goNext, goBack } = useWizard();
   const [errors, setErrors] = useState<FieldErrors>({});
   const [saving, setSaving] = useState(false);
+  const [isHomeAddress, setIsHomeAddress] = useState(false);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const autoSave = useCallback(
@@ -205,6 +206,7 @@ export default function BusinessInfoStep() {
             className={inputClasses("business_name")}
           />
           {errorMessage(errors.business_name)}
+          <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1"><svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>This must be your legal business name as it appears on your business license</p>
         </div>
 
         {/* Owner Name */}
@@ -324,6 +326,29 @@ export default function BusinessInfoStep() {
               className={inputClasses("zip")}
             />
             {errorMessage(errors.zip)}
+          </div>
+        </div>
+
+        {/* Home Address Toggle */}
+        <div className="flex items-start gap-3 pt-1">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isHomeAddress}
+            onClick={() => setIsHomeAddress((prev) => !prev)}
+            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-derby-blue focus:ring-offset-2 ${
+              isHomeAddress ? "bg-derby-blue" : "bg-gray-200"
+            }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                isHomeAddress ? "translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </button>
+          <div>
+            <span className="text-sm font-medium text-gray-700">Is this your home address?</span>
+            <p className="mt-0.5 text-xs text-gray-400 flex items-center gap-1"><svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>If this is a home address, it will be kept private on your Google Business Profile</p>
           </div>
         </div>
       </div>

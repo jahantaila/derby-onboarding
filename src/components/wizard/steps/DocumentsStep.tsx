@@ -30,10 +30,11 @@ interface UploadedDoc {
   mime_type: string;
 }
 
-function formatFileSize(bytes: number): string {
+function formatFileSize(bytes: number | null | undefined): string {
+  if (bytes == null || isNaN(bytes)) return "0 B";
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
 export default function DocumentsStep() {
@@ -225,7 +226,12 @@ export default function DocumentsStep() {
                 onDrop={(e) => handleDrop(e, slot.docType)}
                 onDragOver={(e) => handleDragOver(e, slot.docType)}
                 onDragLeave={() => handleDragLeave(slot.docType)}
-                onClick={() => !isUploading && fileInputRefs.current[slot.docType]?.click()}
+                onClick={() => {
+                  if (isUploading) return;
+                  const scrollY = window.scrollY;
+                  fileInputRefs.current[slot.docType]?.click();
+                  requestAnimationFrame(() => window.scrollTo({ top: scrollY }));
+                }}
                 className={`relative rounded-xl border-2 border-dashed p-6 lg:p-8 transition-all duration-200 cursor-pointer ${
                   uploaded
                     ? "border-green-500/50 bg-green-50"

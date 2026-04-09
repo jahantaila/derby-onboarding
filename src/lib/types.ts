@@ -43,7 +43,7 @@ export interface FormData {
 export interface Document {
   id: string;
   session_id: string;
-  doc_type: "business_license" | "insurance" | "government_id" | "utility_bill";
+  doc_type: "business_license" | "insurance" | "government_id" | "utility_bill" | "utility_bill_1" | "utility_bill_2";
   file_name: string;
   storage_path: string;
   file_size: number;
