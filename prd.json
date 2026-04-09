@@ -7,7 +7,7 @@
       "title": "Redesign wizard layout with vertical step tracker sidebar",
       "description": "Replace the current horizontal progress bar with a vertical step tracker on the left side (like the reference image). Each step shows: step number label (STEP 1, STEP 2, etc), an icon in a blue circle, and the step title. Active step is highlighted with filled blue circle. Completed steps show a checkmark. Upcoming steps are dimmed. The step tracker should be in a card/panel on the left (about 30% width on desktop). The form content fills the right side (70%). On mobile, the step tracker collapses to a horizontal mini bar at the top. Bottom of the left panel shows a blue gradient CTA button: 'Next: [Step Name] →'. At the top right corner show 'Call us for help' with phone number (502) 702-6268.",
       "acceptCriteria": "Vertical step tracker renders on left with icons. Active/completed/upcoming states work. Mobile collapses gracefully. Next button shows upcoming step name. Build passes.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "UI02",

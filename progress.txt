@@ -2,6 +2,10 @@
 
 ## Codebase Patterns
 - Brand colors: derby-dark (#0A0A0F), derby-card (#1A1A2E), derby-blue (#2093FF), derby-blue-deep (#0026FF)
+- New layout: vertical sidebar (320px) on left for desktop (lg:), horizontal mini-bar on mobile. Sidebar hidden on Welcome (step 1) and Confirmation (step 7)
+- STEPS array now includes `icon` field (SVG path data) — used by VerticalStepTracker and potentially other components
+- Root layout uses light mode (bg-gray-50, text-gray-900) — no more dark class on html element
+- Step numbering in sidebar: displayed as "Step N-1" (Step 1 = Business Info) since Welcome is step 1 internally but not shown in tracker
 - Use `@/components/wizard/WizardContext` for step state — useWizard() hook provides currentStep, formData, navigation
 - API routes use `getServiceClient()` from `@/lib/supabase` for server-side Supabase access
 - Session token stored in both WizardContext state and localStorage (`derby_session_token` key)
@@ -244,4 +248,20 @@
   - Admin pages should always have both loading skeletons AND error states for API calls — don't silently swallow errors
   - Next.js metadata export supports openGraph property for social sharing previews
   - ESLint in this project (via next build) catches unused variables — if build fails with "assigned but never used", the variable's usage JSX may not have been saved yet
+---
+
+## 2026-04-09 - UI01
+- What was implemented: Redesigned wizard layout from horizontal progress bar to vertical step tracker sidebar. Desktop: 320px white sidebar on left with logo, 5 step indicators (Business Info through Review) with icons in blue circles, active/completed/upcoming states, progress bar, back button, and "Next: [Step Name] →" CTA button. Mobile: horizontal mini-bar with step counter and mini progress bar. "Call us for help: (502) 702-6268" in top-right on desktop, in mobile header. Sidebar hidden on Welcome and Confirmation steps. Updated root layout from dark mode to light mode (bg-gray-50). Updated WizardSkeleton to match new sidebar layout.
+- Files changed:
+  - src/components/wizard/WizardContext.tsx (updated - added icon SVG paths to STEPS array)
+  - src/components/wizard/WizardLayout.tsx (rewritten - vertical sidebar layout with VerticalStepTracker, MobileStepBar, MobileHeader, updated WizardSkeleton)
+  - src/app/layout.tsx (updated - switched from dark mode to light mode default)
+  - prd.json (updated - UI01 passes: true)
+- **Learnings for future iterations:**
+  - STEPS array icon field contains raw SVG path data strings — render with <path d={step.icon} /> in an <svg> element
+  - Sidebar uses lg: breakpoint for desktop visibility (hidden on mobile/tablet, visible on 1024px+)
+  - Welcome (step 1) and Confirmation (step 7) don't show the sidebar step tracker — controlled by `isWizardStep` flag
+  - Step numbers displayed to user are offset by 1 (internal step 2 = "Step 1" to user) since Welcome is internal step 1
+  - The "Next" CTA button in sidebar only shows between steps 2-5 (not on Review step 6 which has its own submit)
+  - Light mode switch: bg-gray-50 body, white sidebar, gray-200 borders — existing step components still use dark styles and will need updating in UI02
 ---
