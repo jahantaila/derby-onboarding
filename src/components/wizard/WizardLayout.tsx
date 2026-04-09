@@ -66,15 +66,10 @@ function VerticalStepTracker() {
   const isWizardStep = currentStep > 1 && currentStep < TOTAL_STEPS;
 
   return (
-    <div className="hidden lg:flex lg:flex-col lg:w-[320px] lg:min-w-[320px] bg-white border-r border-gray-200 p-6">
+    <div className="hidden lg:flex lg:flex-col lg:w-[30%] lg:min-w-[280px] lg:max-w-[380px] bg-white border-r border-gray-200 p-6">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center">
-          <span className="text-white font-bold text-sm">D</span>
-        </div>
-        <span className="text-lg font-heading text-gray-900 tracking-tight uppercase">
-          Derby Digital
-        </span>
+        <img src="/logo.png" alt="Derby Digital" className="h-9 w-auto" />
       </div>
 
       {/* Step list */}
@@ -113,7 +108,7 @@ function VerticalStepTracker() {
                     Step {step.number - 1}
                   </span>
                   <p
-                    className={`text-base font-bold leading-tight ${
+                    className={`text-lg font-bold leading-tight ${
                       isActive
                         ? "text-gray-900"
                         : isCompleted
@@ -225,9 +220,6 @@ function MobileHeader() {
     <div className="lg:hidden px-4 py-3 bg-white border-b border-gray-200">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center">
-            <span className="text-white font-bold text-xs">D</span>
-          </div>
           <img src="/logo.png" alt="Derby Digital" className="h-8 w-auto" />
         </div>
         <a
@@ -259,7 +251,7 @@ function WizardSkeleton() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar skeleton */}
-      <div className="hidden lg:flex lg:flex-col lg:w-[320px] bg-white border-r border-gray-200 p-6">
+      <div className="hidden lg:flex lg:flex-col lg:w-[30%] lg:min-w-[280px] lg:max-w-[380px] bg-white border-r border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-9 h-9 rounded-lg animate-shimmer" />
           <div className="h-5 w-28 bg-gray-200 rounded animate-pulse" />

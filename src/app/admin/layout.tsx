@@ -32,10 +32,7 @@ export default function AdminLayout({
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col shrink-0 hidden md:flex">
         <div className="p-6 border-b border-gray-200">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center font-bold text-sm text-white">
-              D
-            </div>
-            <span className="font-bold text-lg text-gray-900">Derby Digital</span>
+            <img src="/logo.png" alt="Derby Digital" className="h-8 w-auto" />
           </Link>
           <p className="text-xs text-gray-500 mt-1">Admin Dashboard</p>
         </div>
@@ -74,10 +71,7 @@ export default function AdminLayout({
       {/* Mobile header */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-3 py-2.5 flex items-center justify-between gap-2">
         <Link href="/admin" className="flex items-center gap-1.5 flex-shrink-0">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-derby-blue to-derby-blue-deep flex items-center justify-center font-bold text-xs text-white">
-            D
-          </div>
-          <span className="font-bold text-sm text-gray-900 hidden xs:inline">Derby</span>
+          <img src="/logo.png" alt="Derby Digital" className="h-7 w-auto" />
         </Link>
         <div className="flex items-center gap-1.5">
           {NAV_ITEMS.map((item) => {

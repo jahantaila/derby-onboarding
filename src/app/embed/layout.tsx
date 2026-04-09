@@ -25,7 +25,7 @@ export default function EmbedLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${anton.variable} font-sans antialiased bg-transparent text-gray-900`}>
+      <body className={`${inter.variable} ${anton.variable} font-sans antialiased bg-transparent text-gray-900`} style={{ minWidth: 320 }}>
         {children}
       </body>
     </html>
