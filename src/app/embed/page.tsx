@@ -44,7 +44,7 @@ export default function EmbedPage() {
   return (
     <WizardProvider>
       <AutoHeightReporter />
-      <WizardLayout>
+      <WizardLayout hideHeader>
         <StepRenderer />
       </WizardLayout>
     </WizardProvider>

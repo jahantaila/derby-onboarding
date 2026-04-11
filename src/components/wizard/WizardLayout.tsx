@@ -286,7 +286,7 @@ function WizardSkeleton() {
   );
 }
 
-export default function WizardLayout({ children }: { children: React.ReactNode }) {
+export default function WizardLayout({ children, hideHeader }: { children: React.ReactNode; hideHeader?: boolean }) {
   const { isRestoring } = useWizard();
 
   if (isRestoring) return <WizardSkeleton />;
@@ -297,21 +297,23 @@ export default function WizardLayout({ children }: { children: React.ReactNode }
       <VerticalStepTracker />
 
       {/* Mobile header + step bar */}
-      <MobileHeader />
+      {!hideHeader && <MobileHeader />}
       <MobileStepBar />
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col">
         {/* Call us - desktop only, top right */}
-        <div className="hidden lg:flex items-center justify-end px-8 py-3 border-b border-gray-100">
-          <a
-            href="mailto:accounts@derbydigital.us"
-            className="flex items-center gap-2 text-sm text-gray-500 hover:text-derby-blue transition-colors"
-          >
-            <EmailIcon />
-            <span>Email us for same-day help: <span className="font-medium">accounts@derbydigital.us</span></span>
-          </a>
-        </div>
+        {!hideHeader && (
+          <div className="hidden lg:flex items-center justify-end px-8 py-3 border-b border-gray-100">
+            <a
+              href="mailto:accounts@derbydigital.us"
+              className="flex items-center gap-2 text-sm text-gray-500 hover:text-derby-blue transition-colors"
+            >
+              <EmailIcon />
+              <span>Email us for same-day help: <span className="font-medium">accounts@derbydigital.us</span></span>
+            </a>
+          </div>
+        )}
 
         {/* Step content */}
         <main className="flex-1 px-4 sm:px-8 lg:px-12 py-6 lg:py-10 overflow-y-auto">
