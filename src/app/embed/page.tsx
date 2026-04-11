@@ -11,8 +11,9 @@ function AutoHeightReporter() {
 
     function reportHeight() {
       const height = document.documentElement.scrollHeight;
+      const width = document.documentElement.scrollWidth;
       window.parent.postMessage(
-        { type: "derby-onboarding", event: "resize", height },
+        { type: "derby-onboarding", event: "resize", height, width },
         "*"
       );
     }
@@ -44,9 +45,11 @@ export default function EmbedPage() {
   return (
     <WizardProvider>
       <AutoHeightReporter />
-      <WizardLayout hideHeader>
-        <StepRenderer />
-      </WizardLayout>
+      <div className="w-full max-w-full overflow-x-hidden">
+        <WizardLayout hideHeader>
+          <StepRenderer />
+        </WizardLayout>
+      </div>
     </WizardProvider>
   );
 }

@@ -74,7 +74,7 @@ function VerticalStepTracker() {
   const isWizardStep = currentStep > 1 && currentStep < TOTAL_STEPS;
 
   return (
-    <div className="hidden lg:flex lg:flex-col lg:w-[30%] lg:min-w-[280px] lg:max-w-[380px] bg-white border-r border-gray-200 p-6">
+    <div className="hidden lg:flex lg:flex-col lg:w-[30%] lg:min-w-[220px] lg:max-w-[380px] bg-white border-r border-gray-200 p-6">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-8">
         <img src="/logo.png" alt="Derby Digital" className="h-9 w-auto" />
@@ -259,7 +259,7 @@ function WizardSkeleton() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar skeleton */}
-      <div className="hidden lg:flex lg:flex-col lg:w-[30%] lg:min-w-[280px] lg:max-w-[380px] bg-white border-r border-gray-200 p-6">
+      <div className="hidden lg:flex lg:flex-col lg:w-[30%] lg:min-w-[220px] lg:max-w-[380px] bg-white border-r border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-9 h-9 rounded-lg animate-shimmer" />
           <div className="h-5 w-28 bg-gray-200 rounded animate-pulse" />
@@ -292,7 +292,7 @@ export default function WizardLayout({ children, hideHeader }: { children: React
   if (isRestoring) return <WizardSkeleton />;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row overflow-x-hidden">
       {/* Desktop sidebar */}
       <VerticalStepTracker />
 
@@ -316,7 +316,7 @@ export default function WizardLayout({ children, hideHeader }: { children: React
         )}
 
         {/* Step content */}
-        <main className="flex-1 px-4 sm:px-8 lg:px-12 py-6 lg:py-10 overflow-y-auto">
+        <main className="flex-1 px-4 py-6 lg:py-10 overflow-y-auto overflow-x-hidden">
           <div className="max-w-3xl mx-auto">
             <StepTransition>{children}</StepTransition>
           </div>
