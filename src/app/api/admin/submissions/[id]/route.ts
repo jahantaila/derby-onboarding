@@ -97,3 +97,54 @@ export async function PATCH(
     return NextResponse.json({ error: "Failed to update submission" }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { id } = await params;
+    const supabase = getServiceClient();
+
+    // Get session_id before deleting so we can clean up storage
+    const { data: submission, error: fetchError } = await supabase
+      .from("submissions")
+      .select("session_id")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !submission) {
+      return NextResponse.json({ error: "Submission not found" }, { status: 404 });
+    }
+
+    // Delete associated documents from storage and DB
+    const { data: documents } = await supabase
+      .from("documents")
+      .select("storage_path")
+      .eq("session_id", submission.session_id);
+
+    if (documents && documents.length > 0) {
+      const paths = documents.map((d) => d.storage_path);
+      await supabase.storage.from("documents").remove(paths);
+      await supabase.from("documents").delete().eq("session_id", submission.session_id);
+    }
+
+    // Delete the submission
+    const { error: deleteError } = await supabase
+      .from("submissions")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) {
+      return NextResponse.json({ error: "Failed to delete submission" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Failed to delete submission" }, { status: 500 });
+  }
+}
