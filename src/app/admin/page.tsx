@@ -7,6 +7,10 @@ import { MonthlyTrends } from "@/components/admin/charts/MonthlyTrends";
 import { TimeInStage } from "@/components/admin/charts/TimeInStage";
 import { RecentSubmissions } from "@/components/admin/RecentSubmissions";
 import { StaleAlerts } from "@/components/admin/StaleAlerts";
+import { CrossClientCampaigns } from "@/components/admin/charts/CrossClientCampaigns";
+import { LeadPipelineOverview } from "@/components/admin/charts/LeadPipelineOverview";
+import { RevenueSpendTracking } from "@/components/admin/charts/RevenueSpendTracking";
+import { ClientHealthScores } from "@/components/admin/charts/ClientHealthScores";
 import Link from "next/link";
 
 interface Stats {
@@ -289,6 +293,43 @@ export default function AdminDashboardPage() {
               </div>
               <LeadResponseSLA />
             </div>
+          </div>
+
+          {/* ── Phase 4: Cross-Client Analytics ── */}
+          <div className="mt-10 mb-2">
+            <h2 className="text-xl font-bold text-gray-900 mb-1">Cross-Client Analytics</h2>
+            <p className="text-sm text-gray-500">Portfolio-wide campaign performance, lead pipeline, spend, and client health</p>
+          </div>
+
+          {/* Campaign Performance Overview */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-6">
+            <h3 className="text-base font-semibold text-gray-900 mb-1">Campaign Performance</h3>
+            <p className="text-sm text-gray-500 mb-6">All campaigns across clients — spend, conversions, ROAS</p>
+            <CrossClientCampaigns />
+          </div>
+
+          {/* Lead Pipeline + Revenue Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Lead Pipeline */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h3 className="text-base font-semibold text-gray-900 mb-1">Lead Pipeline</h3>
+              <p className="text-sm text-gray-500 mb-4">Funnel across all clients with stage conversion rates</p>
+              <LeadPipelineOverview />
+            </div>
+
+            {/* Revenue / Spend Tracking */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h3 className="text-base font-semibold text-gray-900 mb-1">Revenue & Spend</h3>
+              <p className="text-sm text-gray-500 mb-4">Monthly spend by client with budget utilization</p>
+              <RevenueSpendTracking />
+            </div>
+          </div>
+
+          {/* Client Health Scores */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-6">
+            <h3 className="text-base font-semibold text-gray-900 mb-1">Client Health Scores</h3>
+            <p className="text-sm text-gray-500 mb-4">Composite health based on SLA compliance, campaigns, conversions, and activity</p>
+            <ClientHealthScores />
           </div>
         </>
       )}
