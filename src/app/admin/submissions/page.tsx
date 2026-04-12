@@ -2,6 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/admin/useToast";
+import { DateRangePicker } from "@/components/admin/DateRangePicker";
+import { ServiceCategoryFilter } from "@/components/admin/ServiceCategoryFilter";
 
 interface Submission {
   id: string;
@@ -66,6 +69,7 @@ function formatServices(categories: string[] | null) {
 
 export default function AdminSubmissionsPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
@@ -78,6 +82,11 @@ export default function AdminSubmissionsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [statusUpdating, setStatusUpdating] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const hasFilters = !!(search || statusFilter || dateFrom || dateTo || selectedCategories.length > 0);
 
   const fetchSubmissions = useCallback(async () => {
     setLoading(true);
@@ -86,6 +95,9 @@ export default function AdminSubmissionsPage() {
       const params = new URLSearchParams({ page: String(page), page_size: "20" });
       if (statusFilter) params.set("status", statusFilter);
       if (search) params.set("search", search);
+      if (dateFrom) params.set("date_from", dateFrom);
+      if (dateTo) params.set("date_to", dateTo);
+      if (selectedCategories.length > 0) params.set("categories", selectedCategories.join(","));
 
       const res = await fetch(`/api/admin/submissions?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch");
@@ -99,7 +111,7 @@ export default function AdminSubmissionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, statusFilter, search]);
+  }, [page, statusFilter, search, dateFrom, dateTo, selectedCategories]);
 
   useEffect(() => {
     fetchSubmissions();
@@ -107,7 +119,27 @@ export default function AdminSubmissionsPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [statusFilter, search]);
+  }, [statusFilter, search, dateFrom, dateTo, selectedCategories]);
+
+  function clearAllFilters() {
+    setSearch("");
+    setStatusFilter("");
+    setDateFrom("");
+    setDateTo("");
+    setSelectedCategories([]);
+    setPage(1);
+  }
+
+  function handleExportCsv() {
+    const params = new URLSearchParams();
+    if (statusFilter) params.set("status", statusFilter);
+    if (search) params.set("search", search);
+    if (dateFrom) params.set("date_from", dateFrom);
+    if (dateTo) params.set("date_to", dateTo);
+    if (selectedCategories.length > 0) params.set("categories", selectedCategories.join(","));
+    window.open(`/api/admin/submissions/export?${params.toString()}`, "_blank");
+    showToast("CSV export started", "info");
+  }
 
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -156,9 +188,12 @@ export default function AdminSubmissionsPage() {
             s.id === subId ? { ...s, pipeline_status: newStatus as Submission["pipeline_status"] } : s
           )
         );
+        showToast("Status updated", "success");
+      } else {
+        showToast("Failed to update status", "error");
       }
     } catch {
-      // silent fail
+      showToast("Failed to update status", "error");
     } finally {
       setStatusUpdating(null);
     }
@@ -173,9 +208,12 @@ export default function AdminSubmissionsPage() {
         if (pagination) {
           setPagination((p) => p ? { ...p, total: p.total - 1 } : p);
         }
+        showToast("Submission deleted", "success");
+      } else {
+        showToast("Failed to delete submission", "error");
       }
     } catch {
-      // silent fail
+      showToast("Failed to delete submission", "error");
     } finally {
       setDeletingId(null);
       setConfirmDeleteId(null);
@@ -207,45 +245,79 @@ export default function AdminSubmissionsPage() {
     <div>
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-2xl font-bold text-gray-900">Submissions</h1>
-        {pagination && (
-          <span className="text-sm text-gray-500">{pagination.total} total</span>
-        )}
+        <div className="flex items-center gap-3">
+          {pagination && (
+            <span className="text-sm text-gray-500">{pagination.total} total</span>
+          )}
+          <button
+            onClick={handleExportCsv}
+            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Export CSV
+          </button>
+        </div>
       </div>
       <p className="text-gray-500 mb-6">Manage client onboarding submissions</p>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <form onSubmit={handleSearchSubmit} className="flex-1">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search by business or owner name..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 pl-10 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
-            />
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </form>
+      <div className="space-y-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleSearchSubmit} className="flex-1">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search by business or owner name..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 pl-10 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
+              />
+              <svg
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </form>
 
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
-        >
-          {STATUS_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
+          >
+            {STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+
+          <ServiceCategoryFilter
+            selected={selectedCategories}
+            onChange={setSelectedCategories}
+          />
+        </div>
+
+        <div className="flex items-center gap-3">
+          <DateRangePicker
+            startDate={dateFrom}
+            endDate={dateTo}
+            onChange={(start, end) => { setDateFrom(start); setDateTo(end); }}
+          />
+          {hasFilters && (
+            <button
+              onClick={clearAllFilters}
+              className="text-sm text-derby-blue hover:text-derby-blue-deep font-medium transition-colors whitespace-nowrap"
+            >
+              Clear all
+            </button>
+          )}
+        </div>
       </div>
 
       {error && !loading && (
@@ -264,12 +336,23 @@ export default function AdminSubmissionsPage() {
           </div>
         ) : sorted.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-gray-500 text-lg">No submissions found</p>
-            <p className="text-gray-400 text-sm mt-1">
+            <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <p className="text-gray-500 text-lg font-medium">No submissions found</p>
+            <p className="text-gray-400 text-sm mt-1 mb-4">
               {search || statusFilter
-                ? "Try adjusting your search or filters"
+                ? "No results match your current filters"
                 : "Submissions will appear here as clients complete onboarding"}
             </p>
+            {(search || statusFilter) && (
+              <button
+                onClick={() => { setSearch(""); setStatusFilter(""); setPage(1); }}
+                className="text-sm text-derby-blue hover:text-derby-blue-deep font-medium transition-colors"
+              >
+                Clear all filters
+              </button>
+            )}
           </div>
         ) : (
           <>

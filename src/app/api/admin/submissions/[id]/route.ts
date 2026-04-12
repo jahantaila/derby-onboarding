@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
-
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "derby2026";
-
-function isAuthorized(request: NextRequest): boolean {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader) {
-    const token = authHeader.replace("Bearer ", "");
-    if (token === ADMIN_PASSWORD) return true;
-  }
-  const cookie = request.cookies.get("admin_token");
-  if (cookie?.value === ADMIN_PASSWORD) return true;
-  return false;
-}
+import { isAuthorized } from "@/lib/admin-auth";
 
 export async function GET(
   request: NextRequest,
@@ -77,9 +65,28 @@ export async function PATCH(
       updates.notes = body.notes;
     }
 
+    // Editable client fields
+    const editableFields = [
+      "business_name", "contact_name", "business_phone", "business_email",
+      "business_address", "business_city", "business_state", "business_zip",
+      "contact_phone", "contact_email", "service_categories", "service_area_miles",
+    ];
+    for (const field of editableFields) {
+      if (body[field] !== undefined) {
+        updates[field] = body[field];
+      }
+    }
+
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ error: "No fields to update" }, { status: 400 });
     }
+
+    // Fetch old values for activity logging
+    const { data: oldSub } = await supabase
+      .from("submissions")
+      .select("pipeline_status, notes")
+      .eq("id", id)
+      .single();
 
     const { data, error } = await supabase
       .from("submissions")
@@ -90,6 +97,42 @@ export async function PATCH(
 
     if (error) {
       return NextResponse.json({ error: "Failed to update submission" }, { status: 500 });
+    }
+
+    // Log activity (non-blocking)
+    if (oldSub) {
+      const logs: { submission_id: string; action: string; details: Record<string, unknown> }[] = [];
+
+      if (body.pipeline_status && oldSub.pipeline_status !== body.pipeline_status) {
+        logs.push({
+          submission_id: id,
+          action: "status_change",
+          details: { from: oldSub.pipeline_status, to: body.pipeline_status },
+        });
+      }
+
+      if (body.notes !== undefined) {
+        const newNote = typeof body.notes === "object" ? body.notes?.internal : "";
+        logs.push({
+          submission_id: id,
+          action: "note_edit",
+          details: { note_preview: (newNote || "").slice(0, 100) },
+        });
+      }
+
+      // Check if any client fields were edited
+      const editedClientFields = editableFields.filter((f) => body[f] !== undefined);
+      if (editedClientFields.length > 0 && !body.pipeline_status && body.notes === undefined) {
+        logs.push({
+          submission_id: id,
+          action: "info_edit",
+          details: { fields: editedClientFields },
+        });
+      }
+
+      if (logs.length > 0) {
+        supabase.from("activity_log").insert(logs).then(() => {});
+      }
     }
 
     return NextResponse.json({ submission: data });

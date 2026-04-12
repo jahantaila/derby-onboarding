@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useToast } from "@/components/admin/useToast";
+import { Breadcrumbs } from "@/components/admin/Breadcrumbs";
+import { DocumentLightbox } from "@/components/admin/DocumentLightbox";
+import { ActivityLog } from "@/components/admin/ActivityLog";
+import { SERVICE_CATEGORIES } from "@/lib/constants";
 
 interface SubmissionDetail {
   id: string;
@@ -82,9 +86,14 @@ function isImageType(mimeType: string) {
   return mimeType.startsWith("image/");
 }
 
+function formatCategoryLabel(c: string) {
+  return c.charAt(0).toUpperCase() + c.slice(1).replace(/_/g, " ");
+}
+
 export default function SubmissionDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { showToast } = useToast();
   const id = params.id as string;
 
   const [submission, setSubmission] = useState<SubmissionDetail | null>(null);
@@ -95,9 +104,13 @@ export default function SubmissionDetailPage() {
   const [statusSaving, setStatusSaving] = useState(false);
   const [internalNotes, setInternalNotes] = useState("");
   const [notesSaving, setNotesSaving] = useState(false);
-  const [notesSaved, setNotesSaved] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [lightboxDoc, setLightboxDoc] = useState<DocumentWithUrl | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState<Record<string, unknown>>({});
+  const [editSaving, setEditSaving] = useState(false);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
   const printRef = useRef<HTMLDivElement>(null);
 
   const fetchData = useCallback(async () => {
@@ -134,6 +147,54 @@ export default function SubmissionDetailPage() {
     fetchData();
   }, [fetchData]);
 
+  function startEditing() {
+    if (!submission) return;
+    setEditData({
+      business_name: submission.business_name || "",
+      contact_name: submission.contact_name || "",
+      business_phone: submission.business_phone || "",
+      business_email: submission.business_email || "",
+      business_address: submission.business_address || "",
+      business_city: submission.business_city || "",
+      business_state: submission.business_state || "",
+      business_zip: submission.business_zip || "",
+      contact_phone: submission.contact_phone || "",
+      contact_email: submission.contact_email || "",
+      service_categories: submission.service_categories || [],
+      service_area_miles: submission.service_area_miles || "",
+    });
+    setIsEditing(true);
+  }
+
+  function cancelEditing() {
+    setIsEditing(false);
+    setEditData({});
+  }
+
+  async function saveEdits() {
+    setEditSaving(true);
+    try {
+      const res = await fetch(`/api/admin/submissions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editData),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSubmission(data.submission);
+        setIsEditing(false);
+        setEditData({});
+        showToast("Client info updated", "success");
+      } else {
+        showToast("Failed to update client info", "error");
+      }
+    } catch {
+      showToast("Failed to update client info", "error");
+    } finally {
+      setEditSaving(false);
+    }
+  }
+
   async function handleStatusChange(newStatus: string) {
     setStatus(newStatus);
     setStatusSaving(true);
@@ -146,8 +207,14 @@ export default function SubmissionDetailPage() {
       if (res.ok) {
         const data = await res.json();
         setSubmission(data.submission);
+        const label = STATUS_OPTIONS.find((s) => s.value === newStatus)?.label || newStatus;
+        showToast(`Status updated to ${label}`, "success");
+      } else {
+        showToast("Failed to update status", "error");
+        if (submission) setStatus(submission.pipeline_status);
       }
     } catch {
+      showToast("Failed to update status", "error");
       if (submission) setStatus(submission.pipeline_status);
     } finally {
       setStatusSaving(false);
@@ -156,7 +223,6 @@ export default function SubmissionDetailPage() {
 
   async function handleSaveNotes() {
     setNotesSaving(true);
-    setNotesSaved(false);
     try {
       const res = await fetch(`/api/admin/submissions/${id}`, {
         method: "PATCH",
@@ -164,11 +230,12 @@ export default function SubmissionDetailPage() {
         body: JSON.stringify({ notes: { internal: internalNotes } }),
       });
       if (res.ok) {
-        setNotesSaved(true);
-        setTimeout(() => setNotesSaved(false), 2000);
+        showToast("Notes saved", "success");
+      } else {
+        showToast("Failed to save notes", "error");
       }
     } catch {
-      // silent fail
+      showToast("Failed to save notes", "error");
     } finally {
       setNotesSaving(false);
     }
@@ -179,18 +246,58 @@ export default function SubmissionDetailPage() {
     try {
       const res = await fetch(`/api/admin/submissions/${id}`, { method: "DELETE" });
       if (res.ok) {
+        showToast("Submission deleted", "success");
         router.push("/admin/submissions");
+      } else {
+        showToast("Failed to delete submission", "error");
       }
     } catch {
-      // silent fail
+      showToast("Failed to delete submission", "error");
     } finally {
       setDeleting(false);
       setShowDeleteConfirm(false);
     }
   }
 
-  function handlePrint() {
-    window.print();
+  async function handleDownloadPdf() {
+    if (!printRef.current) return;
+    setPdfGenerating(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const { jsPDF } = await import("jspdf");
+
+      const canvas = await html2canvas(printRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const fileName = `${(submission?.business_name || "submission").replace(/[^a-zA-Z0-9]/g, "-")}.pdf`;
+      pdf.save(fileName);
+      showToast("PDF downloaded", "success");
+    } catch {
+      showToast("Failed to generate PDF", "error");
+    } finally {
+      setPdfGenerating(false);
+    }
   }
 
   if (loading) {
@@ -215,100 +322,153 @@ export default function SubmissionDetailPage() {
     .join(", ");
 
   const allServices = submission.service_categories
-    ? submission.service_categories.map(
-        (c) => c.charAt(0).toUpperCase() + c.slice(1).replace(/_/g, " ")
-      )
+    ? submission.service_categories.map(formatCategoryLabel)
     : [];
 
   const currentBadge = STATUS_OPTIONS.find((s) => s.value === status) || STATUS_OPTIONS[0];
 
   return (
     <>
-      {/* Print styles */}
-      <style>{`
-        @media print {
-          body * { visibility: hidden; }
-          #print-area, #print-area * { visibility: visible; }
-          #print-area { position: absolute; left: 0; top: 0; width: 100%; }
-          .no-print { display: none !important; }
-          .print-break { page-break-before: always; }
-        }
-      `}</style>
-
       <div ref={printRef}>
-        {/* Header */}
-        <div className="flex items-start sm:items-center gap-3 mb-6 no-print">
-          <Link
-            href="/admin/submissions"
-            className="text-gray-400 hover:text-gray-700 transition-colors mt-1 sm:mt-0 flex-shrink-0"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </Link>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
-              {submission.business_name || "Untitled"}
-            </h1>
-            <p className="text-gray-500 text-xs sm:text-sm">
-              Submitted {formatDate(submission.submitted_at || submission.created_at)}
-            </p>
+        {/* Breadcrumbs + Header */}
+        <div className="mb-6">
+          <div className="mb-3">
+            <Breadcrumbs
+              items={[
+                { label: "Dashboard", href: "/admin" },
+                { label: "Submissions", href: "/admin/submissions" },
+                { label: submission.business_name || "Detail" },
+              ]}
+            />
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <span className={`hidden sm:inline-block px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium ${currentBadge.bg} ${currentBadge.text}`}>
-              {currentBadge.label}
-            </span>
-            {/* PDF / Print button */}
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              title="Download as PDF"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="hidden sm:inline">PDF</span>
-            </button>
-            {/* Delete button */}
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
-              title="Delete submission"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              <span className="hidden sm:inline">Delete</span>
-            </button>
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                {submission.business_name || "Untitled"}
+              </h1>
+              <p className="text-gray-500 text-xs sm:text-sm">
+                Submitted {formatDate(submission.submitted_at || submission.created_at)}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className={`hidden sm:inline-block px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium ${currentBadge.bg} ${currentBadge.text}`}>
+                {currentBadge.label}
+              </span>
+              {!isEditing && (
+                <button
+                  onClick={startEditing}
+                  className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  title="Edit client info"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  <span className="hidden sm:inline">Edit</span>
+                </button>
+              )}
+              {isEditing && (
+                <>
+                  <button
+                    onClick={cancelEditing}
+                    className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveEdits}
+                    disabled={editSaving}
+                    className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-derby-blue to-derby-blue-deep rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                  >
+                    {editSaving ? "Saving..." : "Save"}
+                  </button>
+                </>
+              )}
+              <button
+                onClick={handleDownloadPdf}
+                disabled={pdfGenerating}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                title="Download as PDF"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span className="hidden sm:inline">{pdfGenerating ? "..." : "PDF"}</span>
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                title="Delete submission"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span className="hidden sm:inline">Delete</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Print header (only shows on print) */}
-        <div id="print-area" className="hidden print:block">
-          <div className="mb-6 pb-4 border-b border-gray-300">
-            <h1 className="text-2xl font-bold text-gray-900">{submission.business_name || "Untitled"}</h1>
-            <p className="text-gray-500 text-sm">Submitted {formatDate(submission.submitted_at || submission.created_at)} · Status: {currentBadge.label}</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" id="print-area">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main content - 2 cols */}
           <div className="lg:col-span-2 space-y-6">
             {/* Business Information */}
             <Section title="Business Information">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Business Name" value={submission.business_name} />
-                <Field label="Owner" value={submission.contact_name} />
-                <Field label="Phone" value={submission.business_phone} />
-                <Field label="Email" value={submission.business_email} />
-                {address && <Field label="Address" value={address} className="sm:col-span-2" />}
-              </div>
+              {isEditing ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <EditField label="Business Name" value={editData.business_name as string} onChange={(v) => setEditData((d) => ({ ...d, business_name: v }))} />
+                  <EditField label="Owner / Contact" value={editData.contact_name as string} onChange={(v) => setEditData((d) => ({ ...d, contact_name: v }))} />
+                  <EditField label="Phone" value={editData.business_phone as string} onChange={(v) => setEditData((d) => ({ ...d, business_phone: v }))} />
+                  <EditField label="Email" value={editData.business_email as string} onChange={(v) => setEditData((d) => ({ ...d, business_email: v }))} type="email" />
+                  <EditField label="Address" value={editData.business_address as string} onChange={(v) => setEditData((d) => ({ ...d, business_address: v }))} />
+                  <EditField label="City" value={editData.business_city as string} onChange={(v) => setEditData((d) => ({ ...d, business_city: v }))} />
+                  <EditField label="State" value={editData.business_state as string} onChange={(v) => setEditData((d) => ({ ...d, business_state: v }))} />
+                  <EditField label="Zip" value={editData.business_zip as string} onChange={(v) => setEditData((d) => ({ ...d, business_zip: v }))} />
+                  <EditField label="Contact Phone" value={editData.contact_phone as string} onChange={(v) => setEditData((d) => ({ ...d, contact_phone: v }))} />
+                  <EditField label="Contact Email" value={editData.contact_email as string} onChange={(v) => setEditData((d) => ({ ...d, contact_email: v }))} type="email" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label="Business Name" value={submission.business_name} />
+                  <Field label="Owner" value={submission.contact_name} />
+                  <Field label="Phone" value={submission.business_phone} />
+                  <Field label="Email" value={submission.business_email} />
+                  {address && <Field label="Address" value={address} className="sm:col-span-2" />}
+                </div>
+              )}
             </Section>
 
             {/* Services */}
             <Section title="Services & Trade">
               <div className="space-y-4">
-                {allServices.length > 0 ? (
+                {isEditing ? (
+                  <div className="flex flex-wrap gap-2">
+                    {SERVICE_CATEGORIES.map((cat) => {
+                      const selected = ((editData.service_categories as string[]) || []).includes(cat.id);
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => {
+                            const current = (editData.service_categories as string[]) || [];
+                            setEditData((d) => ({
+                              ...d,
+                              service_categories: selected
+                                ? current.filter((c) => c !== cat.id)
+                                : [...current, cat.id],
+                            }));
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                            selected
+                              ? "bg-derby-blue text-white border-derby-blue"
+                              : "bg-white text-gray-600 border-gray-200 hover:border-derby-blue/50"
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : allServices.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {allServices.map((svc) => (
                       <span
@@ -322,17 +482,24 @@ export default function SubmissionDetailPage() {
                 ) : (
                   <p className="text-gray-400">No services listed</p>
                 )}
-                {formData.other_service && (
+                {formData.other_service && !isEditing && (
                   <Field label="Other Service" value={formData.other_service} />
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                  <Field label="Service Area" value={formData.service_area || null} />
-                  <Field
-                    label="Years in Business"
-                    value={formData.years_in_business != null ? String(formData.years_in_business) : null}
-                  />
-                  <Field label="Employees" value={formData.employees || null} />
-                </div>
+                {!isEditing && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    <Field label="Service Area" value={formData.service_area || null} />
+                    <Field
+                      label="Years in Business"
+                      value={formData.years_in_business != null ? String(formData.years_in_business) : null}
+                    />
+                    <Field label="Employees" value={formData.employees || null} />
+                  </div>
+                )}
+                {isEditing && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    <EditField label="Service Area (miles)" value={String(editData.service_area_miles || "")} onChange={(v) => setEditData((d) => ({ ...d, service_area_miles: v ? Number(v) : null }))} type="number" />
+                  </div>
+                )}
               </div>
             </Section>
 
@@ -343,7 +510,11 @@ export default function SubmissionDetailPage() {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {documents.map((doc) => (
-                    <DocumentCard key={doc.id} doc={doc} />
+                    <DocumentCard
+                      key={doc.id}
+                      doc={doc}
+                      onClick={() => setLightboxDoc(doc)}
+                    />
                   ))}
                 </div>
               )}
@@ -377,7 +548,7 @@ export default function SubmissionDetailPage() {
                 value={status}
                 onChange={(e) => handleStatusChange(e.target.value)}
                 disabled={statusSaving}
-                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 disabled:opacity-50 no-print"
+                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 disabled:opacity-50"
               >
                 {STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -386,7 +557,7 @@ export default function SubmissionDetailPage() {
                 ))}
               </select>
               {statusSaving && (
-                <p className="text-xs text-gray-400 mt-1 no-print">Saving...</p>
+                <p className="text-xs text-gray-400 mt-1">Saving...</p>
               )}
             </Section>
 
@@ -397,12 +568,9 @@ export default function SubmissionDetailPage() {
                 onChange={(e) => setInternalNotes(e.target.value)}
                 placeholder="Add internal notes about this submission..."
                 rows={6}
-                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 resize-y no-print"
+                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 resize-y"
               />
-              {internalNotes && (
-                <p className="hidden print:block text-sm text-gray-700 whitespace-pre-wrap">{internalNotes}</p>
-              )}
-              <div className="flex items-center gap-3 mt-2 no-print">
+              <div className="flex items-center gap-3 mt-2">
                 <button
                   onClick={handleSaveNotes}
                   disabled={notesSaving}
@@ -410,9 +578,6 @@ export default function SubmissionDetailPage() {
                 >
                   {notesSaving ? "Saving..." : "Save Notes"}
                 </button>
-                {notesSaved && (
-                  <span className="text-green-600 text-sm">Saved!</span>
-                )}
               </div>
             </Section>
 
@@ -437,9 +602,24 @@ export default function SubmissionDetailPage() {
                 </div>
               </div>
             </Section>
+
+            {/* Activity Log */}
+            <Section title="Activity Log">
+              <ActivityLog submissionId={id} />
+            </Section>
           </div>
         </div>
       </div>
+
+      {/* Document Lightbox */}
+      {lightboxDoc && (
+        <DocumentLightbox
+          doc={lightboxDoc}
+          docs={documents}
+          onClose={() => setLightboxDoc(null)}
+          onNavigate={(doc) => setLightboxDoc(doc)}
+        />
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
@@ -514,12 +694,39 @@ function Field({
   );
 }
 
-function DocumentCard({ doc }: { doc: DocumentWithUrl }) {
+function EditField({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+}) {
+  return (
+    <div>
+      <label className="text-xs text-gray-400 mb-0.5 block">{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
+      />
+    </div>
+  );
+}
+
+function DocumentCard({ doc, onClick }: { doc: DocumentWithUrl; onClick: () => void }) {
   const isImage = isImageType(doc.mime_type);
   const label = DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type;
 
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div
+      className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden cursor-pointer hover:border-derby-blue/30 transition-colors"
+      onClick={onClick}
+    >
       {isImage && doc.signed_url && (
         <div className="aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -547,16 +754,9 @@ function DocumentCard({ doc }: { doc: DocumentWithUrl }) {
         <p className="text-sm text-gray-900 truncate mb-1">{doc.file_name}</p>
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-400">{formatFileSize(doc.file_size)}</span>
-          {doc.signed_url && (
-            <a
-              href={doc.signed_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-derby-blue hover:text-derby-blue-deep transition-colors font-medium"
-            >
-              {isImage ? "View Full" : "Download"}
-            </a>
-          )}
+          <span className="text-xs text-derby-blue font-medium">
+            Click to preview
+          </span>
         </div>
       </div>
     </div>

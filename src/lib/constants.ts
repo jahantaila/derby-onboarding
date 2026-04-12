@@ -1,0 +1,15 @@
+export const SERVICE_CATEGORIES = [
+  { id: "electrician", label: "Electrician" },
+  { id: "plumber", label: "Plumber" },
+  { id: "hvac", label: "HVAC" },
+  { id: "roofer", label: "Roofer" },
+  { id: "painter", label: "Painter" },
+  { id: "remodeler", label: "Remodeler" },
+  { id: "handyman", label: "Handyman" },
+  { id: "general_contractor", label: "General Contractor" },
+  { id: "landscaper", label: "Landscaper" },
+  { id: "pest_control", label: "Pest Control" },
+  { id: "garage_door", label: "Garage Door" },
+  { id: "locksmith", label: "Locksmith" },
+  { id: "other", label: "Other" },
+];

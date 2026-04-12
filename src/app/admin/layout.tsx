@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { ToastProvider } from "@/components/admin/ToastProvider";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: "📊" },
@@ -102,7 +103,7 @@ export default function AdminLayout({
       {/* Main content */}
       <main className="flex-1 min-h-screen md:p-0 pt-14 md:pt-0">
         <div className="p-6 md:p-8">
-          {children}
+          <ToastProvider>{children}</ToastProvider>
         </div>
       </main>
     </div>

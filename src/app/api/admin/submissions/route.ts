@@ -1,23 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
+import { isAuthorized } from "@/lib/admin-auth";
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "derby2026";
 const DEFAULT_PAGE_SIZE = 20;
-
-function isAuthorized(request: NextRequest): boolean {
-  // Check Authorization header (Bearer token)
-  const authHeader = request.headers.get("authorization");
-  if (authHeader) {
-    const token = authHeader.replace("Bearer ", "");
-    if (token === ADMIN_PASSWORD) return true;
-  }
-
-  // Check admin_token cookie
-  const cookie = request.cookies.get("admin_token");
-  if (cookie?.value === ADMIN_PASSWORD) return true;
-
-  return false;
-}
 
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
@@ -30,6 +15,9 @@ export async function GET(request: NextRequest) {
     const pageSize = Math.max(1, Math.min(100, parseInt(searchParams.get("page_size") || String(DEFAULT_PAGE_SIZE), 10)));
     const status = searchParams.get("status");
     const search = searchParams.get("search");
+    const dateFrom = searchParams.get("date_from");
+    const dateTo = searchParams.get("date_to");
+    const categories = searchParams.get("categories");
 
     const supabase = getServiceClient();
 
@@ -47,6 +35,22 @@ export async function GET(request: NextRequest) {
       query = query.or(
         `business_name.ilike.%${search}%,contact_name.ilike.%${search}%`
       );
+    }
+
+    // Date range filter
+    if (dateFrom) {
+      query = query.gte("created_at", dateFrom);
+    }
+    if (dateTo) {
+      query = query.lte("created_at", dateTo + "T23:59:59");
+    }
+
+    // Service categories filter
+    if (categories) {
+      const cats = categories.split(",").filter(Boolean);
+      if (cats.length > 0) {
+        query = query.overlaps("service_categories", cats);
+      }
     }
 
     // Paginate and sort newest first

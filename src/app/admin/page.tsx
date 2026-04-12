@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { ConversionFunnel } from "@/components/admin/charts/ConversionFunnel";
+import { ServiceBreakdown } from "@/components/admin/charts/ServiceBreakdown";
+import { MonthlyTrends } from "@/components/admin/charts/MonthlyTrends";
+import { TimeInStage } from "@/components/admin/charts/TimeInStage";
+import { RecentSubmissions } from "@/components/admin/RecentSubmissions";
+import { StaleAlerts } from "@/components/admin/StaleAlerts";
 
 interface Stats {
   total: number;
@@ -10,6 +16,16 @@ interface Stats {
   this_week: number;
   this_month: number;
   weekly_chart: { week: string; count: number }[];
+  funnel: {
+    new: number;
+    in_progress: number;
+    active: number;
+    new_to_ip_rate: number;
+    ip_to_active_rate: number;
+  };
+  service_breakdown: { category: string; count: number }[];
+  monthly_trends: { month: string; count: number }[];
+  avg_time_in_stage: { status: string; avg_days: number }[];
 }
 
 function CountUp({ target, duration = 1200 }: { target: number; duration?: number }) {
@@ -25,7 +41,6 @@ function CountUp({ target, duration = 1200 }: { target: number; duration?: numbe
     function animate(now: number) {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setValue(Math.round(eased * target));
       if (progress < 1) {
@@ -83,6 +98,9 @@ export default function AdminDashboardPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
       <p className="text-gray-500 mb-8">Overview of your onboarding pipeline</p>
 
+      {/* Stale Alerts */}
+      <StaleAlerts />
+
       {error && !loading && (
         <div className="mb-8 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600 text-center">
           Unable to load dashboard data. Please try refreshing the page.
@@ -96,7 +114,6 @@ export default function AdminDashboardPage() {
             key={card.key}
             className="relative overflow-hidden bg-white rounded-xl p-5 border border-gray-200 shadow-sm"
           >
-            {/* Gradient accent bar */}
             <div
               className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.gradient}`}
             />
@@ -117,7 +134,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Weekly Chart */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-1">Submissions Per Week</h2>
         <p className="text-sm text-gray-500 mb-6">Last 8 weeks</p>
 
@@ -162,6 +179,50 @@ export default function AdminDashboardPage() {
           <p className="text-gray-500">Failed to load chart data.</p>
         )}
       </div>
+
+      {/* Analytics Grid */}
+      {!loading && stats && (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Conversion Funnel */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">Pipeline Funnel</h2>
+              <p className="text-sm text-gray-500 mb-4">Conversion through stages</p>
+              <ConversionFunnel data={stats.funnel} />
+            </div>
+
+            {/* Service Breakdown */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">Service Categories</h2>
+              <p className="text-sm text-gray-500 mb-4">Most requested services</p>
+              <ServiceBreakdown data={stats.service_breakdown} />
+            </div>
+          </div>
+
+          {/* Monthly Trends */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">Monthly Trends</h2>
+            <p className="text-sm text-gray-500 mb-4">Submissions over the last 6 months</p>
+            <MonthlyTrends data={stats.monthly_trends} />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Time in Stage */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">Avg. Time in Stage</h2>
+              <p className="text-sm text-gray-500 mb-4">Average days since submission</p>
+              <TimeInStage data={stats.avg_time_in_stage} />
+            </div>
+
+            {/* Recent Submissions */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">Recent Submissions</h2>
+              <p className="text-sm text-gray-500 mb-4">Latest client onboardings</p>
+              <RecentSubmissions />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
