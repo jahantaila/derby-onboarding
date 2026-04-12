@@ -7,6 +7,7 @@ import { MonthlyTrends } from "@/components/admin/charts/MonthlyTrends";
 import { TimeInStage } from "@/components/admin/charts/TimeInStage";
 import { RecentSubmissions } from "@/components/admin/RecentSubmissions";
 import { StaleAlerts } from "@/components/admin/StaleAlerts";
+import Link from "next/link";
 
 interface Stats {
   total: number;
@@ -26,6 +27,62 @@ interface Stats {
   service_breakdown: { category: string; count: number }[];
   monthly_trends: { month: string; count: number }[];
   avg_time_in_stage: { status: string; avg_days: number }[];
+}
+
+interface SlaRow {
+  client_id: string;
+  business_name: string | null;
+  total_leads: number;
+  leads_with_response: number;
+  avg_response_ms: number | null;
+}
+
+function SlaColor(ms: number | null): { dot: string; label: string } {
+  if (ms == null) return { dot: "bg-gray-300", label: "text-gray-400" };
+  const min = ms / 60000;
+  if (min < 5) return { dot: "bg-green-500", label: "text-green-600" };
+  if (min <= 30) return { dot: "bg-yellow-400", label: "text-yellow-600" };
+  return { dot: "bg-red-500", label: "text-red-600" };
+}
+
+function LeadResponseSLA() {
+  const [rows, setRows] = useState<SlaRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/admin/lead-response-sla")
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setRows)
+      .catch(() => setRows([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="h-32 bg-gray-50 rounded-xl animate-pulse" />;
+  if (rows.length === 0) return <p className="text-sm text-gray-400 py-4 text-center">No lead data yet.</p>;
+
+  return (
+    <div className="space-y-2">
+      {rows.map((r) => {
+        const { dot, label } = SlaColor(r.avg_response_ms);
+        const avgMin = r.avg_response_ms != null ? Math.round(r.avg_response_ms / 60000) : null;
+        const responseRate = r.total_leads > 0 ? Math.round((r.leads_with_response / r.total_leads) * 100) : 0;
+        return (
+          <div key={r.client_id} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
+            <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${dot}`} />
+            <div className="flex-1 min-w-0">
+              <Link href={`/admin/submissions/${r.client_id}`} className="text-sm font-medium text-gray-800 hover:text-derby-blue truncate block">
+                {r.business_name || "Unnamed Client"}
+              </Link>
+              <p className="text-xs text-gray-400">{r.total_leads} leads · {responseRate}% responded</p>
+            </div>
+            <span className={`text-xs font-semibold flex-shrink-0 ${label}`}>
+              {avgMin != null ? `${avgMin < 1 ? "<1" : avgMin} min` : "—"}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 function CountUp({ target, duration = 1200 }: { target: number; duration?: number }) {
@@ -206,7 +263,7 @@ export default function AdminDashboardPage() {
             <MonthlyTrends data={stats.monthly_trends} />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Time in Stage */}
             <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
               <h2 className="text-lg font-semibold text-gray-900 mb-1">Avg. Time in Stage</h2>
@@ -219,6 +276,18 @@ export default function AdminDashboardPage() {
               <h2 className="text-lg font-semibold text-gray-900 mb-1">Recent Submissions</h2>
               <p className="text-sm text-gray-500 mb-4">Latest client onboardings</p>
               <RecentSubmissions />
+            </div>
+
+            {/* Lead Response SLA */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">Lead Response SLA</h2>
+              <p className="text-sm text-gray-500 mb-1">Avg. response time by client</p>
+              <div className="flex gap-3 text-xs text-gray-400 mb-4">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> &lt;5 min</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" /> 5–30 min</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> &gt;30 min</span>
+              </div>
+              <LeadResponseSLA />
             </div>
           </div>
         </>

@@ -104,6 +104,19 @@ interface Lead {
   updated_at: string;
 }
 
+interface LeadResponse {
+  id: string;
+  client_id: string;
+  template_name: string;
+  subject: string;
+  body_template: string;
+  channel: string;
+  is_active: boolean;
+  delay_seconds: number;
+  created_at: string;
+  updated_at: string;
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const STATUS_OPTIONS = [
@@ -235,6 +248,15 @@ export default function SubmissionDetailPage() {
   const [leadForm, setLeadForm] = useState<Partial<Lead>>({});
   const [leadSaving, setLeadSaving] = useState(false);
 
+  // Lead responses (auto-response templates)
+  const [leadResponses, setLeadResponses] = useState<LeadResponse[]>([]);
+  const [leadResponsesLoading, setLeadResponsesLoading] = useState(false);
+  const [showResponseForm, setShowResponseForm] = useState(false);
+  const [editingResponse, setEditingResponse] = useState<LeadResponse | null>(null);
+  const [responseForm, setResponseForm] = useState<Partial<LeadResponse>>({});
+  const [responseSaving, setResponseSaving] = useState(false);
+  const [previewResponse, setPreviewResponse] = useState<LeadResponse | null>(null);
+
   // ── Fetch core data ───────────────────────────────────────────────────────
 
   const fetchData = useCallback(async () => {
@@ -295,11 +317,19 @@ export default function SubmissionDetailPage() {
     } finally { setLeadsLoading(false); }
   }, [id]);
 
+  const fetchLeadResponses = useCallback(async () => {
+    setLeadResponsesLoading(true);
+    try {
+      const res = await fetch(`/api/admin/clients/${id}/lead-responses`);
+      if (res.ok) setLeadResponses(await res.json());
+    } finally { setLeadResponsesLoading(false); }
+  }, [id]);
+
   useEffect(() => {
     if (activeTab === "strategy") fetchStrategies();
     if (activeTab === "campaigns" || activeTab === "results") fetchCampaigns();
-    if (activeTab === "leads") fetchLeads();
-  }, [activeTab, fetchStrategies, fetchCampaigns, fetchLeads]);
+    if (activeTab === "leads") { fetchLeads(); fetchLeadResponses(); }
+  }, [activeTab, fetchStrategies, fetchCampaigns, fetchLeads, fetchLeadResponses]);
 
   useEffect(() => {
     if (activeTab === "results" && selectedCampaignForMetrics) {
@@ -551,7 +581,7 @@ export default function SubmissionDetailPage() {
   }
 
   function startEditLead(l: Lead) {
-    setLeadForm({ name: l.name || "", email: l.email || "", phone: l.phone || "", source: l.source || "", status: l.status, notes: l.notes || "" });
+    setLeadForm({ name: l.name || "", email: l.email || "", phone: l.phone || "", source: l.source || "", status: l.status, notes: l.notes || "", response_time_ms: l.response_time_ms });
     setEditingLead(l);
     setShowLeadForm(true);
   }
@@ -588,6 +618,79 @@ export default function SubmissionDetailPage() {
       if (res.ok) { showToast("Lead deleted", "success"); fetchLeads(); }
       else showToast("Failed to delete lead", "error");
     } catch { showToast("Failed to delete lead", "error"); }
+  }
+
+  // ── Lead response template actions ───────────────────────────────────────
+
+  function startNewResponse() {
+    setResponseForm({ template_name: "", subject: "", body_template: "", channel: "email", is_active: true, delay_seconds: 0 });
+    setEditingResponse(null);
+    setShowResponseForm(true);
+  }
+
+  function startEditResponse(r: LeadResponse) {
+    setResponseForm({ template_name: r.template_name, subject: r.subject, body_template: r.body_template, channel: r.channel, is_active: r.is_active, delay_seconds: r.delay_seconds });
+    setEditingResponse(r);
+    setShowResponseForm(true);
+  }
+
+  async function saveResponse() {
+    if (!responseForm.template_name?.trim()) { showToast("Template name is required", "error"); return; }
+    setResponseSaving(true);
+    try {
+      let res: Response;
+      if (editingResponse) {
+        res = await fetch(`/api/admin/clients/${id}/lead-responses/${editingResponse.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(responseForm),
+        });
+      } else {
+        res = await fetch(`/api/admin/clients/${id}/lead-responses`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(responseForm),
+        });
+      }
+      if (res.ok) {
+        showToast("Template saved", "success");
+        setShowResponseForm(false);
+        fetchLeadResponses();
+      } else showToast("Failed to save template", "error");
+    } catch { showToast("Failed to save template", "error"); }
+    finally { setResponseSaving(false); }
+  }
+
+  async function deleteResponse(responseId: string) {
+    try {
+      const res = await fetch(`/api/admin/clients/${id}/lead-responses/${responseId}`, { method: "DELETE" });
+      if (res.ok) { showToast("Template deleted", "success"); fetchLeadResponses(); }
+      else showToast("Failed to delete template", "error");
+    } catch { showToast("Failed to delete template", "error"); }
+  }
+
+  async function toggleResponseActive(r: LeadResponse) {
+    try {
+      const res = await fetch(`/api/admin/clients/${id}/lead-responses/${r.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: !r.is_active }),
+      });
+      if (res.ok) fetchLeadResponses();
+      else showToast("Failed to toggle template", "error");
+    } catch { showToast("Failed to toggle template", "error"); }
+  }
+
+  function previewTemplate(r: LeadResponse) {
+    setPreviewResponse(r);
+  }
+
+  function renderTemplatePreview(body: string) {
+    return body
+      .replace(/\{\{lead_name\}\}/g, submission?.contact_name || "John Smith")
+      .replace(/\{\{business_name\}\}/g, submission?.business_name || "Acme Co.")
+      .replace(/\{\{client_email\}\}/g, submission?.contact_email || "contact@example.com")
+      .replace(/\{\{client_phone\}\}/g, submission?.contact_phone || "(555) 000-0000");
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -1034,8 +1137,19 @@ export default function SubmissionDetailPage() {
         {/* ── Leads ── */}
         {activeTab === "leads" && (
           <div className="space-y-6">
+            {/* Header with avg response time */}
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-500">Track leads for this client.</p>
+              <div>
+                <p className="text-sm text-gray-500">Track leads for this client.</p>
+                {leads.length > 0 && (() => {
+                  const withTime = leads.filter((l) => l.response_time_ms != null);
+                  if (withTime.length === 0) return null;
+                  const avgMs = withTime.reduce((sum, l) => sum + (l.response_time_ms || 0), 0) / withTime.length;
+                  const avgMin = Math.round(avgMs / 60000);
+                  const color = avgMin < 5 ? "text-green-600" : avgMin <= 30 ? "text-yellow-600" : "text-red-600";
+                  return <p className={`text-xs mt-0.5 font-medium ${color}`}>Avg response time: {avgMin < 1 ? "<1" : avgMin} min</p>;
+                })()}
+              </div>
               {!showLeadForm && (
                 <button onClick={startNewLead} className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-derby-blue to-derby-blue-deep rounded-lg hover:opacity-90 transition-opacity">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
@@ -1056,6 +1170,16 @@ export default function SubmissionDetailPage() {
                     <select value={leadForm.status || "new"} onChange={(e) => setLeadForm((f) => ({ ...f, status: e.target.value }))} className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50">
                       {LEAD_STATUSES.map((s) => <option key={s} value={s}>{capitalize(s)}</option>)}
                     </select>
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 mb-0.5 block">Response Time (ms)</label>
+                    <input
+                      type="number"
+                      value={leadForm.response_time_ms ?? ""}
+                      onChange={(e) => setLeadForm((f) => ({ ...f, response_time_ms: e.target.value ? parseInt(e.target.value) : null }))}
+                      placeholder="e.g. 120000"
+                      className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
+                    />
                   </div>
                 </div>
                 <div className="mt-4">
@@ -1083,6 +1207,7 @@ export default function SubmissionDetailPage() {
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Contact</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Source</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Response</th>
                       <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Added</th>
                       <th className="px-4 py-3" />
                     </tr>
@@ -1099,6 +1224,13 @@ export default function SubmissionDetailPage() {
                         <td className="px-4 py-3">
                           <LeadStatusBadge status={l.status} />
                         </td>
+                        <td className="px-4 py-3 hidden lg:table-cell">
+                          {l.response_time_ms != null ? (
+                            <span className={`text-xs font-medium ${l.response_time_ms < 300000 ? "text-green-600" : l.response_time_ms < 1800000 ? "text-yellow-600" : "text-red-600"}`}>
+                              {Math.round(l.response_time_ms / 60000)} min
+                            </span>
+                          ) : <span className="text-xs text-gray-400">—</span>}
+                        </td>
                         <td className="px-4 py-3 text-gray-400 text-xs hidden lg:table-cell">{formatDateShort(l.created_at)}</td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-3">
@@ -1112,6 +1244,112 @@ export default function SubmissionDetailPage() {
                 </table>
               </div>
             )}
+
+            {/* Auto-Response Templates */}
+            <div className="mt-2">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-700">Auto-Response Templates</h3>
+                  <p className="text-xs text-gray-400 mt-0.5">Templates queued automatically when a new lead is created.</p>
+                </div>
+                {!showResponseForm && (
+                  <button onClick={startNewResponse} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-derby-blue border border-derby-blue/30 rounded-lg hover:bg-derby-blue/5 transition-colors">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                    Add Template
+                  </button>
+                )}
+              </div>
+
+              {showResponseForm && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-4">
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">{editingResponse ? "Edit Template" : "New Template"}</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <EditField label="Template Name" value={responseForm.template_name || ""} onChange={(v) => setResponseForm((f) => ({ ...f, template_name: v }))} />
+                    <EditField label="Subject" value={responseForm.subject || ""} onChange={(v) => setResponseForm((f) => ({ ...f, subject: v }))} />
+                    <div>
+                      <label className="text-xs text-gray-400 mb-0.5 block">Channel</label>
+                      <select value={responseForm.channel || "email"} onChange={(e) => setResponseForm((f) => ({ ...f, channel: e.target.value }))} className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50">
+                        <option value="email">Email</option>
+                        <option value="sms">SMS</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-400 mb-0.5 block">Delay (seconds after lead creation)</label>
+                      <input
+                        type="number"
+                        min={0}
+                        value={responseForm.delay_seconds ?? 0}
+                        onChange={(e) => setResponseForm((f) => ({ ...f, delay_seconds: parseInt(e.target.value) || 0 }))}
+                        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <label className="text-xs text-gray-400 mb-0.5 block">Body Template <span className="text-gray-300">(use &#123;&#123;lead_name&#125;&#125;, &#123;&#123;business_name&#125;&#125;)</span></label>
+                    <textarea
+                      rows={5}
+                      value={responseForm.body_template || ""}
+                      onChange={(e) => setResponseForm((f) => ({ ...f, body_template: e.target.value }))}
+                      className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-derby-blue/50 focus:ring-1 focus:ring-derby-blue/50 font-mono"
+                      placeholder={"Hi {{lead_name}},\n\nThank you for your interest in {{business_name}}..."}
+                    />
+                  </div>
+                  <div className="flex items-center gap-3 mt-4">
+                    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={responseForm.is_active ?? true}
+                        onChange={(e) => setResponseForm((f) => ({ ...f, is_active: e.target.checked }))}
+                        className="rounded border-gray-300"
+                      />
+                      Active
+                    </label>
+                  </div>
+                  <div className="flex gap-3 mt-4">
+                    <button onClick={saveResponse} disabled={responseSaving} className="px-4 py-2 bg-gradient-to-r from-derby-blue to-derby-blue-deep text-white text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50">
+                      {responseSaving ? "Saving..." : "Save Template"}
+                    </button>
+                    <button onClick={() => setShowResponseForm(false)} className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+                  </div>
+                </div>
+              )}
+
+              {leadResponsesLoading ? (
+                <div className="h-24 bg-gray-100 rounded-xl animate-pulse" />
+              ) : leadResponses.length === 0 ? (
+                <div className="text-center py-8 text-gray-400 text-sm bg-gray-50 rounded-xl border border-dashed border-gray-200">No templates configured.</div>
+              ) : (
+                <div className="space-y-2">
+                  {leadResponses.map((r) => (
+                    <div key={r.id} className={`bg-white rounded-xl border shadow-sm p-4 ${r.is_active ? "border-gray-200" : "border-gray-100 opacity-60"}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <button
+                            onClick={() => toggleResponseActive(r)}
+                            title={r.is_active ? "Deactivate" : "Activate"}
+                            className={`relative flex-shrink-0 w-9 h-5 rounded-full transition-colors ${r.is_active ? "bg-green-500" : "bg-gray-300"}`}
+                          >
+                            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${r.is_active ? "left-4" : "left-0.5"}`} />
+                          </button>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{r.template_name}</p>
+                            <p className="text-xs text-gray-400">
+                              {r.channel.toUpperCase()} · {r.delay_seconds === 0 ? "Immediate" : `${Math.round(r.delay_seconds / 60)} min delay`}
+                              {r.subject ? ` · "${r.subject}"` : ""}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <button onClick={() => previewTemplate(r)} className="text-xs text-gray-500 hover:text-derby-blue">Preview</button>
+                          <button onClick={() => startEditResponse(r)} className="text-xs text-derby-blue hover:underline">Edit</button>
+                          <button onClick={() => deleteResponse(r.id)} className="text-xs text-red-500 hover:underline">Delete</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -1141,6 +1379,30 @@ export default function SubmissionDetailPage() {
       {/* Document Lightbox */}
       {lightboxDoc && (
         <DocumentLightbox doc={lightboxDoc} docs={documents} onClose={() => setLightboxDoc(null)} onNavigate={(doc) => setLightboxDoc(doc)} />
+      )}
+
+      {/* Template Preview Modal */}
+      {previewResponse && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-gray-900">Template Preview</h3>
+              <button onClick={() => setPreviewResponse(null)} className="text-gray-400 hover:text-gray-600">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="text-xs text-gray-400 mb-1 uppercase tracking-wider">{previewResponse.channel} · {previewResponse.template_name}</div>
+            {previewResponse.subject && (
+              <div className="text-sm font-medium text-gray-800 mb-3 pb-3 border-b border-gray-100">
+                Subject: {renderTemplatePreview(previewResponse.subject)}
+              </div>
+            )}
+            <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans leading-relaxed bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+              {renderTemplatePreview(previewResponse.body_template) || "(no body)"}
+            </pre>
+            <p className="text-xs text-gray-400 mt-3">Variables substituted with sample data from this client.</p>
+          </div>
+        </div>
       )}
 
       {/* Delete Confirmation Modal */}

@@ -13,14 +13,14 @@ export async function GET(
     const { id } = await params;
     const supabase = getServiceClient();
     const { data, error } = await supabase
-      .from("leads")
+      .from("lead_responses")
       .select("*")
       .eq("client_id", id)
       .order("created_at", { ascending: false });
     if (error) throw error;
     return NextResponse.json(data || []);
   } catch {
-    return NextResponse.json({ error: "Failed to fetch leads" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch lead responses" }, { status: 500 });
   }
 }
 
@@ -35,33 +35,22 @@ export async function POST(
     const { id } = await params;
     const body = await request.json();
     const supabase = getServiceClient();
-
-    // Create the lead
-    const { data: lead, error: leadError } = await supabase
-      .from("leads")
-      .insert({ client_id: id, ...body })
+    const { data, error } = await supabase
+      .from("lead_responses")
+      .insert({
+        client_id: id,
+        template_name: body.template_name,
+        subject: body.subject || "",
+        body_template: body.body_template || "",
+        channel: body.channel || "email",
+        is_active: body.is_active ?? true,
+        delay_seconds: body.delay_seconds ?? 0,
+      })
       .select()
       .single();
-    if (leadError) throw leadError;
-
-    // Queue auto-responses: find all active templates for this client
-    const { data: templates } = await supabase
-      .from("lead_responses")
-      .select("id")
-      .eq("client_id", id)
-      .eq("is_active", true);
-
-    if (templates && templates.length > 0) {
-      const logEntries = templates.map((t) => ({
-        lead_id: lead.id,
-        response_id: t.id,
-        status: "pending",
-      }));
-      await supabase.from("lead_response_log").insert(logEntries);
-    }
-
-    return NextResponse.json(lead);
+    if (error) throw error;
+    return NextResponse.json(data);
   } catch {
-    return NextResponse.json({ error: "Failed to create lead" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create lead response" }, { status: 500 });
   }
 }
